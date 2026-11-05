@@ -45,4 +45,3 @@ export default async function handler(req) {
     return Response.redirect(driveStreamUrl, 302);
   }
 }
-
