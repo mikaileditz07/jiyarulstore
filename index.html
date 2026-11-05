@@ -1,0 +1,3516 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jiyarul Tea Stall & Grocery — Online Store</title>
+  <meta name="description" content="Jiyarul Tea Stall & Grocery — চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা অনলাইন শপিং ও লাইভ অর্ডার ট্র্যাকিং" />
+  <meta name="theme-color" content="#C0392B" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            chai: {
+              primary: '#C0392B',
+              primaryHover: '#A93226',
+              secondary: '#D35400',
+              tertiary: '#F39C12',
+              cream: '#F8FAFC',
+              warmBg: '#FAF6F0',
+              warmFooter: '#F9F5EF',
+              imgBg: '#F3ECE1',
+              borderWarm: '#E8E0D5',
+              borderInput: '#E2D6C7',
+            },
+            status: {
+              openGreen: '#2E7D32',
+              openContainer: '#E8F5E9',
+              openText: '#1B5E20',
+              closedRed: '#C62828',
+              closedContainer: '#FFEBEE',
+              closedText: '#B71C1C',
+            }
+          },
+          fontFamily: {
+            sans: ['"Hind Siliguri"', '"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Georgia"', '"Times New Roman"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts: Hind Siliguri & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Material Icons & FontAwesome -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Firebase JS SDK (Compat v10 for Firestore + Auth) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    body {
+      font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF6F0;
+      color: #0F172A;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .app-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      border: 1px solid #E8E0D5;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Pulse ring for Download App button */
+    @keyframes subtlePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .download-app-pill {
+      animation: subtlePulse 2.8s infinite ease-in-out;
+    }
+
+    /* Circular Spinner */
+    @keyframes spinLoader {
+      to { transform: rotate(360deg); }
+    }
+    .apk-spinner {
+      animation: spinLoader 0.75s linear infinite;
+    }
+
+    /* Custom Switch */
+    .m3-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .m3-switch input { opacity: 0; width: 0; height: 0; }
+    .m3-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #E2E8F0;
+      border: 1.5px solid #CBD5E1;
+      transition: 0.22s;
+      border-radius: 999px;
+    }
+    .m3-slider:before {
+      position: absolute;
+      content: "";
+      height: 15px;
+      width: 15px;
+      left: 2.5px;
+      bottom: 2px;
+      background-color: #64748B;
+      transition: 0.22s;
+      border-radius: 50%;
+    }
+    .m3-switch input:checked + .m3-slider {
+      background-color: #E8F5E9;
+      border-color: #A5D6A7;
+    }
+    .m3-switch input:checked + .m3-slider:before {
+      transform: translateX(17px);
+      background-color: #2E7D32;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-28 select-none">
+
+  <!-- ===================================================================== -->
+  <!-- 1. APK-STYLE GOOGLE LOGIN WELCOME SCREEN                              -->
+  <!-- ===================================================================== -->
+  <div
+    id="googleLoginWelcomeScreen"
+    class="fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]"
+  >
+    <!-- Top-Right Action Bar on Sign-In Page: Download App + Theme Toggle -->
+    <div class="fixed top-4 right-4 z-10 flex items-center gap-2.5">
+      <button
+        id="welcomeDownloadAppBtn"
+        onclick="triggerApkDirectDownload()"
+        class="download-app-pill px-3.5 py-2 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-lg shadow-[#2E7D32]/30 flex items-center gap-1.5 transition"
+        title="লগইন না করেই সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
+      >
+        <svg class="w-4 h-4 shrink-0 text-[#A5D6A7]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85l1.84 3.18C4.06 11.16 2.5 13.84 2.5 17h19c0-3.16-1.56-5.84-3.9-7.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
+        </svg>
+        <span
+          id="welcomeDownloadSpinnerIcon"
+          class="hidden w-3.5 h-3.5 rounded-full border-[2px] border-[#A5D6A7] border-t-transparent apk-spinner shrink-0"
+        ></span>
+        <span id="welcomeDownloadAppBtnText" class="font-extrabold text-[12px] tracking-tight whitespace-nowrap">Download App</span>
+        <svg id="welcomeDownloadArrowIcon" class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3"/>
+        </svg>
+      </button>
+
+      <button
+        id="loginThemeToggleBtn"
+        onclick="toggleLoginWelcomeTheme()"
+        class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]"
+        title="Toggle Theme"
+      >
+        <span id="loginThemeIcon" class="material-icons-round text-[22px]">light_mode</span>
+      </button>
+    </div>
+
+    <!-- Centered Login Card -->
+    <div
+      id="loginWelcomeCard"
+      class="w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300"
+    >
+      <!-- Circular Logo Emblem -->
+      <div
+        id="loginLogoCircle"
+        class="w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5"
+      >
+        <span class="material-icons-round text-[#8B4513] text-[34px]">local_cafe</span>
+      </div>
+
+      <!-- Store Title -->
+      <h1
+        id="loginStoreTitle"
+        class="font-serif font-extrabold text-[23px] sm:text-[24px] text-[#FDFBF7] leading-snug"
+      >
+        Jiyarul Tea Stall & Grocery
+      </h1>
+
+      <!-- Bengali Subtitle -->
+      <p
+        id="loginStoreSubtitle"
+        class="mt-2.5 text-[14px] text-[#A69B8D] leading-relaxed"
+      >
+        চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
+      </p>
+
+      <!-- Pill-Shaped "Sign in with Google" Button -->
+      <button
+        id="welcomeGoogleSignInBtn"
+        onclick="handleGoogleSignInClick()"
+        class="mt-7 w-full h-[52px] rounded-full bg-white hover:bg-slate-50 active:scale-[0.99] border border-[#DADCE0] shadow-md px-5 flex items-center justify-center gap-3 transition"
+      >
+        <svg id="welcomeGoogleGIcon" class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+          <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+          <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+          <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
+        </svg>
+        <span
+          id="welcomeSigningInSpinner"
+          class="hidden w-[18px] h-[18px] rounded-full border-[2.4px] border-[#C0392B] border-t-transparent apk-spinner shrink-0"
+        ></span>
+        <span id="welcomeSignInBtnText" class="text-[15px] font-semibold text-[#3C4043]">Sign in with Google</span>
+      </button>
+
+      <!-- Real Auth Error / Domain Info Banner (Only shown if Google Auth fails) -->
+      <div
+        id="realAuthErrorBox"
+        class="hidden mt-4 w-full rounded-[14px] bg-[#2A1215] border border-[#EF4444]/40 p-3 text-left text-[12px] text-[#FCA5A5] leading-relaxed"
+      ></div>
+
+      <!-- Subtle Security Footer -->
+      <div class="mt-5 flex items-center justify-center gap-1.5">
+        <span class="material-icons-round text-[#D99B26] text-[14px]">lock</span>
+        <span id="loginFooterText" class="text-[11.5px] text-[#7D7265]">
+          সম্পূর্ণ নিরাপদ ও আপনার ব্যক্তিগত ক্লাউডে সংরক্ষিত
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. STICKY TOP HEADER BAR (Exact 4th Screenshot UI + Download App)     -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E8E0D5] shadow-sm">
+    <div class="max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
+      <!-- Left: Store Emblem + Name + Live Dot + Subtitle -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#C0392B] to-[#D35400] flex items-center justify-center text-white shadow-sm shrink-0">
+          <span class="material-icons-round text-[22px]">local_cafe</span>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h1 id="topStoreName" class="font-extrabold text-[15px] sm:text-[17px] text-[#1E293B] truncate">
+              Jiyarul Tea Stall & Grocery
+            </h1>
+            <span
+              id="liveSyncDot"
+              class="w-2 h-2 rounded-full bg-[#2E7D32] shrink-0"
+              title="Live Firestore Sync Connected"
+            ></span>
+          </div>
+          <p id="topStoreSubtitle" class="text-[11px] text-[#64748B] truncate">
+            চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Action Buttons (Exact match to 4th Screenshot: Download App Pill + Baki Book + WhatsApp + Profile) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- PROMINENT VECTOR DOWNLOAD APP BUTTON (Full pill on Desktop, sleek circular icon on Mobile so store title never squishes) -->
+        <button
+          id="topDownloadAppBtn"
+          onclick="triggerApkDirectDownload()"
+          class="download-app-pill w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-md shadow-[#2E7D32]/25 flex items-center justify-center gap-1.5 transition shrink-0"
+          title="সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
+        >
+          <!-- Vector Android Icon (Desktop pill) -->
+          <svg id="topDownloadAndroidIcon" class="hidden sm:block w-4 h-4 shrink-0 text-[#A5D6A7]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85l1.84 3.18C4.06 11.16 2.5 13.84 2.5 17h19c0-3.16-1.56-5.84-3.9-7.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
+          </svg>
+          <!-- Downloading Spinner (Hidden by default) -->
+          <span
+            id="topDownloadSpinnerIcon"
+            class="hidden w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full border-[2px] border-[#A5D6A7] border-t-transparent apk-spinner shrink-0"
+          ></span>
+          <span id="topDownloadAppBtnText" class="hidden sm:inline font-extrabold text-[12px] tracking-tight whitespace-nowrap">Download App</span>
+          <!-- Vector Download Arrow Icon (Always visible on both Mobile circle & Desktop pill) -->
+          <svg id="topDownloadArrowIcon" class="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3"/>
+          </svg>
+        </button>
+
+        <!-- Baki Khata Lookup Icon Button -->
+        <button
+          onclick="openCustomerBakiModal()"
+          class="w-9 h-9 rounded-full bg-[#FFF3E0] hover:bg-[#FFE0B2] border border-[#FFCC80] text-[#D35400] flex items-center justify-center transition"
+          title="বাকি খাতা হিসাব দেখুন (Check Baki Khata)"
+        >
+          <span class="material-icons-round text-[19px]">menu_book</span>
+        </button>
+
+        <!-- WhatsApp Quick Contact Icon -->
+        <button
+          onclick="openStoreWhatsApp()"
+          class="w-9 h-9 rounded-full bg-[#E8F5E9] hover:bg-[#C8E6C9] border border-[#A5D6A7] text-[#2E7D32] flex items-center justify-center transition"
+          title="দোকানে WhatsApp করুন"
+        >
+          <i class="fa-brands fa-whatsapp text-[18px]"></i>
+        </button>
+
+        <!-- Google Account Avatar Button -->
+        <button
+          id="topGoogleAvatarBtn"
+          onclick="openGoogleProfileModal()"
+          class="w-9 h-9 rounded-full bg-[#C0392B] text-white font-extrabold text-[14px] border-2 border-[#E2E8F0] shadow-sm overflow-hidden flex items-center justify-center transition"
+          title="আপনার Google Account"
+        >
+          <span id="topGoogleAvatarInitial">G</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 3. MAIN CONTENT CONTAINER (Exact 4th Screenshot UI)                   -->
+  <!-- ===================================================================== -->
+  <main class="max-w-4xl mx-auto px-3 sm:px-5 pt-3 space-y-3.5">
+
+    <!-- STORE OPEN / CLOSED BANNER -->
+    <div
+      id="customerStoreStatusBanner"
+      class="w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#E8F5E9] border-[#A5D6A7]"
+    >
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="custStatusDot" class="w-2.5 h-2.5 rounded-full bg-[#2E7D32] shrink-0"></span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span id="custStatusTitle" class="font-extrabold text-[13px] text-[#1B5E20]">দোকান খোলা আছে (OPEN)</span>
+            <span id="custStatusSub" class="text-[11px] font-semibold text-[#2E7D32]">• অর্ডার নেওয়া হচ্ছে</span>
+          </div>
+          <p id="custStoreTiming" class="text-[11px] text-[#1B5E20]/80 truncate">
+            সকাল ৬:০০ - রাত ১০:৩০ (6:00 AM - 10:30 PM)
+          </p>
+        </div>
+      </div>
+
+      <button
+        onclick="enableWebPushNotifications()"
+        id="webNotifBellBtn"
+        class="px-2.5 py-1 rounded-[8px] bg-white/80 hover:bg-white text-[#1E293B] border border-black/10 text-[11px] font-bold flex items-center gap-1 shrink-0 transition"
+        title="অর্ডার আপডেট নোটিফিকেশন চালু রাখুন"
+      >
+        <span id="webNotifBellIcon" class="material-icons-round text-[15px] text-[#D35400]">notifications_active</span>
+        <span class="hidden sm:inline">নোটিফিকেশন</span>
+      </button>
+    </div>
+
+    <!-- TODAY'S SPECIAL NOTICE BANNER -->
+    <div
+      id="customerNoticeBanner"
+      class="w-full rounded-[14px] bg-gradient-to-r from-[#FFF8E1] via-[#FFF3E0] to-[#FFECB3] border border-[#FFE082] px-3.5 py-2.5 flex items-center gap-2.5 shadow-sm"
+    >
+      <div class="w-8 h-8 rounded-full bg-[#D35400]/15 text-[#D35400] flex items-center justify-center shrink-0">
+        <span class="material-icons-round text-[18px]">campaign</span>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#E65100]">আজকের স্পেশাল ঘোষণা (NOTICE)</p>
+        <p id="customerNoticeText" class="text-[12.5px] font-bold text-[#3E2723] leading-snug">
+          আজকের স্পেশাল: খাঁটি দুধের স্পেশাল মালাই চা ও গরম সিঙ্গাড়া!
+        </p>
+      </div>
+    </div>
+
+    <!-- ACTIVE ORDER LIVE TRACKING BANNER (Shown ONLY if THIS logged-in account has an active order) -->
+    <div id="activeOrderBannerContainer" class="hidden"></div>
+
+    <!-- =============================================================== -->
+    <!-- TAB 0: SHOPPING CATALOG VIEW (#customerTab_home)                -->
+    <!-- =============================================================== -->
+    <section id="customerTab_home" class="space-y-3.5">
+
+      <!-- Search Bar + In-Stock Filter Toggle (Exact 4th Screenshot UI) -->
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="relative flex-1 flex items-center">
+          <span class="material-icons-round text-[#C0392B] text-[20px] absolute left-3.5">search</span>
+          <input
+            id="customerSearchInput"
+            type="text"
+            oninput="renderCustomerProducts()"
+            placeholder="চা, সিঙ্গাড়া, চিনি, তেল বা মশলা খুঁজুন..."
+            class="w-full bg-white border border-[#E2D6C7] focus:border-[#C0392B] rounded-[14px] pl-10 pr-9 py-2.5 text-[13.5px] font-medium text-[#0F172A] shadow-sm outline-none"
+          />
+          <button
+            id="clearCustSearchBtn"
+            onclick="document.getElementById('customerSearchInput').value=''; renderCustomerProducts();"
+            class="hidden absolute right-3 text-slate-400 hover:text-slate-600"
+          >
+            <span class="material-icons-round text-[18px]">close</span>
+          </button>
+        </div>
+
+        <div class="px-3.5 py-2 rounded-[14px] bg-white border border-[#E2D6C7] flex items-center justify-between sm:justify-start gap-2.5 shrink-0 shadow-sm">
+          <span class="text-[12px] font-bold text-[#3E2723]">শুধু স্টকে থাকা পণ্য</span>
+          <label class="m3-switch">
+            <input id="inStockOnlyToggle" type="checkbox" onchange="renderCustomerProducts()" />
+            <span class="m3-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Category Chips Horizontal Scroll (Exact 4th Screenshot UI) -->
+      <div id="customerCategoriesRow" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+
+      <!-- Product Catalog Grid (Exact 4th Screenshot Horizontal Cards) -->
+      <div id="customerProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- TAB 1: CUSTOMER LIVE ORDERS & HISTORY (#customerTab_orders)     -->
+    <!-- =============================================================== -->
+    <section id="customerTab_orders" class="space-y-3.5 hidden">
+      <div class="app-card p-3.5 border-[#E2D6C7]">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-2.5">
+          <div>
+            <h2 class="font-extrabold text-[15px] text-[#0F172A] flex items-center gap-1.5">
+              <span class="material-icons-round text-[#C0392B] text-[20px]">receipt_long</span>
+              <span>আমার অর্ডার সমূহ (My Live Orders)</span>
+            </h2>
+            <p id="myOrdersAccountSub" class="text-[11px] text-slate-500">আপনার অর্ডারের লাইভ স্ট্যাটাস এখানে সাথে সাথে আপডেট হবে</p>
+          </div>
+          <span id="myOrdersCountPill" class="px-2.5 py-1 rounded-full bg-[#C0392B] text-white font-extrabold text-[11px]">
+            0টি অর্ডার
+          </span>
+        </div>
+
+        <!-- Order Search Box -->
+        <div class="relative flex items-center">
+          <span class="material-icons-round text-[#C0392B] text-[19px] absolute left-3">search</span>
+          <input
+            id="myOrderSearchInput"
+            type="text"
+            oninput="renderCustomerOrders()"
+            placeholder="Order ID (#123456) বা তারিখ (dd/mm/yyyy) দিয়ে খুঁজুন..."
+            class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[12px] pl-9 pr-10 py-2 text-[12.5px] font-medium text-[#0F172A] outline-none"
+          />
+          <label class="absolute right-2.5 w-7 h-7 rounded-[7px] bg-[#C0392B]/10 hover:bg-[#C0392B]/20 flex items-center justify-center cursor-pointer text-[#C0392B]">
+            <span class="material-icons-round text-[16px]">calendar_month</span>
+            <input type="date" class="sr-only" onchange="applyMyOrderDateFilter(this.value)" />
+          </label>
+        </div>
+      </div>
+
+      <div id="myOrdersListContainer" class="space-y-3"></div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 4. FLOATING CART BAR & 3RD SCREENSHOT CIRCULAR AI BUTTON              -->
+  <!-- ===================================================================== -->
+  <div
+    id="floatingCartBar"
+    onclick="openCartCheckoutModal()"
+    class="fixed bottom-[68px] left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-[520px] rounded-[16px] bg-gradient-to-r from-[#C0392B] to-[#D35400] text-white px-4 py-3 shadow-xl shadow-[#C0392B]/35 hidden items-center justify-between cursor-pointer active:scale-[0.99] transition"
+  >
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-extrabold text-[14px]" id="floatingCartCountBadge">
+        0
+      </div>
+      <div>
+        <p class="text-[11px] font-medium text-white/85">আপনার শপিং ব্যাগ (Cart)</p>
+        <p id="floatingCartTotalText" class="text-[16px] font-extrabold leading-tight">মোট ₹0</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5 bg-white text-[#C0392B] px-3.5 py-2 rounded-[11px] font-extrabold text-[12.5px] shadow-sm">
+      <span>অর্ডার করুন</span>
+      <span class="material-icons-round text-[17px]">arrow_forward</span>
+    </div>
+  </div>
+
+  <!-- Circular 52x52 Purple-Blue Sparkle AI Button (Exact match to 3rd Screenshot!) -->
+  <button
+    onclick="openSaraAiModal()"
+    class="fixed bottom-[76px] right-4 z-30 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#4F46E5] via-[#7C3AED] to-[#2563EB] hover:from-[#4338CA] hover:to-[#1D4ED8] text-white shadow-xl shadow-indigo-600/35 flex items-center justify-center active:scale-95 transition"
+    title="AI Shopping Assistant"
+  >
+    <span class="material-icons-round text-[24px]">auto_awesome</span>
+  </button>
+
+  <!-- ===================================================================== -->
+  <!-- 5. BOTTOM NAVIGATION BAR (Exact 4th Screenshot UI: দোকান | আমার অর্ডার) -->
+  <!-- ===================================================================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-[#E8E0D5] shadow-lg">
+    <div class="max-w-md mx-auto grid grid-cols-2 h-[58px]">
+      <button
+        id="bottomNav_home"
+        onclick="switchCustomerTab('home')"
+        class="flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition"
+      >
+        <span class="material-icons-round text-[22px]">storefront</span>
+        <span class="text-[11px]">দোকান (Shop)</span>
+      </button>
+
+      <button
+        id="bottomNav_orders"
+        onclick="switchCustomerTab('orders')"
+        class="relative flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition"
+      >
+        <div class="relative">
+          <span class="material-icons-round text-[22px]">receipt_long</span>
+          <span
+            id="bottomNavOrderBadge"
+            class="hidden absolute -top-1.5 -right-3 px-1.5 py-0.2 rounded-full bg-[#C0392B] text-white font-extrabold text-[9px]"
+          >0</span>
+        </div>
+        <span class="text-[11px]">আমার অর্ডার (Orders)</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL A: LOOSE / PACKET WEIGHT & PRICE SELECTOR                       -->
+  <!-- ===================================================================== -->
+  <div id="looseProductModal" onclick="if(event.target===this) closeLooseProductModal()" class="fixed inset-0 z-[60] bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4">
+    <div class="w-full max-w-[400px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+        <div>
+          <h3 id="looseModalTitle" class="font-extrabold text-[15px] text-[#0F172A]">প্যাকেট বা খুচরো পরিমাণ নির্বাচন করুন</h3>
+          <p id="looseModalSub" class="text-[11px] text-[#D35400] font-semibold"></p>
+        </div>
+        <button onclick="closeLooseProductModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+          <span class="material-icons-round text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3.5">
+        <div id="looseModalPacketsBox" class="hidden space-y-1.5">
+          <p class="text-[11.5px] font-bold text-[#1B5E20]">রেডি প্যাকেট সিলেক্ট করুন (Packet):</p>
+          <div id="looseModalPacketChips" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <div class="space-y-1.5">
+          <p class="text-[11.5px] font-bold text-[#3E2723]">অথবা খুচরো ওজন সিলেক্ট করুন (Loose Weight):</p>
+          <div id="looseModalWeightChips" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">কত টাকার নেবেন? (₹)</label>
+            <input
+              id="looseCustomRupeeInput"
+              type="number"
+              oninput="onLooseRupeeInput()"
+              placeholder="যেমন: 15"
+              class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[14px] font-extrabold text-[#C0392B] outline-none"
+            />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">ওজন (গ্রাম / মিলি)</label>
+            <input
+              id="looseCustomGramInput"
+              type="number"
+              oninput="onLooseGramInput()"
+              placeholder="যেমন: 100"
+              class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[14px] font-bold text-[#0F172A] outline-none"
+            />
+          </div>
+        </div>
+
+        <div id="looseCalcSummary" class="p-2.5 rounded-[10px] bg-[#E8F5E9] border border-[#A5D6A7] text-center font-bold text-[12.5px] text-[#1B5E20]">
+          পরিমাণ নির্বাচন করুন
+        </div>
+
+        <button
+          onclick="confirmAddLooseItemToCart()"
+          class="w-full py-2.5 rounded-[12px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+        >
+          <span class="material-icons-round text-[18px]">add_shopping_cart</span>
+          <span>ব্যাগে যোগ করুন (Add to Cart)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL B: SHOPPING CART & CHECKOUT SHEET                               -->
+  <!-- ===================================================================== -->
+  <div id="cartCheckoutModal" onclick="if(event.target===this) closeCartCheckoutModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="w-full max-w-[500px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
+      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-icons-round text-[#C0392B]">shopping_bag</span>
+          <h3 class="font-extrabold text-[15px] text-[#0F172A]">আপনার অর্ডার বক্স (Checkout)</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearEntireCart()" class="text-[11px] font-bold text-[#C62828] hover:underline">সব মুছুন</button>
+          <button onclick="closeCartCheckoutModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+            <span class="material-icons-round text-[20px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 space-y-3.5 max-h-[80vh] overflow-y-auto">
+        <div id="cartModalItemsList" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
+
+        <div class="p-3 rounded-[12px] bg-[#FAF6F0] border border-[#E2D6C7] flex items-center justify-between">
+          <span class="font-bold text-[13px] text-[#3E2723]">সর্বমোট বিল (Total Payable):</span>
+          <span id="cartModalTotalAmount" class="font-extrabold text-[19px] text-[#C0392B]">₹0</span>
+        </div>
+
+        <div class="px-3 py-2 rounded-[10px] bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="material-icons-round text-[#1D4ED8] text-[16px]">verified</span>
+            <div class="min-w-0">
+              <p class="text-[10px] font-bold text-[#1E40AF]">Order Gmail ID (Verified)</p>
+              <p id="checkoutVerifiedEmailText" class="text-[12px] font-extrabold text-[#0F172A] truncate"></p>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[10px] shrink-0">Scam Protected</span>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">আপনার নাম (Customer Name) *</label>
+            <input
+              id="checkoutCustomerName"
+              type="text"
+              placeholder="আপনার নাম লিখুন"
+              class="w-full bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">মোবাইল নম্বর (১০ সংখ্যার ফোন নম্বর) *</label>
+            <div class="flex gap-2">
+              <input
+                id="checkoutCustomerPhone"
+                type="tel"
+                maxlength="10"
+                oninput="onCustomerPhoneInputChanged()"
+                placeholder="9876543210"
+                class="flex-1 bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[13px] font-bold outline-none"
+              />
+              <button
+                id="sendOtpBtn"
+                type="button"
+                onclick="sendInstantPhoneOtp()"
+                class="px-3 py-2 rounded-[10px] bg-[#D35400] hover:bg-[#BA4A00] text-white font-bold text-[11.5px] shrink-0 transition"
+              >
+                OTP নিন
+              </button>
+            </div>
+            <div id="otpVerifyBox" class="hidden mt-2 p-2.5 rounded-[10px] bg-[#FFF7ED] border border-[#FDBA74] space-y-2">
+              <div class="flex items-center justify-between">
+                <span id="generatedOtpHint" class="text-[11px] font-extrabold text-[#9A3412]"></span>
+                <span class="text-[10px] text-[#C2410C]">নিচে কোডটি লিখুন</span>
+              </div>
+              <div class="flex gap-2">
+                <input
+                  id="otpCodeInput"
+                  type="text"
+                  maxlength="4"
+                  placeholder="4-digit OTP"
+                  class="flex-1 bg-white border border-[#FDBA74] rounded-[8px] px-3 py-1.5 text-[13px] font-extrabold tracking-widest outline-none"
+                />
+                <button
+                  type="button"
+                  onclick="verifyPhoneOtpCode()"
+                  class="px-3.5 py-1.5 rounded-[8px] bg-[#16A34A] text-white font-bold text-[11.5px]"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+            <p id="phoneVerifiedBadge" class="hidden mt-1 text-[11px] font-bold text-[#16A34A] items-center gap-1">
+              <span class="material-icons-round text-[14px]">check_circle</span>
+              <span>নম্বরটি OTP দ্বারা ভেরিফায়েড!</span>
+            </p>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[11px] font-bold text-slate-700">ডেলিভারি ঠিকানা বা নোট (Address / Note) *</label>
+              <button
+                type="button"
+                onclick="detectCustomerGpsLocation()"
+                class="text-[11px] font-bold text-[#C0392B] hover:underline flex items-center gap-0.5"
+              >
+                <span class="material-icons-round text-[13px]">my_location</span>
+                <span>GPS লোকেশন নিন</span>
+              </button>
+            </div>
+            <textarea
+              id="checkoutCustomerAddress"
+              rows="2"
+              placeholder="বাড়ির নাম, পাড়া বা দোকানে এসে নেবেন কি না লিখুন..."
+              class="w-full bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] p-2.5 text-[12.5px] font-medium outline-none"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <button
+            onclick="submitCustomerOrder('COD')"
+            class="py-3 px-4 rounded-[12px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+          >
+            <span class="material-icons-round text-[18px]">check_circle</span>
+            <span>অর্ডার কনফার্ম করুন (Cash)</span>
+          </button>
+
+          <button
+            onclick="openUpiQrPaymentModal()"
+            class="py-3 px-4 rounded-[12px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+          >
+            <span class="material-icons-round text-[18px]">qr_code_2</span>
+            <span>UPI / QR পেমেন্ট ও অর্ডার</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL C: UPI QR CODE PAYMENT DIALOG                                   -->
+  <!-- ===================================================================== -->
+  <div id="upiPaymentModal" onclick="if(event.target===this) closeUpiQrPaymentModal()" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4">
+    <div class="w-full max-w-[380px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden p-5 text-center space-y-3.5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-extrabold text-[15px] text-[#0F172A] flex items-center gap-1.5">
+          <span class="material-icons-round text-[#C0392B]">qr_code_2</span>
+          <span>UPI QR স্ক্যান ও পেমেন্ট</span>
+        </h3>
+        <button onclick="closeUpiQrPaymentModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+          <span class="material-icons-round text-[18px]">close</span>
+        </button>
+      </div>
+
+      <p id="upiModalStoreName" class="text-[12px] font-bold text-[#5D4037]">Jiyarul Tea Stall & Grocery</p>
+      <p id="upiModalAmountText" class="text-[24px] font-extrabold text-[#C0392B]">₹0</p>
+
+      <div class="w-48 h-48 mx-auto rounded-[16px] bg-white border-2 border-[#E2D6C7] p-2 flex items-center justify-center shadow-inner">
+        <img id="upiQrImage" src="" alt="UPI QR Code" class="w-full h-full object-contain" />
+      </div>
+
+      <p id="upiModalIdText" class="text-[11.5px] font-bold text-slate-600 bg-slate-100 py-1.5 px-3 rounded-full inline-block"></p>
+
+      <div class="space-y-2 pt-1">
+        <a
+          id="upiDeepLinkBtn"
+          href="#"
+          class="w-full py-2.5 rounded-[11px] bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm"
+        >
+          <span class="material-icons-round text-[17px]">account_balance_wallet</span>
+          <span>GPay / PhonePe / Paytm অ্যাপে পেমেন্ট করুন</span>
+        </a>
+
+        <button
+          onclick="submitCustomerOrder('UPI Paid')"
+          class="w-full py-2.5 rounded-[11px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-md"
+        >
+          <span class="material-icons-round text-[17px]">verified</span>
+          <span>পেমেন্ট সম্পন্ন — অর্ডার কনফার্ম করুন</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL D: CUSTOMER BAKI KHATA CHECK DIALOG                             -->
+  <!-- ===================================================================== -->
+  <div id="customerBakiModal" onclick="if(event.target===this) closeCustomerBakiModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-[440px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
+      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-icons-round text-[#D35400]">menu_book</span>
+          <div>
+            <h3 class="font-extrabold text-[14.5px] text-[#0F172A]">দোকানের বাকি খাতা (Baki Khata)</h3>
+            <p class="text-[10.5px] text-slate-500">রেজিস্ট্রেশন নম্বর (#1) বা ফোন নম্বর দিয়ে আপনার হিসাব দেখুন</p>
+          </div>
+        </div>
+        <button onclick="closeCustomerBakiModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+          <span class="material-icons-round text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3 max-h-[78vh] overflow-y-auto">
+        <div class="flex gap-2">
+          <input
+            id="bakiLookupInput"
+            type="text"
+            oninput="renderCustomerBakiLookup()"
+            placeholder="Reg No (যেমন: #1) বা মোবাইল নম্বর লিখুন..."
+            class="flex-1 bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#D35400] rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
+          />
+        </div>
+        <div id="bakiLookupResultContainer" class="space-y-2.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL E: GOOGLE ACCOUNT PROFILE DIALOG (Account Details)              -->
+  <!-- ===================================================================== -->
+  <div id="googleProfileModal" onclick="if(event.target===this) closeGoogleProfileModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4">
+    <div class="w-full max-w-[350px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden p-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+            <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
+          </svg>
+          <h3 class="font-bold text-[15px] text-[#1E293B]">Account Details</h3>
+        </div>
+        <button onclick="closeGoogleProfileModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+          <span class="material-icons-round text-[19px]">close</span>
+        </button>
+      </div>
+
+      <div class="mt-4 flex flex-col items-center text-center">
+        <div class="relative w-16 h-16">
+          <div id="profileModalAvatarBox" class="w-16 h-16 rounded-full bg-[#C0392B] text-white font-extrabold text-[24px] flex items-center justify-center overflow-hidden border-2 border-[#C0392B]">
+            G
+          </div>
+          <div class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-white shadow flex items-center justify-center p-[2.5px]">
+            <svg class="w-full h-full" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+              <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
+            </svg>
+          </div>
+        </div>
+
+        <h3 id="profileModalName" class="mt-2.5 font-extrabold text-[16.5px] text-[#0F172A]">Customer</h3>
+        <p id="profileModalEmail" class="text-[12.5px] font-medium text-[#64748B] mt-0.5"></p>
+      </div>
+
+      <div class="mt-3.5 pt-3 border-t border-[#E2E8F0] space-y-2 text-left">
+        <div class="flex items-center gap-2.5">
+          <span class="material-icons-round text-[#C0392B] text-[16px]">phone</span>
+          <span id="profileModalPhoneText" class="text-[12.5px] font-medium text-[#334155]">নম্বর এখনো যোগ করা হয়নি</span>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="material-icons-round text-[#C0392B] text-[16px] mt-0.5">location_on</span>
+          <span id="profileModalAddressText" class="text-[12.5px] text-[#475569] line-clamp-2">ঠিকানা এখনো যোগ করা হয়নি</span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-col gap-2">
+        <button
+          onclick="closeGoogleProfileModal(); switchCustomerTab('orders');"
+          class="w-full py-2.5 rounded-[11px] bg-[#C0392B] hover:bg-[#A93226] text-white font-bold text-[13px] flex items-center justify-center gap-2 shadow-sm transition"
+        >
+          <span class="material-icons-round text-[17px]">inventory_2</span>
+          <span id="profileModalMyOrdersBtnText">My Orders (0)</span>
+        </button>
+
+        <button
+          onclick="signOutCustomerGoogle()"
+          class="w-full py-2.5 rounded-[11px] bg-white hover:bg-[#FEF2F2] border border-[#FCA5A5] text-[#DC2626] font-bold text-[13px] flex items-center justify-center gap-2 transition"
+        >
+          <span class="material-icons-round text-[17px]">logout</span>
+          <span>Log Out (লগআউট)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL F: REAL GEMINI AI ASSISTANT SHEET (Matches Phone App UI 100%)   -->
+  <!-- ===================================================================== -->
+  <div id="saraAiModal" onclick="if(event.target===this) closeSaraAiModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-end sm:items-center justify-center sm:p-4">
+    <div class="w-full max-w-[440px] bg-[#F8FAFC] rounded-t-[24px] sm:rounded-[24px] border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[680px]">
+      <!-- Drag Handle & White Header (Exact Match to Phone App AiAssistantBottomSheet.kt) -->
+      <div class="bg-white border-b border-[#E2E8F0] pt-2.5 pb-3 px-4 shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div class="w-9 h-1 rounded-full bg-[#CBD5E1] mx-auto mb-3"></div>
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <!-- Glowing Gradient Robot Avatar -->
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#6366F1] via-[#A855F7] to-[#06B6D4] flex items-center justify-center shrink-0 shadow-sm">
+              <span class="material-icons-round text-white text-[22px]">smart_toy</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 id="saraModalTitle" class="font-bold text-[15px] text-[#0F172A] truncate">Talk to Rijiya (Rijiya-র সাথে কথা বলুন)</h3>
+              <div class="mt-0.5 flex items-center">
+                <span id="saraQuotaBadge" class="inline-block px-2 py-0.5 rounded-[12px] bg-[#ECFDF5] text-[#059669] font-bold text-[10.5px]">
+                  বার্তা বাকি: 20/20
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="clearAiChatHistory()" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#64748B] transition" title="চ্যাট মুছুন">
+              <span class="material-icons-round text-[20px]">delete_sweep</span>
+            </button>
+            <button onclick="closeSaraAiModal()" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#64748B] transition" title="বন্ধ করুন">
+              <span class="material-icons-round text-[20px]">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages Container -->
+      <div id="saraChatMessages" class="flex-1 px-4 py-3 overflow-y-auto space-y-3 bg-[#F8FAFC]"></div>
+
+      <!-- Quota Exhausted Banner -->
+      <div id="saraQuotaWarningBanner" class="hidden px-4 py-2 bg-[#FEF2F2] border-t border-red-100 text-[#B91C1C] font-semibold text-[12px]"></div>
+
+      <!-- Input Row (Exact Match to Phone App) -->
+      <div class="px-3 py-2.5 bg-white border-t border-[#E2E8F0] flex items-center gap-2 shadow-[0_-2px_10px_rgba(0,0,0,0.03)]">
+        <input
+          id="saraChatInput"
+          type="text"
+          placeholder="প্রশ্ন লিখুন..."
+          class="flex-1 bg-[#F8FAFC] border border-[#CBD5E1] focus:border-[#6366F1] rounded-[24px] px-4 py-2.5 text-[14px] text-[#0F172A] placeholder-[#94A3B8] outline-none transition"
+          onkeydown="if(event.key==='Enter') sendSaraChatMessage()"
+        />
+        <button
+          id="saraSendBtn"
+          onclick="sendSaraChatMessage()"
+          class="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition"
+        >
+          <span class="material-icons-round text-[20px]">send</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL G: FULL ORDER DETAILS & PHOTO ZOOM MODAL                        -->
+  <!-- ===================================================================== -->
+  <div id="custOrderDetailsModal" onclick="if(event.target===this) closeCustOrderDetailsModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div id="custOrderDetailsCard" class="w-full max-w-[500px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-6"></div>
+  </div>
+
+  <div id="photoZoomModal" onclick="if(event.target===this) closePhotoZoomModal()" class="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-[380px] bg-white rounded-[20px] overflow-hidden shadow-2xl p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h4 id="zoomModalTitle" class="font-bold text-[14px] text-[#0F172A] truncate"></h4>
+        <button onclick="closePhotoZoomModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+          <span class="material-icons-round text-[20px]">close</span>
+        </button>
+      </div>
+      <div class="w-full h-[250px] rounded-[12px] bg-[#FAF6F0] overflow-hidden flex items-center justify-center">
+        <img id="zoomModalImg" src="" alt="Product" class="w-full h-full object-cover" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[70] space-y-2 max-w-md w-full pointer-events-none px-4"></div>
+
+  <!-- ===================================================================== -->
+  <!-- COMPLETE JAVASCRIPT ENGINE (LIVE FIRESTORE + AUTH + SMART AI)         -->
+  <!-- ===================================================================== -->
+  <script>
+    /*************************************************************************
+     * 1. FIREBASE CONFIGURATION
+     *************************************************************************/
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUnA1UAKAW6NLKWcTraZEzCmQ4KeDnH9I",
+      authDomain: "jiyarul-store.firebaseapp.com",
+      projectId: "jiyarul-store",
+      storageBucket: "jiyarul-store.firebasestorage.app",
+      messagingSenderId: "230635427505",
+      appId: "1:230635427505:android:8f9f3f9e944b7e7ec0f490"
+    };
+
+    let db = null;
+    let auth = null;
+
+    // Live Store Settings (Synced with store_settings/main)
+    let storeSettings = {
+      id: 1,
+      shopName: "Jiyarul Tea Stall & Grocery",
+      shopSubtitle: "চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা",
+      isOpen: true,
+      notice: "আজকের স্পেশাল: খাঁটি দুধের স্পেশাল মালাই চা ও গরম সিঙ্গাড়া!",
+      upiId: "jiyarul.tea@oksbi",
+      shopPhone: "919876543210",
+      storeTiming: "সকাল ৬:০০ - রাত ১০:৩০ (6:00 AM - 10:30 PM)",
+      assistantName: "Rijiya",
+      apkDownloadUrl: ""
+    };
+
+    let productsList = [];
+    let storeCategories = [];
+    let allOrdersList = [];
+    let khataCustomers = [];
+    let khataTransactions = [];
+
+    // Customer Auth & Cart State
+    let currentCustomerAccount = null; // { uid, displayName, email, photoUrl, color }
+    let loginWelcomeDarkMode = true;
+    let activeCustomerTab = "home"; // 'home' | 'orders'
+    let selectedCategory = "All";
+    let cartMap = {};
+    let choosingAccountEmail = null;
+
+    // Phone OTP Verification State
+    let verifiedPhonesSet = new Set();
+    let currentGeneratedOtp = null;
+
+    // Loose Modal State
+    let activeLooseProduct = null;
+    let selectedLooseTitle = "";
+    let selectedLoosePrice = 0;
+
+    // Order Status Notification Tracking
+    let knownOrderStatuses = {};
+    let isFirstOrdersSnapshot = true;
+    let lastSeenBroadcastId = localStorage.getItem("jiyarul_last_broadcast_id") || "";
+
+    // AI Chat History & Real Gemini State (Synced with Android GeminiAiService.kt & ShopViewModel.kt)
+    const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6KnrGXnSKkGWozV7fglf570AdWvuhVVAGVlXIZz4WzGbA";
+    let saraMessages = [];
+    let isAiLoading = false;
+    let aiDailyMsgCount = 0;
+
+    function getAssistantName() {
+      const n = (storeSettings.assistantName || "").trim();
+      return n ? n : "Rijiya";
+    }
+
+    /*************************************************************************
+     * 2. GOOGLE DRIVE LINK -> DIRECT APK BINARY STREAM CONVERTER (NO NEW TAB)
+     *************************************************************************/
+    const DEFAULT_APK_DRIVE_URL =
+      "https://drive.usercontent.google.com/download?id=16Yg2QXYHFpx5Ayrk1IQtRsiqywUB8GbV&export=download&confirm=t&uuid=b93b4880-424f-4de8-b031-5e607a25cd89";
+    let apkDownloadFeedbackTimer = null;
+
+    function generateDownloadUuid() {
+      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+      }
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        const v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
+    function extractGoogleDriveFileId(rawUrl) {
+      const trimmed = String(rawUrl || "").trim();
+      if (!trimmed) return "";
+      const fileIdMatch = trimmed.match(/\/(?:file\/)?d\/([a-zA-Z0-9_-]{15,})/);
+      if (fileIdMatch && fileIdMatch[1]) return fileIdMatch[1];
+      const queryIdMatch = trimmed.match(/[?&]id=([a-zA-Z0-9_-]{15,})/);
+      if (queryIdMatch && queryIdMatch[1]) return queryIdMatch[1];
+      return "";
+    }
+
+    function convertToDirectDownloadUrl(rawUrl) {
+      const trimmed = String(rawUrl || "").trim();
+      if (!trimmed) return "";
+
+      const uuid = generateDownloadUuid();
+      const driveId = extractGoogleDriveFileId(trimmed);
+      if (driveId) {
+        return `https://drive.usercontent.google.com/download?id=${driveId}&export=download&confirm=t&uuid=${uuid}`;
+      }
+
+      if (trimmed.includes("dropbox.com") && trimmed.includes("dl=0")) {
+        return trimmed.replace("dl=0", "dl=1");
+      }
+
+      return trimmed;
+    }
+
+    function startBrowserFileDownload(url) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.setAttribute("download", "Jiyarul Store.apk");
+      a.rel = "noopener noreferrer";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => a.remove(), 1000);
+    }
+
+    async function triggerApkDirectDownload() {
+      const rawLink = (storeSettings.apkDownloadUrl || "").trim() || DEFAULT_APK_DRIVE_URL;
+      const directUrl = convertToDirectDownloadUrl(rawLink);
+      if (!directUrl) {
+        showToast("অ্যাডমিন প্যানেল (Settings) থেকে এখনো অ্যাপের ডাউনলোড লিংক যোগ করা হয়নি!");
+        return;
+      }
+
+      // 1. Official-website style button feedback on both Header & Sign-in buttons
+      const btnTextEl = document.getElementById("topDownloadAppBtnText");
+      const spinnerEl = document.getElementById("topDownloadSpinnerIcon");
+      const arrowEl = document.getElementById("topDownloadArrowIcon");
+      const welcomeTextEl = document.getElementById("welcomeDownloadAppBtnText");
+      const welcomeSpinnerEl = document.getElementById("welcomeDownloadSpinnerIcon");
+      const welcomeArrowEl = document.getElementById("welcomeDownloadArrowIcon");
+
+      if (btnTextEl) btnTextEl.textContent = "Downloading...";
+      if (spinnerEl) spinnerEl.classList.remove("hidden");
+      if (arrowEl) arrowEl.classList.add("hidden");
+      if (welcomeTextEl) welcomeTextEl.textContent = "Downloading...";
+      if (welcomeSpinnerEl) welcomeSpinnerEl.classList.remove("hidden");
+      if (welcomeArrowEl) welcomeArrowEl.classList.add("hidden");
+
+      if (apkDownloadFeedbackTimer) clearTimeout(apkDownloadFeedbackTimer);
+      apkDownloadFeedbackTimer = setTimeout(() => {
+        if (btnTextEl) btnTextEl.textContent = "Download App";
+        if (spinnerEl) spinnerEl.classList.add("hidden");
+        if (arrowEl) arrowEl.classList.remove("hidden");
+        if (welcomeTextEl) welcomeTextEl.textContent = "Download App";
+        if (welcomeSpinnerEl) welcomeSpinnerEl.classList.add("hidden");
+        if (welcomeArrowEl) welcomeArrowEl.classList.remove("hidden");
+      }, 3800);
+
+      showToast("অফিশিয়াল Jiyarul Store অ্যাপ ডাউনলোড শুরু হয়েছে!");
+
+      // 2. If a Google Drive link is used, check if our Vercel cookie-free stream endpoint (/api/download-apk)
+      // or a local /JiyarulStore.apk file is available so Chrome never sends .google.com cookies to Google Drive!
+      const driveId = extractGoogleDriveFileId(rawLink);
+      if (driveId) {
+        const candidates = [];
+        if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+          candidates.push(`${window.location.origin}/JiyarulStore.apk`);
+          candidates.push(`${window.location.origin}/api/download-apk?id=${encodeURIComponent(driveId)}`);
+        }
+        candidates.push(`https://jiyarulstore.vercel.app/JiyarulStore.apk`);
+        candidates.push(`https://jiyarulstore.vercel.app/api/download-apk?id=${encodeURIComponent(driveId)}`);
+
+        for (const candidateUrl of candidates) {
+          try {
+            const checkResp = await fetch(candidateUrl, { method: "HEAD" });
+            const ct = (checkResp.headers.get("content-type") || "").toLowerCase();
+            if (checkResp.ok && !ct.includes("text/html")) {
+              startBrowserFileDownload(candidateUrl);
+              return;
+            }
+          } catch (e) {}
+        }
+      }
+
+      // 3. Direct download fallback (e.g. GitHub Releases, Dropbox ?dl=1, or direct APK URL)
+      startBrowserFileDownload(directUrl);
+    }
+
+    /*************************************************************************
+     * 3. AUTHENTICATION (ZERO DUMMY ACCOUNTS + STRICT PER-ACCOUNT ISOLATION)
+     *************************************************************************/
+    function getAccountStorageSuffix() {
+      const email = (currentCustomerAccount?.email || "").trim().toLowerCase();
+      return email ? email.replace(/[^a-z0-9]/g, "_") : "guest";
+    }
+
+    function getAccountSavedProfile() {
+      const key = `jiyarul_profile_v2_${getAccountStorageSuffix()}`;
+      try {
+        return JSON.parse(localStorage.getItem(key) || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveAccountProfile(name, phone, address) {
+      const key = `jiyarul_profile_v2_${getAccountStorageSuffix()}`;
+      try {
+        localStorage.setItem(key, JSON.stringify({ name, phone, address }));
+      } catch (e) {}
+    }
+
+    function getAccountScopedOrderIds() {
+      const key = `jiyarul_order_ids_v2_${getAccountStorageSuffix()}`;
+      try {
+        return JSON.parse(localStorage.getItem(key) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function addAccountScopedOrderId(orderId) {
+      const key = `jiyarul_order_ids_v2_${getAccountStorageSuffix()}`;
+      const list = getAccountScopedOrderIds();
+      if (!list.includes(orderId)) {
+        list.unshift(orderId);
+        try {
+          localStorage.setItem(key, JSON.stringify(list));
+        } catch (e) {}
+      }
+    }
+
+    function toggleLoginWelcomeTheme() {
+      loginWelcomeDarkMode = !loginWelcomeDarkMode;
+      const screen = document.getElementById("googleLoginWelcomeScreen");
+      const card = document.getElementById("loginWelcomeCard");
+      const title = document.getElementById("loginStoreTitle");
+      const sub = document.getElementById("loginStoreSubtitle");
+      const footer = document.getElementById("loginFooterText");
+      const logoCircle = document.getElementById("loginLogoCircle");
+      const icon = document.getElementById("loginThemeIcon");
+      const toggleBtn = document.getElementById("loginThemeToggleBtn");
+
+      if (loginWelcomeDarkMode) {
+        screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]";
+        card.className = "w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300";
+        title.className = "font-serif font-extrabold text-[23px] sm:text-[24px] text-[#FDFBF7] leading-snug";
+        sub.className = "mt-2.5 text-[14px] text-[#A69B8D] leading-relaxed";
+        footer.className = "text-[11.5px] text-[#7D7265]";
+        logoCircle.className = "w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5";
+        icon.textContent = "light_mode";
+        toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]";
+      } else {
+        screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#FBF7F2]";
+        card.className = "w-full max-w-[400px] rounded-[28px] bg-white border border-[#E8DFD3] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300";
+        title.className = "font-serif font-extrabold text-[23px] sm:text-[24px] text-[#1F1610] leading-snug";
+        sub.className = "mt-2.5 text-[14px] text-[#6E5E4F] leading-relaxed";
+        footer.className = "text-[11.5px] text-[#8C7B6B]";
+        logoCircle.className = "w-[72px] h-[72px] rounded-full bg-[#F7EFE4] flex items-center justify-center shadow-inner mb-5";
+        icon.textContent = "dark_mode";
+        toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/5 transition text-[#4A3B32]";
+      }
+    }
+
+    function setWelcomeButtonLoading(isLoading) {
+      const gIcon = document.getElementById("welcomeGoogleGIcon");
+      const spinner = document.getElementById("welcomeSigningInSpinner");
+      const text = document.getElementById("welcomeSignInBtnText");
+      if (isLoading) {
+        gIcon.classList.add("hidden");
+        spinner.classList.remove("hidden");
+        text.textContent = "Signing in...";
+      } else {
+        gIcon.classList.remove("hidden");
+        spinner.classList.add("hidden");
+        text.textContent = "Sign in with Google";
+      }
+    }
+
+    function showRealAuthError(htmlMsg) {
+      const box = document.getElementById("realAuthErrorBox");
+      if (!box) return;
+      if (!htmlMsg) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+      } else {
+        box.innerHTML = htmlMsg;
+        box.classList.remove("hidden");
+      }
+    }
+
+    function handleGoogleSignInClick() {
+      showRealAuthError("");
+
+      // Real Google OAuth requires http:// or https:// (cannot run on file://)
+      if (window.location.protocol === "file:") {
+        setWelcomeButtonLoading(false);
+        showRealAuthError(
+          `⚠️ <strong>লোকাল ফাইলে (file://) রিয়েল Google Sign-In চলে না।</strong><br/>রিয়েল Google Authentication-এর জন্য ফাইলটি <strong>Vercel</strong>-এ হোস্ট করে সেই লিংক থেকে ওপেন করুন।`
+        );
+        showToast("রিয়েল Google Login-এর জন্য Vercel লিংক থেকে ওপেন করুন!");
+        return;
+      }
+
+      if (!auth) {
+        setWelcomeButtonLoading(false);
+        showRealAuthError(`⚠️ Firebase Auth লোড হয়নি। ইন্টারনেট সংযোগ চেক করে পেজটি রিফ্রেশ করুন।`);
+        return;
+      }
+
+      setWelcomeButtonLoading(true);
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+
+      auth
+        .signInWithPopup(provider)
+        .then((result) => {
+          const u = result.user;
+          if (u && u.uid && u.email) {
+            setAuthenticatedCustomer(
+              {
+                uid: u.uid,
+                displayName: u.displayName || "Customer",
+                email: u.email.toLowerCase(),
+                photoUrl: u.photoURL || ""
+              },
+              true
+            );
+          } else {
+            setWelcomeButtonLoading(false);
+          }
+        })
+        .catch((err) => {
+          setWelcomeButtonLoading(false);
+          const code = err && err.code ? String(err.code) : "";
+
+          if (code === "auth/popup-blocked") {
+            // Browser blocked popup -> use real Google OAuth Redirect
+            setWelcomeButtonLoading(true);
+            auth.signInWithRedirect(provider).catch(() => setWelcomeButtonLoading(false));
+            return;
+          }
+
+          if (code === "auth/unauthorized-domain") {
+            const host = window.location.hostname || window.location.host;
+            showRealAuthError(
+              `⚠️ <strong>এই ডোমেইনটি (${escapeHtml(host)}) এখনো Firebase-এ অনুমোদিত নয়!</strong><br/>` +
+              `রিয়েল Google Login চালু করতে <strong>Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains ➔ Add domain</strong>-এ গিয়ে <code>${escapeHtml(host)}</code> যোগ করুন।`
+            );
+            return;
+          }
+
+          if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+            showToast("লগইন পপআপ বন্ধ করা হয়েছে। আবার চেষ্টা করুন।");
+            return;
+          }
+
+          showRealAuthError(
+            `⚠️ রিয়েল Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || "Auth Error")})। অনুগ্রহ করে আবার চেষ্টা করুন।`
+          );
+        });
+    }
+
+    function loadSavedCustomerSession() {
+      try {
+        // Clear any old non-Firebase fake session keys
+        localStorage.removeItem("jiyarul_saved_google_accounts");
+        localStorage.removeItem("jiyarul_my_device_accounts_v2");
+        localStorage.removeItem("jiyarul_web_customer_account");
+        localStorage.removeItem("jiyarul_web_customer_account_v2");
+        localStorage.removeItem("jiyarul_my_order_ids");
+        localStorage.removeItem("jiyarul_cust_phone");
+        localStorage.removeItem("jiyarul_cust_name");
+        localStorage.removeItem("jiyarul_cust_address");
+
+        const savedPhones = JSON.parse(localStorage.getItem("jiyarul_verified_phones") || "[]");
+        savedPhones.forEach((p) => verifiedPhonesSet.add(String(p)));
+
+        const savedCart = JSON.parse(localStorage.getItem("jiyarul_web_cart") || "{}");
+        if (savedCart && typeof savedCart === "object") cartMap = savedCart;
+
+        // Restore verified Real Firebase Google session so refreshing or reopening never logs out automatically
+        const savedRealUser = JSON.parse(localStorage.getItem("jiyarul_real_firebase_user_v3") || "null");
+        if (savedRealUser && savedRealUser.uid && savedRealUser.email) {
+          setAuthenticatedCustomer(savedRealUser, false);
+        }
+      } catch (e) {}
+    }
+
+    function setAuthenticatedCustomer(acc, showWelcomeToast) {
+      currentCustomerAccount = acc;
+      try {
+        localStorage.setItem("jiyarul_real_firebase_user_v3", JSON.stringify(acc));
+      } catch (e) {}
+
+      showRealAuthError("");
+      setWelcomeButtonLoading(false);
+      document.getElementById("googleLoginWelcomeScreen").classList.add("hidden");
+
+      // Update Top Avatar & Profile Modal
+      const avatarBtn = document.getElementById("topGoogleAvatarBtn");
+      const initial = (acc.displayName || acc.email || "G").trim().charAt(0).toUpperCase();
+      if (acc.photoUrl) {
+        avatarBtn.innerHTML = `<img src="${escapeAttr(acc.photoUrl)}" alt="Avatar" class="w-full h-full object-cover" />`;
+        document.getElementById("profileModalAvatarBox").innerHTML = `<img src="${escapeAttr(acc.photoUrl)}" alt="Avatar" class="w-full h-full object-cover" />`;
+      } else {
+        avatarBtn.innerHTML = `<span>${escapeHtml(initial)}</span>`;
+        document.getElementById("profileModalAvatarBox").innerHTML = `<span>${escapeHtml(initial)}</span>`;
+      }
+      document.getElementById("profileModalName").textContent = acc.displayName || "Customer";
+      document.getElementById("profileModalEmail").textContent = acc.email || "";
+
+      // Clear checkout inputs so previous account's info is never mixed
+      document.getElementById("checkoutCustomerName").value = "";
+      document.getElementById("checkoutCustomerPhone").value = "";
+      document.getElementById("checkoutCustomerAddress").value = "";
+
+      // Sync customer account to Firestore customer_accounts
+      if (db && acc.uid) {
+        db.collection("customer_accounts").doc(acc.uid).set({
+          uid: acc.uid,
+          email: acc.email,
+          customerName: acc.displayName,
+          updatedAt: Date.now()
+        }, { merge: true }).catch(() => {});
+      }
+
+      if (showWelcomeToast) {
+        showToast(`স্বাগতম, ${acc.displayName}! (${acc.email})`);
+      }
+
+      renderCustomerOrders();
+    }
+
+    function openGoogleProfileModal() {
+      const myOrders = getMyOrdersFilteredList();
+      const latestMyOrder = myOrders[0];
+      const savedProf = getAccountSavedProfile();
+
+      const myPhone = savedProf.phone || latestMyOrder?.customerPhone || "";
+      const myAddr = savedProf.address || latestMyOrder?.deliveryAddress || "";
+
+      document.getElementById("profileModalPhoneText").textContent = myPhone
+        ? (myPhone.startsWith("+91") ? myPhone : `+91 ${myPhone}`)
+        : "নম্বর এখনো যোগ করা হয়নি";
+      document.getElementById("profileModalAddressText").textContent = myAddr
+        ? myAddr.replace(/\s*\[UPI Paid\]$/i, "")
+        : "ঠিকানা এখনো যোগ করা হয়নি";
+      document.getElementById("profileModalMyOrdersBtnText").textContent = `My Orders (${myOrders.length})`;
+
+      const modal = document.getElementById("googleProfileModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeGoogleProfileModal() {
+      const modal = document.getElementById("googleProfileModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function signOutCustomerGoogle() {
+      closeGoogleProfileModal();
+      currentCustomerAccount = null;
+      try {
+        localStorage.removeItem("jiyarul_real_firebase_user_v3");
+      } catch (e) {}
+      setWelcomeButtonLoading(false);
+      document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
+      if (auth) {
+        auth.signOut().catch(() => {});
+      }
+      showToast("আপনি সফলভাবে লগআউট করেছেন।");
+    }
+
+    /*************************************************************************
+     * 4. FIREBASE REAL-TIME LISTENERS & REAL AUTH STATE LISTENER
+     *************************************************************************/
+    function initFirebaseCustomerStore() {
+      loadSavedCustomerSession();
+      renderCartBar();
+      renderStoreHeaderAndBanners();
+
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        auth = firebase.auth();
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+        db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+
+        // Handle OAuth redirect completion on mobile browsers
+        auth.getRedirectResult().then((result) => {
+          if (result && result.user && result.user.uid && result.user.email) {
+            setAuthenticatedCustomer(
+              {
+                uid: result.user.uid,
+                displayName: result.user.displayName || "Customer",
+                email: result.user.email.toLowerCase(),
+                photoUrl: result.user.photoURL || ""
+              },
+              true
+            );
+          }
+        }).catch(() => {});
+
+        // Listen to Real Firebase Auth state without wiping an existing verified session
+        auth.onAuthStateChanged((user) => {
+          if (user && user.uid && user.email) {
+            setAuthenticatedCustomer(
+              {
+                uid: user.uid,
+                displayName: user.displayName || "Customer",
+                email: user.email.toLowerCase(),
+                photoUrl: user.photoURL || ""
+              },
+              false
+            );
+          } else if (!currentCustomerAccount) {
+            setWelcomeButtonLoading(false);
+            document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
+          }
+        });
+
+        startRealtimeStoreListeners();
+      } catch (e) {
+        console.warn("Firebase init notice:", e);
+      }
+    }
+
+    function startRealtimeStoreListeners() {
+      if (!db) return;
+
+      // 1. store_settings/main
+      db.collection("store_settings").doc("main").onSnapshot((doc) => {
+        if (doc.exists) {
+          const d = doc.data();
+          storeSettings = {
+            ...storeSettings,
+            shopName: d.shopName || storeSettings.shopName,
+            shopSubtitle: d.shopSubtitle || storeSettings.shopSubtitle,
+            isOpen: typeof d.isOpen === "boolean" ? d.isOpen : true,
+            notice: d.notice ?? storeSettings.notice,
+            upiId: d.upiId || storeSettings.upiId,
+            shopPhone: d.shopPhone || storeSettings.shopPhone,
+            storeTiming: d.storeTiming || storeSettings.storeTiming,
+            assistantName: (d.assistantName || "").trim() || "Rijiya",
+            apkDownloadUrl: d.apkDownloadUrl || ""
+          };
+          renderStoreHeaderAndBanners();
+          renderSaraMessages();
+        }
+      });
+
+      // 2. products
+      db.collection("products").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          list.push({
+            id: doc.id,
+            name: d.name || "",
+            nameBn: d.nameBn || "",
+            category: d.category || "Tea & Snacks",
+            price: Number(d.price || 0),
+            unit: d.unit || "pc",
+            isAvailable: typeof d.isAvailable === "boolean" ? d.isAvailable : true,
+            imageUrl: d.imageUrl || "",
+            updatedAt: Number(d.updatedAt || Date.now())
+          });
+        });
+        list.sort((a, b) => a.name.localeCompare(b.name));
+        productsList = list;
+        renderCustomerCategoryChips();
+        renderCustomerProducts();
+      });
+
+      // 3. store_categories
+      db.collection("store_categories").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          if (d.name && !d.isDeleted) {
+            list.push({
+              id: doc.id,
+              name: d.name.trim(),
+              isPinned: Boolean(d.isPinned),
+              pinnedAt: Number(d.pinnedAt || 0)
+            });
+          }
+        });
+        storeCategories = list;
+        renderCustomerCategoryChips();
+      });
+
+      // 4. orders (Real-time Customer Order Status & Notification Listener)
+      db.collection("orders").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          const rawItems = Array.isArray(d.items) ? d.items : [];
+          list.push({
+            id: doc.id,
+            customerName: d.customerName || "Customer",
+            customerPhone: d.customerPhone || "",
+            deliveryAddress: d.deliveryAddress || d.deliveryNote || "",
+            items: rawItems.map((it) => ({
+              title: it.title || it.name || "",
+              quantity: Number(it.quantity ?? it.qty ?? 1),
+              price: Number(it.price || 0),
+              imageUrl: it.imageUrl || "",
+              productId: it.productId || ""
+            })),
+            totalAmount: Number(d.totalAmount || 0),
+            status: d.status || "Pending",
+            expectedTime: d.expectedTime || d.estimatedDeliveryTime || "",
+            createdAt: Number(d.createdAt || Date.now()),
+            updatedAt: Number(d.updatedAt || Date.now()),
+            customerUid: d.customerUid || d.userId || "",
+            customerEmail: d.customerEmail || d.email || ""
+          });
+        });
+        list.sort((a, b) => b.createdAt - a.createdAt);
+        allOrdersList = list;
+
+        checkMyOrdersStatusNotifications();
+        renderCustomerOrders();
+      });
+
+      // 5. broadcast_alerts
+      db.collection("broadcast_alerts").doc("latest").onSnapshot((doc) => {
+        if (!doc.exists) return;
+        const d = doc.data();
+        const alertId = String(d.alertId || d.timestamp || "");
+        if (!alertId || alertId === lastSeenBroadcastId) return;
+        const ageMs = Date.now() - Number(d.timestamp || 0);
+        if (ageMs >= 0 && ageMs < 30 * 60 * 1000) {
+          lastSeenBroadcastId = alertId;
+          localStorage.setItem("jiyarul_last_broadcast_id", alertId);
+          triggerCustomerNotificationAlert(d.title || "জরুরি দোকান আপডেট!", d.message || "");
+        }
+      });
+
+      // 6. khata_customers & khata_transactions
+      db.collection("khata_customers").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          if (!d.isDeleted) {
+            list.push({
+              id: doc.id,
+              name: d.name || "",
+              regNo: d.regNo || "",
+              phone: d.phone || ""
+            });
+          }
+        });
+        khataCustomers = list;
+      });
+
+      db.collection("khata_transactions").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
+          const d = doc.data();
+          list.push({
+            id: doc.id,
+            customerId: d.customerId || "",
+            amount: Number(d.amount || 0),
+            notes: d.notes || "",
+            timestamp: Number(d.timestamp || Date.now()),
+            status: d.status || "PENDING DUE"
+          });
+        });
+        list.sort((a, b) => b.timestamp - a.timestamp);
+        khataTransactions = list;
+      });
+    }
+
+    /*************************************************************************
+     * 5. RENDER HEADER, STATUS BANNER, CATEGORIES & PRODUCTS (4th Pic UI)
+     *************************************************************************/
+    function renderStoreHeaderAndBanners() {
+      const assistantName = getAssistantName();
+      document.getElementById("topStoreName").textContent = storeSettings.shopName || "Jiyarul Tea Stall & Grocery";
+      document.getElementById("topStoreSubtitle").textContent = storeSettings.shopSubtitle || "চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা";
+      document.getElementById("loginStoreTitle").textContent = storeSettings.shopName || "Jiyarul Tea Stall & Grocery";
+      document.getElementById("loginStoreSubtitle").textContent = storeSettings.shopSubtitle || "চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা";
+      document.getElementById("saraModalTitle").textContent = `Talk to ${assistantName} (${assistantName}-র সাথে কথা বলুন)`;
+
+      const banner = document.getElementById("customerStoreStatusBanner");
+      const dot = document.getElementById("custStatusDot");
+      const title = document.getElementById("custStatusTitle");
+      const sub = document.getElementById("custStatusSub");
+      document.getElementById("custStoreTiming").textContent = storeSettings.storeTiming || "";
+
+      if (storeSettings.isOpen) {
+        banner.className = "w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#E8F5E9] border-[#A5D6A7]";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-[#2E7D32] shrink-0";
+        title.className = "font-extrabold text-[13px] text-[#1B5E20]";
+        title.textContent = "দোকান খোলা আছে (OPEN)";
+        sub.className = "text-[11px] font-semibold text-[#2E7D32]";
+        sub.textContent = "• অর্ডার নেওয়া হচ্ছে";
+      } else {
+        banner.className = "w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#FFEBEE] border-[#EF9A9A]";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-[#C62828] shrink-0";
+        title.className = "font-extrabold text-[13px] text-[#B71C1C]";
+        title.textContent = "দোকান এখন বন্ধ আছে (CLOSED)";
+        sub.className = "text-[11px] font-semibold text-[#C62828]";
+        sub.textContent = "• নতুন অর্ডার সাময়িক বন্ধ";
+      }
+
+      const noticeBanner = document.getElementById("customerNoticeBanner");
+      const noticeText = document.getElementById("customerNoticeText");
+      if (storeSettings.notice && storeSettings.notice.trim()) {
+        noticeBanner.classList.remove("hidden");
+        noticeText.textContent = storeSettings.notice.trim();
+      } else {
+        noticeBanner.classList.add("hidden");
+      }
+    }
+
+    function renderCustomerCategoryChips() {
+      const catSet = new Set();
+      productsList.forEach((p) => {
+        if (p.category && p.category.trim()) catSet.add(p.category.trim());
+      });
+      storeCategories.forEach((c) => {
+        if (c.name) catSet.add(c.name.trim());
+      });
+
+      const pinnedMap = {};
+      storeCategories.forEach((c) => {
+        if (c.isPinned) pinnedMap[c.name.toLowerCase()] = c.pinnedAt || 1;
+      });
+
+      const allCats = Array.from(catSet);
+      const pinned = allCats
+        .filter((name) => Boolean(pinnedMap[name.toLowerCase()]))
+        .sort((a, b) => (pinnedMap[a.toLowerCase()] || 0) - (pinnedMap[b.toLowerCase()] || 0));
+      const unpinned = allCats
+        .filter((name) => !pinnedMap[name.toLowerCase()])
+        .sort((a, b) => a.localeCompare(b));
+
+      const finalOrder = ["All", ...pinned, ...unpinned];
+      const row = document.getElementById("customerCategoriesRow");
+
+      row.innerHTML = finalOrder
+        .map((cat) => {
+          const isSelected = selectedCategory === cat;
+          const isPinned = Boolean(pinnedMap[cat.toLowerCase()]);
+          const label = cat === "All" ? "সব পণ্য (All)" : cat;
+          return `
+            <button
+              onclick="selectedCategory='${escapeQuotes(cat)}'; renderCustomerCategoryChips(); renderCustomerProducts();"
+              class="px-3.5 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap border flex items-center gap-1 transition ${
+                isSelected
+                  ? "bg-[#C0392B] text-white border-[#C0392B] shadow-sm"
+                  : "bg-white text-[#3E2723] border-[#E2D6C7] hover:bg-[#FAF6F0]"
+              }"
+            >
+              ${isPinned ? `<span class="material-icons-round text-[13px] ${isSelected ? "text-amber-200" : "text-[#D35400]"}">push_pin</span>` : ""}
+              <span>${escapeHtml(label)}</span>
+            </button>
+          `;
+        })
+        .join("");
+    }
+
+    function parseProductUnitSpec(unitRaw) {
+      const raw = String(unitRaw || "pc").trim();
+      const parts = raw.split("|").map((s) => s.trim());
+      const baseUnit = parts[0] || "pc";
+      let packetPrices = [];
+      let isLooseOnly = false;
+
+      parts.slice(1).forEach((p) => {
+        if (p.toLowerCase().startsWith("pack:")) {
+          const nums = p
+            .slice(5)
+            .split(",")
+            .map((n) => Number(n.trim()))
+            .filter((n) => n > 0);
+          packetPrices = nums;
+        } else if (p.toLowerCase() === "loose") {
+          isLooseOnly = true;
+        }
+      });
+
+      const isWeightBase = /(100g|200g|250g|500g|50g|1\s*kg|kg|kilo|gm|gram|100ml|250ml|500ml|1\s*litre|litre|liter|ml|কেজি|গ্রাম|লিটার|মিলি)/i.test(baseUnit);
+      return {
+        baseUnit,
+        packetPrices,
+        hasPacketAndLoose: packetPrices.length > 0,
+        isWeightBase,
+        isMultiMode: packetPrices.length > 0 || isLooseOnly || isWeightBase
+      };
+    }
+
+    function calculatePriceForGramsWeb(product, selectedGrams) {
+      if (selectedGrams < 0) return Math.max(1, Math.round(-selectedGrams));
+      const spec = parseProductUnitSpec(product.unit);
+      if (!spec.isMultiMode || !selectedGrams) return Math.max(1, Math.round(Number(product.price) || 0));
+      const baseGrams = getBaseGramFromUnit(spec.baseUnit);
+      return Math.max(1, Math.round(((Number(product.price) || 0) * selectedGrams) / baseGrams));
+    }
+
+    function formatWeightLabelWeb(product, grams) {
+      if (grams < 0) return `₹${-grams} প্যাকেট`;
+      const u = String(product.unit || "").toLowerCase();
+      const isLiquid = /(liter|litre|ltr|ml|লিটার|মিলি)/i.test(u);
+      if (grams >= 1000 && grams % 1000 === 0) {
+        return `${grams / 1000} ${isLiquid ? "L" : "kg"}`;
+      }
+      if (grams > 1000 && grams % 500 === 0) {
+        return `${grams / 1000} ${isLiquid ? "L" : "kg"}`;
+      }
+      return `${grams}${isLiquid ? "ml" : "g"}`;
+    }
+
+    function renderCustomerProducts() {
+      const query = (document.getElementById("customerSearchInput")?.value || "").trim().toLowerCase();
+      const clearBtn = document.getElementById("clearCustSearchBtn");
+      if (clearBtn) {
+        if (query) clearBtn.classList.remove("hidden");
+        else clearBtn.classList.add("hidden");
+      }
+
+      const inStockOnly = document.getElementById("inStockOnlyToggle")?.checked || false;
+
+      const filtered = productsList.filter((p) => {
+        if (inStockOnly && !p.isAvailable) return false;
+        if (selectedCategory !== "All" && p.category.toLowerCase() !== selectedCategory.toLowerCase()) return false;
+        if (!query) return true;
+        return (
+          p.name.toLowerCase().includes(query) ||
+          (p.nameBn && p.nameBn.toLowerCase().includes(query)) ||
+          (p.category && p.category.toLowerCase().includes(query))
+        );
+      });
+
+      const grid = document.getElementById("customerProductsGrid");
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center space-y-2">
+            <div class="w-16 h-16 rounded-full bg-[#F3ECE1] mx-auto flex items-center justify-center text-[#C0392B]/60">
+              <span class="material-icons-round text-[32px]">inventory_2</span>
+            </div>
+            <h4 class="font-bold text-[15px] text-[#3E2723]">কোনো পণ্য পাওয়া যায়নি</h4>
+            <p class="text-[12px] text-slate-500">অন্য কোনো নাম বা ক্যাটাগরি দিয়ে খুঁজুন।</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Exact 4th Screenshot Horizontal Cards
+      grid.innerHTML = filtered
+        .map((p) => {
+          const spec = parseProductUnitSpec(p.unit);
+          const cartKey = p.id;
+          const inCartQty = cartMap[cartKey] ? cartMap[cartKey].quantity : 0;
+
+          return `
+            <div class="app-card p-3 flex items-center gap-3 transition hover:shadow-md ${!p.isAvailable ? "opacity-70" : ""}">
+              <!-- Product Photo -->
+              <div
+                onclick="${p.imageUrl ? `openPhotoZoomModal('${escapeQuotes(p.imageUrl)}', '${escapeQuotes(p.nameBn || p.name)}')` : ""}"
+                class="w-[82px] h-[82px] rounded-[14px] bg-[#F3ECE1] border border-[#E8E0D5] overflow-hidden shrink-0 flex items-center justify-center relative ${p.imageUrl ? "cursor-pointer" : ""}"
+              >
+                ${
+                  p.imageUrl
+                    ? `<img src="${escapeAttr(p.imageUrl)}" alt="${escapeAttr(p.name)}" class="w-full h-full object-cover" loading="lazy" />`
+                    : `<span class="material-icons-round text-[#D35400]/50 text-[32px]">local_cafe</span>`
+                }
+                ${
+                  !p.isAvailable
+                    ? `<div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+                         <span class="px-1.5 py-0.5 rounded bg-[#C62828] text-white font-extrabold text-[9px]">STOCK SESH</span>
+                       </div>`
+                    : ""
+                }
+              </div>
+
+              <!-- Info & Cart Controls -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-1">
+                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FAF6F0] border border-[#E8E0D5] text-[#D35400] font-bold text-[10px] truncate">
+                    ${escapeHtml(p.category)}
+                  </span>
+                </div>
+
+                <h3 class="font-extrabold text-[14.5px] text-[#0F172A] truncate mt-1">${escapeHtml(p.name)}</h3>
+                ${p.nameBn ? `<p class="text-[12px] font-semibold text-[#5D4037] truncate">${escapeHtml(p.nameBn)}</p>` : ""}
+
+                <div class="mt-2 flex items-center justify-between gap-2">
+                  <div>
+                    <span class="font-extrabold text-[16px] text-[#C0392B]">₹${p.price}</span>
+                    <span class="text-[11px] font-semibold text-slate-500">/ ${escapeHtml(spec.baseUnit)}</span>
+                  </div>
+
+                  ${
+                    !p.isAvailable
+                      ? `<span class="px-2.5 py-1 rounded-[8px] bg-[#FFEBEE] text-[#C62828] font-bold text-[11px]">স্টক শেষ</span>`
+                      : spec.isMultiMode
+                      ? `<button
+                           onclick="openLooseProductModal('${escapeQuotes(p.id)}')"
+                           class="px-3 py-1.5 rounded-[10px] bg-[#D35400] hover:bg-[#BA4A00] text-white font-extrabold text-[11.5px] flex items-center gap-1 shadow-sm transition"
+                         >
+                           <span class="material-icons-round text-[14px]">scale</span>
+                           <span>ওজন / প্যাক</span>
+                         </button>`
+                      : inCartQty > 0
+                      ? `<div class="flex items-center gap-2 bg-[#C0392B] text-white rounded-[10px] px-2 py-1 shadow-sm">
+                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', -1)" class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-extrabold">-</button>
+                           <span class="font-extrabold text-[13px] min-w-[16px] text-center">${inCartQty}</span>
+                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', 1)" class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-extrabold">+</button>
+                         </div>`
+                      : `<button
+                           onclick="updateFixedCartQty('${escapeQuotes(p.id)}', 1)"
+                           class="px-3.5 py-1.5 rounded-[10px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[12px] flex items-center gap-1 shadow-sm transition"
+                         >
+                           <span class="material-icons-round text-[15px]">add</span>
+                           <span>Add</span>
+                         </button>`
+                  }
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    /*************************************************************************
+     * 6. CART & LOOSE WEIGHT / PACKET CALCULATOR
+     *************************************************************************/
+    function updateFixedCartQty(productId, delta) {
+      const p = productsList.find((x) => x.id === productId);
+      if (!p) return;
+
+      const existing = cartMap[productId];
+      const nextQty = (existing ? existing.quantity : 0) + delta;
+
+      if (nextQty <= 0) {
+        delete cartMap[productId];
+      } else {
+        cartMap[productId] = {
+          cartKey: productId,
+          productId: p.id,
+          title: p.nameBn ? `${p.name} (${p.nameBn})` : p.name,
+          price: Number(p.price),
+          quantity: nextQty,
+          imageUrl: p.imageUrl || ""
+        };
+      }
+
+      saveCartState();
+      renderCustomerProducts();
+      renderCartBar();
+      renderSaraMessages();
+    }
+
+    let activeLooseAiMsgIdx = null;
+    let selectedLooseGramsValue = null;
+
+    function getBaseGramFromUnit(baseUnit) {
+      const lower = String(baseUnit || "").toLowerCase();
+      if (lower.includes("50g") || lower.includes("50ml")) return 50;
+      if (lower.includes("100g") || lower.includes("100ml") || lower.includes("১০০")) return 100;
+      if (lower.includes("200g") || lower.includes("200ml") || lower.includes("২০০")) return 200;
+      if (lower.includes("250g") || lower.includes("250ml")) return 250;
+      if (lower.includes("500g") || lower.includes("500ml")) return 500;
+      if (lower.includes("kg") || lower.includes("litre") || lower.includes("liter") || lower.includes("কেজি") || lower.includes("লিটার")) return 1000;
+      return 100;
+    }
+
+    function openLooseProductModal(productId, aiMsgIdx = null) {
+      const p = productsList.find((x) => x.id === productId);
+      if (!p) return;
+      activeLooseProduct = p;
+      activeLooseAiMsgIdx = aiMsgIdx;
+
+      const spec = parseProductUnitSpec(p.unit);
+      document.getElementById("looseModalTitle").textContent = p.nameBn ? `${p.name} (${p.nameBn})` : p.name;
+      document.getElementById("looseModalSub").textContent = `বেস দাম: ₹${p.price} / ${spec.baseUnit}`;
+
+      const packBox = document.getElementById("looseModalPacketsBox");
+      const packChips = document.getElementById("looseModalPacketChips");
+      if (spec.packetPrices.length > 0) {
+        packBox.classList.remove("hidden");
+        packChips.innerHTML = spec.packetPrices
+          .map(
+            (amt) => `
+            <button
+              onclick="selectLoosePreset('${escapeQuotes(p.name)} (₹${amt} প্যাকেট)', ${amt}, ${-amt})"
+              class="px-3 py-1.5 rounded-[10px] bg-[#E8F5E9] hover:bg-[#C8E6C9] border border-[#A5D6A7] text-[#1B5E20] font-extrabold text-[12px]"
+            >
+              ₹${amt} প্যাকেট
+            </button>`
+          )
+          .join("");
+      } else {
+        packBox.classList.add("hidden");
+      }
+
+      const baseGrams = getBaseGramFromUnit(spec.baseUnit);
+      const pricePerGram = p.price / baseGrams;
+      const presetGrams = [50, 100, 200, 250, 500, 1000];
+      document.getElementById("looseModalWeightChips").innerHTML = presetGrams
+        .map((g) => {
+          const cost = Math.max(1, Math.round(g * pricePerGram));
+          const label = g >= 1000 ? "1 kg" : `${g}g`;
+          return `
+            <button
+              onclick="selectLoosePreset('${escapeQuotes(p.name)} (${label} খুচরো)', ${cost}, ${g})"
+              class="px-3 py-1.5 rounded-[10px] bg-[#FFF3E0] hover:bg-[#FFE0B2] border border-[#FFCC80] text-[#E65100] font-bold text-[12px]"
+            >
+              ${label} (₹${cost})
+            </button>
+          `;
+        })
+        .join("");
+
+      document.getElementById("looseCustomRupeeInput").value = "";
+      document.getElementById("looseCustomGramInput").value = "";
+      if (spec.packetPrices.length > 0) {
+        const firstPack = spec.packetPrices[0];
+        selectLoosePreset(`${p.name} (₹${firstPack} প্যাকেট)`, firstPack, -firstPack);
+      } else {
+        selectLoosePreset(`${p.name} (${spec.baseUnit})`, p.price, baseGrams);
+      }
+
+      const modal = document.getElementById("looseProductModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function selectLoosePreset(title, price, gramsVal = null) {
+      selectedLooseTitle = title;
+      selectedLoosePrice = Number(price);
+      selectedLooseGramsValue = gramsVal;
+      document.getElementById("looseCalcSummary").textContent = `নির্বাচিত: ${title} — ₹${selectedLoosePrice}`;
+    }
+
+    function onLooseRupeeInput() {
+      if (!activeLooseProduct) return;
+      const rupee = Number(document.getElementById("looseCustomRupeeInput").value || 0);
+      if (rupee <= 0) return;
+      const spec = parseProductUnitSpec(activeLooseProduct.unit);
+      const baseGrams = getBaseGramFromUnit(spec.baseUnit);
+      const grams = Math.max(1, Math.round((rupee / activeLooseProduct.price) * baseGrams));
+      document.getElementById("looseCustomGramInput").value = grams;
+      selectLoosePreset(`${activeLooseProduct.name} (${grams}g খুচরো)`, rupee, grams);
+    }
+
+    function onLooseGramInput() {
+      if (!activeLooseProduct) return;
+      const grams = Number(document.getElementById("looseCustomGramInput").value || 0);
+      if (grams <= 0) return;
+      const spec = parseProductUnitSpec(activeLooseProduct.unit);
+      const baseGrams = getBaseGramFromUnit(spec.baseUnit);
+      const rupee = Math.max(1, Math.round((grams / baseGrams) * activeLooseProduct.price));
+      document.getElementById("looseCustomRupeeInput").value = rupee;
+      selectLoosePreset(`${activeLooseProduct.name} (${grams}g খুচরো)`, rupee, grams);
+    }
+
+    function buildVariantCartKey(productId, gramsOrNegPack) {
+      if (!gramsOrNegPack || gramsOrNegPack === 0) return productId;
+      const p = productsList.find((x) => x.id === productId);
+      if (!p) return productId;
+      if (gramsOrNegPack < 0) {
+        return `${p.id}_${p.name} (₹${-gramsOrNegPack} প্যাকেট)`;
+      }
+      const label = formatWeightLabelWeb(p, gramsOrNegPack);
+      return `${p.id}_${p.name} (${label} খুচরো)`;
+    }
+
+    function confirmAddLooseItemToCart() {
+      if (!activeLooseProduct || selectedLoosePrice <= 0) return;
+      const cartKey = selectedLooseGramsValue
+        ? buildVariantCartKey(activeLooseProduct.id, selectedLooseGramsValue)
+        : `${activeLooseProduct.id}_${selectedLooseTitle}`;
+      const existing = cartMap[cartKey];
+      cartMap[cartKey] = {
+        cartKey,
+        productId: activeLooseProduct.id,
+        title: selectedLooseTitle,
+        price: selectedLoosePrice,
+        selectedWeightGrams: selectedLooseGramsValue,
+        quantity: (existing ? existing.quantity : 0) + 1,
+        imageUrl: activeLooseProduct.imageUrl || ""
+      };
+
+      if (activeLooseAiMsgIdx !== null && saraMessages[activeLooseAiMsgIdx] && selectedLooseGramsValue) {
+        if (!saraMessages[activeLooseAiMsgIdx].selectedProductGrams) {
+          saraMessages[activeLooseAiMsgIdx].selectedProductGrams = {};
+        }
+        saraMessages[activeLooseAiMsgIdx].selectedProductGrams[activeLooseProduct.id] = selectedLooseGramsValue;
+        saveAiChatHistory();
+      }
+
+      saveCartState();
+      renderCustomerProducts();
+      renderCartBar();
+      renderSaraMessages();
+      closeLooseProductModal();
+      showToast(`${selectedLooseTitle} কার্টে যোগ হয়েছে!`);
+    }
+
+    function closeLooseProductModal() {
+      const modal = document.getElementById("looseProductModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function saveCartState() {
+      try {
+        localStorage.setItem("jiyarul_web_cart", JSON.stringify(cartMap));
+      } catch (e) {}
+    }
+
+    function getCartSummary() {
+      const items = Object.values(cartMap);
+      const totalCount = items.reduce((sum, it) => sum + it.quantity, 0);
+      const totalAmount = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+      return { items, totalCount, totalAmount };
+    }
+
+    function renderCartBar() {
+      const { items, totalCount, totalAmount } = getCartSummary();
+      const bar = document.getElementById("floatingCartBar");
+      if (totalCount > 0) {
+        bar.classList.remove("hidden");
+        bar.classList.add("flex");
+        document.getElementById("floatingCartCountBadge").textContent = totalCount;
+        document.getElementById("floatingCartTotalText").textContent = `মোট ₹${Math.round(totalAmount)}`;
+      } else {
+        bar.classList.add("hidden");
+        bar.classList.remove("flex");
+      }
+
+      const listEl = document.getElementById("cartModalItemsList");
+      if (listEl) {
+        document.getElementById("cartModalTotalAmount").textContent = `₹${Math.round(totalAmount)}`;
+        if (!items.length) {
+          listEl.innerHTML = `<p class="text-center text-[12px] text-slate-400 py-4">আপনার ব্যাগ খালি।</p>`;
+        } else {
+          listEl.innerHTML = items
+            .map(
+              (it) => `
+              <div class="p-2.5 rounded-[12px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-10 h-10 rounded-[8px] bg-[#F3ECE1] overflow-hidden shrink-0 flex items-center justify-center">
+                    ${
+                      it.imageUrl
+                        ? `<img src="${escapeAttr(it.imageUrl)}" class="w-full h-full object-cover" />`
+                        : `<span class="material-icons-round text-[#D35400] text-[18px]">shopping_bag</span>`
+                    }
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-bold text-[12.5px] text-[#0F172A] truncate">${escapeHtml(it.title)}</p>
+                    <p class="text-[11px] font-semibold text-[#C0392B]">₹${it.price} × ${it.quantity} = ₹${Math.round(it.price * it.quantity)}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', -1)" class="w-6 h-6 rounded-full bg-white border border-slate-300 font-extrabold text-[13px]">-</button>
+                  <span class="font-bold text-[12.5px] w-5 text-center">${it.quantity}</span>
+                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', 1)" class="w-6 h-6 rounded-full bg-[#C0392B] text-white font-extrabold text-[13px]">+</button>
+                </div>
+              </div>
+            `
+            )
+            .join("");
+        }
+      }
+    }
+
+    function changeCartItemQty(cartKey, delta) {
+      if (!cartMap[cartKey]) return;
+      cartMap[cartKey].quantity += delta;
+      if (cartMap[cartKey].quantity <= 0) {
+        delete cartMap[cartKey];
+      }
+      saveCartState();
+      renderCustomerProducts();
+      renderCartBar();
+      if (Object.keys(cartMap).length === 0) closeCartCheckoutModal();
+    }
+
+    function clearEntireCart() {
+      cartMap = {};
+      saveCartState();
+      renderCustomerProducts();
+      renderCartBar();
+      closeCartCheckoutModal();
+    }
+
+    /*************************************************************************
+     * 7. CHECKOUT, PHONE OTP VERIFICATION, GPS & ORDER SUBMISSION
+     *************************************************************************/
+    function openCartCheckoutModal() {
+      const { totalCount } = getCartSummary();
+      if (totalCount === 0) return;
+
+      renderCartBar();
+      const savedProf = getAccountSavedProfile();
+      const myOrders = getMyOrdersFilteredList();
+      const latestMyOrder = myOrders[0];
+
+      const nameEl = document.getElementById("checkoutCustomerName");
+      const phoneEl = document.getElementById("checkoutCustomerPhone");
+      const addrEl = document.getElementById("checkoutCustomerAddress");
+
+      nameEl.value = savedProf.name || currentCustomerAccount?.displayName || "";
+      phoneEl.value = savedProf.phone || latestMyOrder?.customerPhone || "";
+      addrEl.value = savedProf.address || (latestMyOrder?.deliveryAddress || "").replace(/\s*\[UPI Paid\]$/i, "") || "";
+
+      document.getElementById("checkoutVerifiedEmailText").textContent =
+        currentCustomerAccount?.email || "Not signed in";
+
+      onCustomerPhoneInputChanged();
+
+      const modal = document.getElementById("cartCheckoutModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCartCheckoutModal() {
+      const modal = document.getElementById("cartCheckoutModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function onCustomerPhoneInputChanged() {
+      const phone = document.getElementById("checkoutCustomerPhone").value.replace(/\D/g, "").slice(0, 10);
+      document.getElementById("checkoutCustomerPhone").value = phone;
+      const isVerified = phone.length === 10 && verifiedPhonesSet.has(phone);
+
+      const badge = document.getElementById("phoneVerifiedBadge");
+      const sendBtn = document.getElementById("sendOtpBtn");
+      const otpBox = document.getElementById("otpVerifyBox");
+
+      if (isVerified) {
+        badge.classList.remove("hidden");
+        badge.classList.add("flex");
+        sendBtn.classList.add("hidden");
+        otpBox.classList.add("hidden");
+      } else {
+        badge.classList.add("hidden");
+        badge.classList.remove("flex");
+        sendBtn.classList.remove("hidden");
+      }
+    }
+
+    function sendInstantPhoneOtp() {
+      const phone = document.getElementById("checkoutCustomerPhone").value.trim();
+      if (phone.length !== 10) {
+        showToast("সঠিক ১০ সংখ্যার মোবাইল নম্বর দিন!");
+        return;
+      }
+      currentGeneratedOtp = String(Math.floor(1000 + Math.random() * 9000));
+      document.getElementById("generatedOtpHint").textContent = `আপনার OTP কোড: ${currentGeneratedOtp}`;
+      document.getElementById("otpVerifyBox").classList.remove("hidden");
+      document.getElementById("otpCodeInput").value = currentGeneratedOtp;
+      showToast(`আপনার ভেরিফিকেশন OTP: ${currentGeneratedOtp}`);
+    }
+
+    function verifyPhoneOtpCode() {
+      const phone = document.getElementById("checkoutCustomerPhone").value.trim();
+      const code = document.getElementById("otpCodeInput").value.trim();
+      if (code && code === currentGeneratedOtp) {
+        verifiedPhonesSet.add(phone);
+        localStorage.setItem("jiyarul_verified_phones", JSON.stringify(Array.from(verifiedPhonesSet)));
+        onCustomerPhoneInputChanged();
+        showToast("মোবাইল নম্বর সফলভাবে ভেরিফায়েড হয়েছে!");
+      } else {
+        showToast("ভুল OTP কোড!");
+      }
+    }
+
+    function detectCustomerGpsLocation() {
+      if (!navigator.geolocation) {
+        showToast("আপনার ব্রাউজারে GPS সাপোর্ট নেই।");
+        return;
+      }
+      showToast("GPS লোকেশন খোঁজা হচ্ছে...");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const mapsUrl = `https://maps.google.com/?q=${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+          const addrEl = document.getElementById("checkoutCustomerAddress");
+          addrEl.value = addrEl.value ? `${addrEl.value} (${mapsUrl})` : `GPS Location: ${mapsUrl}`;
+          showToast("GPS লোকেশন যুক্ত হয়েছে!");
+        },
+        () => showToast("GPS লোকেশন পাওয়া যায়নি, অনুগ্রহ করে ঠিকানা লিখে দিন।")
+      );
+    }
+
+    function openUpiQrPaymentModal() {
+      if (!validateCheckoutInputs()) return;
+      const { totalAmount } = getCartSummary();
+      const upiUri = `upi://pay?pa=${encodeURIComponent(storeSettings.upiId)}&pn=${encodeURIComponent(storeSettings.shopName)}&am=${totalAmount.toFixed(2)}&cu=INR`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUri)}`;
+
+      document.getElementById("upiModalStoreName").textContent = storeSettings.shopName;
+      document.getElementById("upiModalAmountText").textContent = `₹${Math.round(totalAmount)}`;
+      document.getElementById("upiModalIdText").textContent = `UPI ID: ${storeSettings.upiId}`;
+      document.getElementById("upiQrImage").src = qrApiUrl;
+      document.getElementById("upiDeepLinkBtn").href = upiUri;
+
+      const modal = document.getElementById("upiPaymentModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeUpiQrPaymentModal() {
+      const modal = document.getElementById("upiPaymentModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function validateCheckoutInputs() {
+      if (!storeSettings.isOpen) {
+        showToast("দোকান এখন বন্ধ আছে! নতুন অর্ডার গ্রহণ করা সম্ভব নয়।");
+        return false;
+      }
+      const name = document.getElementById("checkoutCustomerName").value.trim();
+      const phone = document.getElementById("checkoutCustomerPhone").value.trim();
+      const addr = document.getElementById("checkoutCustomerAddress").value.trim();
+
+      if (!name) {
+        showToast("অনুগ্রহ করে আপনার নাম লিখুন!");
+        return false;
+      }
+      if (phone.length !== 10) {
+        showToast("সঠিক ১০ সংখ্যার মোবাইল নম্বর দিন!");
+        return false;
+      }
+      if (!verifiedPhonesSet.has(phone)) {
+        sendInstantPhoneOtp();
+        showToast("প্রথমে Verify বাটনে চাপ দিয়ে মোবাইল নম্বরটি OTP ভেরিফাই করুন!");
+        return false;
+      }
+      if (!addr) {
+        showToast("অনুগ্রহ করে ডেলিভারি ঠিকানা বা নোট লিখুন!");
+        return false;
+      }
+      return true;
+    }
+
+    function submitCustomerOrder(paymentMode) {
+      if (!validateCheckoutInputs()) return;
+      const { items, totalAmount } = getCartSummary();
+      if (!items.length) return;
+
+      const name = document.getElementById("checkoutCustomerName").value.trim();
+      const phone = document.getElementById("checkoutCustomerPhone").value.trim();
+      const addr = document.getElementById("checkoutCustomerAddress").value.trim();
+
+      // Save strictly under THIS logged-in Gmail account's profile
+      saveAccountProfile(name, phone, addr);
+
+      const now = Date.now();
+      const orderId = `ORD_${now}`;
+      const customerEmail = (currentCustomerAccount?.email || "").toLowerCase();
+      const customerUid = currentCustomerAccount?.uid || `WEB_${customerEmail || phone}`;
+
+      const orderItems = items.map((it) => ({
+        title: it.title,
+        quantity: it.quantity,
+        qty: it.quantity,
+        price: it.price,
+        imageUrl: it.imageUrl || "",
+        productId: it.productId || ""
+      }));
+
+      const finalAddress = paymentMode === "UPI Paid" ? `${addr} [UPI Paid]` : addr;
+
+      const orderDoc = {
+        customerName: name,
+        customerPhone: phone,
+        deliveryNote: finalAddress,
+        deliveryAddress: finalAddress,
+        items: orderItems,
+        totalAmount: Number(totalAmount),
+        status: "Pending",
+        expectedTime: "",
+        createdAt: now,
+        updatedAt: now,
+        isVerified: true,
+        fcmToken: "WEB_CUSTOMER",
+        deviceInfo: "JiyarulStore Website",
+        customerUid,
+        userId: customerUid,
+        customerEmail,
+        email: customerEmail
+      };
+
+      addAccountScopedOrderId(orderId);
+      knownOrderStatuses[orderId] = "Pending";
+
+      if (db) {
+        db.collection("orders")
+          .doc(orderId)
+          .set(orderDoc, { merge: true })
+          .then(() => {
+            if (customerUid) {
+              db.collection("customer_accounts").doc(customerUid).set({
+                uid: customerUid,
+                email: customerEmail,
+                customerName: name,
+                customerPhone: phone,
+                deliveryAddress: finalAddress,
+                lastOrderId: orderId,
+                updatedAt: now,
+                orderIds: firebase.firestore.FieldValue.arrayUnion(orderId)
+              }, { merge: true });
+            }
+            const shortId = orderId.slice(-6).toUpperCase();
+            db.collection("fcm_notifications").add({
+              type: "NEW_ORDER",
+              topic: "admin_orders",
+              orderId: orderId,
+              title: "নতুন অর্ডার এসেছে! (New Order)",
+              body: `Order #${shortId} • মোট ₹${Math.round(totalAmount)} • গ্রাহক: ${name}`,
+              createdAt: now,
+              processed: false
+            });
+          });
+      }
+
+      clearEntireCart();
+      closeUpiQrPaymentModal();
+      closeCartCheckoutModal();
+      playCustomerChimeSound();
+      showToast(`অর্ডার সফলভাবে পাঠানো হয়েছে! (#${orderId.slice(-6).toUpperCase()})`);
+      switchCustomerTab("orders");
+    }
+
+    /*************************************************************************
+     * 8. CUSTOMER LIVE ORDER TRACKING (STRICT PER-ACCOUNT ISOLATION!)
+     *************************************************************************/
+    function getMyOrdersFilteredList() {
+      if (!currentCustomerAccount || !currentCustomerAccount.email) {
+        return [];
+      }
+
+      const myEmail = currentCustomerAccount.email.trim().toLowerCase();
+      const myUid = (currentCustomerAccount.uid || "").trim();
+      const myScopedIds = new Set(getAccountScopedOrderIds());
+
+      return allOrdersList.filter((o) => {
+        const orderEmail = (o.customerEmail || "").trim().toLowerCase();
+        // If the order in Firestore has an email, it MUST match the logged-in Gmail!
+        if (orderEmail) {
+          return orderEmail === myEmail;
+        }
+        // Otherwise match by exact UID or account-scoped order ID
+        if (myUid && o.customerUid === myUid) return true;
+        if (myScopedIds.has(o.id)) return true;
+        return false;
+      });
+    }
+
+    function checkMyOrdersStatusNotifications() {
+      const myOrders = getMyOrdersFilteredList();
+      if (isFirstOrdersSnapshot) {
+        isFirstOrdersSnapshot = false;
+        myOrders.forEach((o) => {
+          knownOrderStatuses[o.id] = o.status;
+        });
+        return;
+      }
+
+      myOrders.forEach((o) => {
+        const prev = knownOrderStatuses[o.id];
+        if (prev && prev !== o.status) {
+          knownOrderStatuses[o.id] = o.status;
+          const shortId = o.id.slice(-6).toUpperCase();
+          let msg = `আপনার অর্ডার #${shortId}-এর বর্তমান অবস্থা: ${o.status}`;
+          if (o.status === "Accepted") msg = `আপনার অর্ডার #${shortId} দোকানদার গ্রহণ করেছেন!`;
+          else if (o.status === "Preparing") msg = `আপনার অর্ডার #${shortId} তৈরি করা হচ্ছে!`;
+          else if (o.status === "Out for Delivery") msg = `আপনার অর্ডার #${shortId} ডেলিভারির জন্য বেরিয়েছে!`;
+          else if (o.status === "Completed") msg = `আপনার অর্ডার #${shortId} সফলভাবে সম্পন্ন হয়েছে! ধন্যবাদ।`;
+          else if (o.status === "Cancelled") msg = `আপনার অর্ডার #${shortId} বাতিল করা হয়েছে।`;
+
+          triggerCustomerNotificationAlert(`অর্ডার আপডেট (#${shortId})`, msg);
+        } else if (!prev) {
+          knownOrderStatuses[o.id] = o.status;
+        }
+      });
+    }
+
+    function enableWebPushNotifications() {
+      playCustomerChimeSound();
+      if (!("Notification" in window)) {
+        showToast("সাউন্ড নোটিফিকেশন সক্রিয় আছে!");
+        return;
+      }
+      Notification.requestPermission().then((perm) => {
+        if (perm === "granted") {
+          showToast("ব্রাউজার নোটিফিকেশন ও সাউন্ড চালু করা হয়েছে!");
+        } else {
+          showToast("সাউন্ড অ্যালার্ট চালু আছে!");
+        }
+      });
+    }
+
+    function triggerCustomerNotificationAlert(title, body) {
+      playCustomerChimeSound();
+      showToast(`${title}: ${body}`);
+      if ("Notification" in window && Notification.permission === "granted") {
+        try {
+          new Notification(title, { body });
+        } catch (e) {}
+      }
+    }
+
+    function playCustomerChimeSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+        [659.25, 880, 1046.5].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + i * 0.12);
+          gain.gain.setValueAtTime(0.25, now + i * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.12);
+          osc.stop(now + i * 0.12 + 0.4);
+        });
+      } catch (e) {}
+    }
+
+    function renderCustomerOrders() {
+      const myOrders = getMyOrdersFilteredList();
+      const activeOrders = myOrders.filter((o) => o.status !== "Completed" && o.status !== "Cancelled");
+
+      // Update Subtitle with logged-in Gmail
+      const subEl = document.getElementById("myOrdersAccountSub");
+      if (subEl && currentCustomerAccount?.email) {
+        subEl.textContent = `অ্যাকাউন্ট: ${currentCustomerAccount.email} • লাইভ অর্ডার স্ট্যাটাস`;
+      }
+
+      // Update Bottom Nav Badge
+      const badge = document.getElementById("bottomNavOrderBadge");
+      if (activeOrders.length > 0) {
+        badge.textContent = activeOrders.length;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+
+      document.getElementById("myOrdersCountPill").textContent = `${myOrders.length}টি অর্ডার`;
+
+      // Active Order Live Tracking Banner at Top
+      const activeContainer = document.getElementById("activeOrderBannerContainer");
+      if (activeOrders.length > 0) {
+        const latest = activeOrders[0];
+        const shortId = latest.id.slice(-6).toUpperCase();
+        activeContainer.classList.remove("hidden");
+        activeContainer.innerHTML = `
+          <div
+            onclick="openCustOrderDetailsModal('${escapeQuotes(latest.id)}')"
+            class="w-full rounded-[14px] bg-white border-2 border-[#D35400] p-3 shadow-sm cursor-pointer flex items-center justify-between gap-2"
+          >
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-full bg-[#FFF3E0] text-[#D35400] flex items-center justify-center shrink-0">
+                <span class="material-icons-round text-[20px]">local_shipping</span>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-[12.5px] text-[#C0392B]">#${shortId}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#FFF3E0] text-[#E65100] font-extrabold text-[10.5px]">${escapeHtml(latest.status)}</span>
+                </div>
+                <p class="text-[11px] font-semibold text-slate-600 truncate">
+                  ${latest.expectedTime ? `সম্ভাব্য সময়: ${escapeHtml(latest.expectedTime)}` : "লাইভ ট্র্যাক করতে ট্যাপ করুন"}
+                </p>
+              </div>
+            </div>
+            <span class="material-icons-round text-[#D35400]">chevron_right</span>
+          </div>
+        `;
+      } else {
+        activeContainer.classList.add("hidden");
+      }
+
+      // Filter My Orders list by search query
+      const q = (document.getElementById("myOrderSearchInput")?.value || "").trim().toLowerCase().replace(/^#/, "");
+      const filtered = myOrders.filter((o) => {
+        if (!q) return true;
+        const shortId = o.id.slice(-6).toLowerCase();
+        const dateStr = formatOrderDate(o.createdAt).toLowerCase();
+        return o.id.toLowerCase().includes(q) || shortId.includes(q) || dateStr.includes(q);
+      });
+
+      const listEl = document.getElementById("myOrdersListContainer");
+      if (!filtered.length) {
+        listEl.innerHTML = `
+          <div class="app-card py-12 text-center space-y-2">
+            <span class="material-icons-round text-[36px] text-slate-300">receipt_long</span>
+            <p class="font-bold text-[14px] text-slate-600">এই অ্যাকাউন্টে এখনো কোনো অর্ডার নেই</p>
+            <p class="text-[11.5px] text-slate-400">দোকান ট্যাব থেকে পণ্য ব্যাগে যোগ করে অর্ডার করুন।</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered
+        .map((o) => {
+          const shortId = o.id.slice(-6).toUpperCase();
+          const itemCount = o.items.reduce((s, i) => s + (i.quantity || 1), 0);
+          const badgeStyle = getStatusStyle(o.status);
+          return `
+            <div
+              onclick="openCustOrderDetailsModal('${escapeQuotes(o.id)}')"
+              class="app-card p-3.5 cursor-pointer hover:border-[#C0392B]/50 transition space-y-2.5"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="font-extrabold text-[14px] text-[#C0392B] whitespace-nowrap">#${shortId}</span>
+                  <span class="text-[11px] text-slate-500 truncate">${formatOrderDate(o.createdAt)}</span>
+                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FFF3E0] border border-[#FFE0B2] text-[#D35400] font-extrabold text-[10.5px] whitespace-nowrap">
+                    ${itemCount}টি আইটেম • ₹${Math.round(o.totalAmount)}
+                  </span>
+                </div>
+                <span class="px-2.5 py-1 rounded-[7px] font-bold text-[11px] whitespace-nowrap ${badgeStyle}">
+                  ${escapeHtml(o.status)}
+                </span>
+              </div>
+
+              <div class="p-2.5 rounded-[10px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="font-bold text-[12.5px] text-[#0F172A] truncate">${escapeHtml(o.customerName)} • ${escapeHtml(o.customerPhone)}</p>
+                  <p class="text-[11px] text-slate-500 truncate">ঠিকানা: ${escapeHtml(o.deliveryAddress)}</p>
+                </div>
+                <span class="text-[11px] font-bold text-[#C0392B] whitespace-nowrap">বিস্তারিত দেখুন →</span>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function openCustOrderDetailsModal(orderId) {
+      const o = allOrdersList.find((x) => x.id === orderId);
+      if (!o) return;
+      const shortId = o.id.slice(-6).toUpperCase();
+      const canCancel = o.status === "Pending" || o.status === "New";
+
+      const itemsHtml = o.items
+        .map((it) => {
+          const img = it.imageUrl || (productsList.find((p) => p.id === it.productId)?.imageUrl || "");
+          return `
+            <div class="p-2.5 rounded-[10px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-11 h-11 rounded-[8px] bg-white border border-[#E2E8F0] overflow-hidden shrink-0 flex items-center justify-center">
+                  ${
+                    img
+                      ? `<img src="${escapeAttr(img)}" class="w-full h-full object-cover" />`
+                      : `<span class="material-icons-round text-[#D35400]">shopping_bag</span>`
+                  }
+                </div>
+                <div class="min-w-0">
+                  <p class="font-bold text-[13px] text-[#0F172A] truncate">${escapeHtml(it.title)}</p>
+                  <p class="text-[11px] font-bold text-[#C0392B]">Qty: x${it.quantity} • ₹${it.price} করে</p>
+                </div>
+              </div>
+              <span class="font-extrabold text-[13.5px] text-[#0F172A]">₹${Math.round(it.price * it.quantity)}</span>
+            </div>
+          `;
+        })
+        .join("");
+
+      const card = document.getElementById("custOrderDetailsCard");
+      card.innerHTML = `
+        <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+          <div>
+            <h3 class="font-extrabold text-[15px] text-[#C0392B]">Order #${shortId}</h3>
+            <p class="text-[11px] text-slate-500">${formatOrderDate(o.createdAt)}</p>
+          </div>
+          <button onclick="closeCustOrderDetailsModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center">
+            <span class="material-icons-round text-[20px]">close</span>
+          </button>
+        </div>
+
+        <div class="p-4 space-y-3 max-h-[75vh] overflow-y-auto">
+          <div class="flex items-center justify-between p-2.5 rounded-[10px] bg-slate-50 border border-slate-200">
+            <span class="text-[12px] font-bold text-slate-600">বর্তমান স্ট্যাটাস:</span>
+            <span class="px-2.5 py-1 rounded-[7px] font-extrabold text-[12px] ${getStatusStyle(o.status)}">${escapeHtml(o.status)}</span>
+          </div>
+
+          ${
+            o.expectedTime
+              ? `<div class="p-2.5 rounded-[10px] bg-[#FFF3E0] border border-[#FFCC80] text-[#E65100] font-bold text-[12px]">
+                   সম্ভাব্য ডেলিভারি সময়: ${escapeHtml(o.expectedTime)}
+                 </div>`
+              : ""
+          }
+
+          <div class="space-y-2">${itemsHtml}</div>
+
+          <div class="p-3 rounded-[12px] bg-[#FAF6F0] border border-[#E2D6C7] flex items-center justify-between">
+            <span class="font-bold text-[13px]">মোট বিল (Total Amount):</span>
+            <span class="font-extrabold text-[18px] text-[#C0392B]">₹${Math.round(o.totalAmount)}</span>
+          </div>
+
+          ${
+            canCancel
+              ? `<button
+                   onclick="cancelMyPendingOrder('${escapeQuotes(o.id)}')"
+                   class="w-full py-2.5 rounded-[10px] bg-[#FFEBEE] hover:bg-[#FFCDD2] text-[#C62828] font-extrabold text-[12.5px] transition"
+                 >
+                   অর্ডার বাতিল করুন (Cancel Order)
+                 </button>`
+              : ""
+          }
+        </div>
+      `;
+
+      const modal = document.getElementById("custOrderDetailsModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeCustOrderDetailsModal() {
+      const modal = document.getElementById("custOrderDetailsModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function cancelMyPendingOrder(orderId) {
+      if (!confirm("আপনি কি নিশ্চিত যে এই অর্ডারটি বাতিল করতে চান?")) return;
+      if (db) {
+        db.collection("orders").doc(orderId).update({
+          status: "Cancelled",
+          updatedAt: Date.now()
+        });
+      }
+      closeCustOrderDetailsModal();
+      showToast("অর্ডারটি বাতিল করা হয়েছে।");
+    }
+
+    function applyMyOrderDateFilter(val) {
+      if (!val) return;
+      const d = new Date(val + "T00:00:00");
+      if (!isNaN(d.getTime())) {
+        document.getElementById("myOrderSearchInput").value = d.toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+        renderCustomerOrders();
+      }
+    }
+
+    /*************************************************************************
+     * 9. BAKI KHATA LOOKUP & SMART RIJIYA AI ASSISTANT (5th Screenshot Fix!)
+     *************************************************************************/
+    function openCustomerBakiModal() {
+      const modal = document.getElementById("customerBakiModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      renderCustomerBakiLookup();
+    }
+
+    function closeCustomerBakiModal() {
+      const modal = document.getElementById("customerBakiModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function renderCustomerBakiLookup() {
+      const q = (document.getElementById("bakiLookupInput")?.value || "").trim().toLowerCase();
+      const container = document.getElementById("bakiLookupResultContainer");
+      if (!q) {
+        container.innerHTML = `<p class="text-center text-[12px] text-slate-400 py-6">আপনার রেজিস্ট্রেশন নম্বর (যেমন #1) অথবা মোবাইল নম্বর লিখে খুঁজুন।</p>`;
+        return;
+      }
+
+      const matched = khataCustomers.filter(
+        (c) =>
+          c.regNo.toLowerCase() === q ||
+          c.regNo.toLowerCase() === `#${q}` ||
+          (c.phone && c.phone.includes(q)) ||
+          c.name.toLowerCase().includes(q)
+      );
+
+      if (!matched.length) {
+        container.innerHTML = `<p class="text-center text-[12px] text-slate-500 py-6">এই নম্বরে কোনো বাকি খাতা অ্যাকাউন্ট পাওয়া যায়নি।</p>`;
+        return;
+      }
+
+      container.innerHTML = matched
+        .map((c) => {
+          const txs = khataTransactions.filter((t) => t.customerId === c.id);
+          const pendingTotal = txs
+            .filter((t) => t.status !== "SETTLED")
+            .reduce((s, t) => s + t.amount, 0);
+
+          return `
+            <div class="p-3.5 rounded-[14px] bg-[#FAF6F0] border border-[#E2D6C7] space-y-2">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="px-2 py-0.5 rounded bg-[#FFF3E0] text-[#D35400] font-extrabold text-[11px]">${escapeHtml(c.regNo)}</span>
+                  <h4 class="font-extrabold text-[14px] text-[#0F172A] mt-0.5">${escapeHtml(c.name)}</h4>
+                </div>
+                <div class="text-right">
+                  <p class="text-[10px] text-slate-500">মোট বকেয়া (Pending Due)</p>
+                  <p class="font-extrabold text-[17px] text-[#C62828]">₹${Math.round(pendingTotal)}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function getTodayDateKey() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function loadAiChatState() {
+      try {
+        const savedDate = localStorage.getItem("jiyarul_ai_quota_date_v2") || "";
+        const today = getTodayDateKey();
+        if (savedDate !== today) {
+          aiDailyMsgCount = 0;
+          localStorage.setItem("jiyarul_ai_quota_date_v2", today);
+          localStorage.setItem("jiyarul_ai_quota_count_v2", "0");
+        } else {
+          aiDailyMsgCount = parseInt(localStorage.getItem("jiyarul_ai_quota_count_v2") || "0", 10) || 0;
+        }
+
+        const rawMsgs = localStorage.getItem("jiyarul_ai_chat_history_v2");
+        if (rawMsgs) {
+          const parsed = JSON.parse(rawMsgs);
+          if (Array.isArray(parsed)) {
+            const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+            saraMessages = parsed.filter((m) => !m.timestamp || m.timestamp >= cutoff);
+          }
+        }
+      } catch (e) {
+        saraMessages = [];
+        aiDailyMsgCount = 0;
+      }
+    }
+
+    function saveAiChatHistory() {
+      try {
+        localStorage.setItem("jiyarul_ai_chat_history_v2", JSON.stringify(saraMessages.slice(-40)));
+      } catch (e) {}
+    }
+
+    function incrementAiDailyQuota() {
+      const today = getTodayDateKey();
+      aiDailyMsgCount = Math.min(20, aiDailyMsgCount + 1);
+      try {
+        localStorage.setItem("jiyarul_ai_quota_date_v2", today);
+        localStorage.setItem("jiyarul_ai_quota_count_v2", String(aiDailyMsgCount));
+      } catch (e) {}
+    }
+
+    function updateAiHeaderAndQuotaUI() {
+      const assistantName = getAssistantName();
+      const titleEl = document.getElementById("saraModalTitle");
+      if (titleEl) {
+        titleEl.textContent = `Talk to ${assistantName} (${assistantName}-র সাথে কথা বলুন)`;
+      }
+
+      const remaining = Math.max(0, 20 - aiDailyMsgCount);
+      const isExhausted = aiDailyMsgCount >= 20;
+
+      const badge = document.getElementById("saraQuotaBadge");
+      if (badge) {
+        badge.textContent = `বার্তা বাকি: ${remaining}/20`;
+        badge.className = isExhausted
+          ? "inline-block px-2 py-0.5 rounded-[12px] bg-[#FEE2E2] text-[#DC2626] font-bold text-[10.5px]"
+          : "inline-block px-2 py-0.5 rounded-[12px] bg-[#ECFDF5] text-[#059669] font-bold text-[10.5px]";
+      }
+
+      const warnBanner = document.getElementById("saraQuotaWarningBanner");
+      if (warnBanner) {
+        if (isExhausted) {
+          warnBanner.textContent = `আজকের ২০টি ফ্রি বার্তার সীমা শেষ হয়েছে! আগামীকাল আবার ${assistantName}-র সাথে কথা বলতে পারবেন।`;
+          warnBanner.classList.remove("hidden");
+        } else {
+          warnBanner.classList.add("hidden");
+        }
+      }
+
+      const inp = document.getElementById("saraChatInput");
+      const sendBtn = document.getElementById("saraSendBtn");
+      if (inp) {
+        inp.disabled = isExhausted || isAiLoading;
+        inp.placeholder = isExhausted ? "সীমা শেষ হয়েছে..." : "প্রশ্ন লিখুন...";
+      }
+      if (sendBtn) {
+        sendBtn.disabled = isExhausted || isAiLoading;
+        sendBtn.className =
+          isExhausted || isAiLoading
+            ? "w-11 h-11 rounded-full bg-gradient-to-br from-[#CBD5E1] to-[#94A3B8] text-white flex items-center justify-center shrink-0 cursor-not-allowed"
+            : "w-11 h-11 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition";
+      }
+    }
+
+    function openSaraAiModal() {
+      loadAiChatState();
+      updateAiHeaderAndQuotaUI();
+      renderSaraMessages();
+      const modal = document.getElementById("saraAiModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        document.getElementById("saraChatInput")?.focus();
+      }, 100);
+    }
+
+    function closeSaraAiModal() {
+      const modal = document.getElementById("saraAiModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function clearAiChatHistory() {
+      saraMessages = [];
+      saveAiChatHistory();
+      renderSaraMessages();
+    }
+
+    function sendSaraQuickQuestion(text) {
+      if (aiDailyMsgCount >= 20 || isAiLoading) return;
+      const inp = document.getElementById("saraChatInput");
+      if (inp) inp.value = text;
+      sendSaraChatMessage();
+    }
+
+    async function callRealGeminiModel(modelName, apiKey, systemInstructionText, userPrompt, recentHistory) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const contents = [];
+
+        recentHistory.slice(-6).forEach((m) => {
+          contents.push({
+            role: m.sender === "user" ? "user" : "model",
+            parts: [{ text: String(m.text || "") }]
+          });
+        });
+
+        contents.push({
+          role: "user",
+          parts: [{ text: userPrompt }]
+        });
+
+        const payload = { contents };
+        if (systemInstructionText && systemInstructionText.trim()) {
+          payload.systemInstruction = {
+            parts: [{ text: systemInstructionText }]
+          };
+        }
+
+        const resp = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          console.warn(`Gemini API (${modelName}) HTTP ${resp.status}`);
+          return null;
+        }
+
+        const data = await resp.json();
+        const candidate = data?.candidates?.[0];
+        const parts = candidate?.content?.parts;
+        if (Array.isArray(parts) && parts.length > 0) {
+          const textPart = parts.find((p) => typeof p.text === "string" && !p.thought) || parts[0];
+          if (textPart && typeof textPart.text === "string" && textPart.text.trim()) {
+            return textPart.text.trim();
+          }
+        }
+      } catch (err) {
+        console.warn(`Gemini API (${modelName}) error:`, err);
+      }
+      return null;
+    }
+
+    async function generateRealGeminiResponse(systemInstructionText, userPrompt, recentHistory) {
+      const apiKey = (storeSettings.geminiApiKey || DEFAULT_GEMINI_API_KEY || "").trim();
+      if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
+        return "দুঃখিত, এআই সার্ভিস কনফিগার করা হয়নি।";
+      }
+
+      const models = ["gemini-3.5-flash", "gemini-2.5-flash"];
+      for (const modelName of models) {
+        const reply = await callRealGeminiModel(modelName, apiKey, systemInstructionText, userPrompt, recentHistory);
+        if (reply && reply.trim()) {
+          return reply.trim();
+        }
+      }
+
+      return "দুঃখিত, বর্তমানে এআই সার্ভারে সংযোগ করা যাচ্ছে না। অনুগ্রহ করে একটু পর চেষ্টা করুন।";
+    }
+
+    function normalizeBengaliDigitsWeb(str) {
+      const bn = "০১২৩৪৫৬৭৮৯";
+      return String(str || "").replace(/[০-৯]/g, (ch) => String(bn.indexOf(ch)));
+    }
+
+    function inferRequestedWeightOrPacketWeb(product, userPrompt, aiResponse) {
+      const normPrompt = normalizeBengaliDigitsWeb(userPrompt).toLowerCase();
+      const normAi = normalizeBengaliDigitsWeb(aiResponse);
+      const spec = parseProductUnitSpec(product.unit);
+
+      const promptHasQuantityCue =
+        /\b\d+\s*(?:g|gm|gram|grams|kg|kilo|ml|l|liter|litre|pack|packet|প্যাকেট|প্যাক|গ্রাম|কেজি|মিলি|লিটার)\b/i.test(normPrompt) ||
+        /(?:প্যাকেট|প্যাক|packet|pack)/i.test(normPrompt);
+
+      if (!promptHasQuantityCue) return null;
+
+      const nameBn = String(product.nameBn || "").trim().toLowerCase();
+      const nameEn = String(product.name || "").trim().toLowerCase();
+      const matchingAiLine =
+        normAi
+          .split(/\r?\n/)
+          .find(
+            (line) =>
+              (nameBn.length >= 2 && line.toLowerCase().includes(nameBn)) ||
+              (nameEn.length >= 3 && line.toLowerCase().includes(nameEn))
+          ) || "";
+
+      if (spec.hasPacketAndLoose) {
+        if (/(?:প্যাকেট|প্যাক|packet|pack)/i.test(matchingAiLine)) {
+          for (const pPrice of spec.packetPrices) {
+            const re = new RegExp(`\\b${pPrice}\\b`);
+            if (re.test(matchingAiLine) || re.test(normPrompt)) {
+              return -pPrice;
+            }
+          }
+          if (spec.packetPrices.length > 0) return -spec.packetPrices[0];
+        }
+      }
+
+      if (spec.isMultiMode && matchingAiLine) {
+        const beforeSlash = matchingAiLine.split("/")[0];
+        const gramMatch = beforeSlash.match(/(\d+)\s*(?:গ্রাম|মিলি|gm|gms|gram|grams|g|ml)\b/i);
+        if (gramMatch) {
+          const g = parseInt(gramMatch[1], 10);
+          if (g >= 10 && g <= 20000) return g;
+        }
+        const kgMatch = beforeSlash.match(/(\d+(?:\.\d+)?)\s*(?:কেজি|লিটার|kg|kilo|liter|litre)\b/i);
+        if (kgMatch) {
+          const kg = parseFloat(kgMatch[1]);
+          if (kg > 0 && kg <= 50) return Math.round(kg * 1000);
+        }
+      }
+
+      return null;
+    }
+
+    async function sendSaraChatMessage() {
+      const inp = document.getElementById("saraChatInput");
+      if (!inp) return;
+      const prompt = inp.value.trim();
+      if (!prompt || isAiLoading || aiDailyMsgCount >= 20) return;
+
+      inp.value = "";
+      const previousHistory = [...saraMessages];
+
+      // 1. Insert user message
+      saraMessages.push({
+        sender: "user",
+        text: prompt,
+        timestamp: Date.now()
+      });
+      isAiLoading = true;
+      saveAiChatHistory();
+      updateAiHeaderAndQuotaUI();
+      renderSaraMessages();
+
+      // 2. Build live inventory & systemInstruction with explicit Packet vs Loose Weight separation (Exact match to ShopViewModel.kt)
+      const inStock = productsList.filter((p) => p.isAvailable);
+      const inventoryStr = inStock
+        .map((p) => {
+          const spec = parseProductUnitSpec(p.unit);
+          let pricingInfo = "";
+          if (spec.hasPacketAndLoose) {
+            const packList = spec.packetPrices.map((amt) => `₹${amt} প্রতি প্যাকেট`).join(", ");
+            pricingInfo = `খুচরো ওজনের দাম (Loose Weight Base Rate): ₹${p.price} per ${spec.baseUnit} (যেমন 100g = ₹${calculatePriceForGramsWeb(p, 100)}, 200g = ₹${calculatePriceForGramsWeb(p, 200)}, 250g = ₹${calculatePriceForGramsWeb(p, 250)}, 500g = ₹${calculatePriceForGramsWeb(p, 500)}) | ফিক্সড প্যাকেটের দাম (Packet Price): ${packList}`;
+          } else if (spec.isMultiMode) {
+            pricingInfo = `খুচরো ওজনের দাম (Loose Weight Base Rate): ₹${p.price} per ${spec.baseUnit} (যেমন 100g = ₹${calculatePriceForGramsWeb(p, 100)}, 200g = ₹${calculatePriceForGramsWeb(p, 200)}, 250g = ₹${calculatePriceForGramsWeb(p, 250)}, 500g = ₹${calculatePriceForGramsWeb(p, 500)})`;
+          } else {
+            pricingInfo = `ফিক্সড দাম (Fixed Price): ₹${p.price} per ${spec.baseUnit}`;
+          }
+          return `- [ID: ${p.id}] ${p.nameBn || p.name} (${p.name}) | ${pricingInfo} | Category: ${p.category}`;
+        })
+        .join("\n");
+
+      const assistantName = getAssistantName();
+      const systemInstruction = `You are ${assistantName}, the polite, warm, and cheerful Bengali shopping assistant for '${storeSettings.shopName || "Jiyarul Tea Stall & Grocery"}'.
+Here is our current LIVE IN-STOCK inventory:
+${inventoryStr}
+
+RULES:
+1. You answer questions strictly regarding grocery items, ingredients, tea, snacks, bidi/gutkha, and daily shopping from Jiyarul Store.
+2. If the user asks about ANYTHING unrelated to shopping, store items, cooking ingredients, or prices (e.g. personal life, coding, gaming, general knowledge, exams, movies):
+   You MUST reply ONLY with this exact sentence:
+   "আমি শুধু জিয়ারুল স্টোরের কেনাকাটায় সাহায্য করতে পারি! 😊🛍️"
+3. CRITICAL PRICING RULE FOR PACKET VS LOOSE WEIGHT:
+   - Many items in our store (such as চানাচুর / Chanachur, চা পাতা, বিস্কুট, etc.) have BOTH a Loose Weight Base Rate (খুচরো ওজনের দাম, e.g., ₹150 per 1 kg) AND a Fixed Packet Price (প্যাকেটের দাম, e.g., ₹70 প্রতি প্যাকেট).
+   - When a customer asks for "packet" / "pack" / "প্যাকেট" of such an item (e.g., "1 packet chanachur"), you MUST charge the Fixed Packet Price (e.g., 1 প্যাকেট = ₹70), NEVER the 1 kg loose weight price (₹150)! Do NOT write "(১ প্যাকেট / ১ কেজি)". Write "(১ প্যাকেট): ₹৭০.০".
+   - When a customer asks for a specific weight in grams/kg/ml/litre (e.g., "100g masoor dal", "200g jhal er guro"), calculate the exact proportional price from the Loose Weight Base Rate (e.g., 100g of ₹100/1 kg = ₹10; 200g of ₹30/100g = ₹60) and compute the total sum accurately.
+4. When user asks for recipes or shopping lists (e.g., Khichuri, Biriyani, Tea party):
+   - Recommend matching items from the inventory list with their prices.
+   - If an essential ingredient is NOT available in our store inventory, clearly add:
+     "⚠️ দ্রষ্টব্য: [Item Name] বর্তমানে আমাদের দোকানে নেই, এটি আলাদা সংগ্রহ করতে হবে।"
+5. Always respond in polite, friendly, concise, natural Bengali.
+6. IMPORTANT: Always use expressive, relevant emojis naturally in every reply (e.g., 😊, 🙏, ☕, 🛒, 🛍️, ✨, 🍪, 🌾, 💰, 😋, 👍) to make the conversation lively, warm, and engaging!
+7. MACHINE TAG FOR CART PRE-SELECTION:
+   At the very end of your response on a new line, output a single machine tag for all recommended in-stock items:
+   [[CART_SPEC: productId=gramsOrNegativePackPrice; productId=gramsOrNegativePackPrice]]
+   - If the customer requested a packet of price P (e.g. ₹70 packet), write '-70' (negative packet price in Taka).
+   - If the customer requested a specific weight in grams or ml (e.g. 100g -> '100', 200g -> '200', 500g -> '500', 1kg -> '1000'), write that positive integer.
+   - If the customer did NOT specify any weight or packet for that item, write '0'.`;
+
+      // 3. Call Real Gemini AI
+      const rawAiResponse = await generateRealGeminiResponse(systemInstruction, prompt, previousHistory);
+
+      // Parse and strip [[CART_SPEC: ...]] tag
+      const specMapFromAiTag = {};
+      const cartSpecMatch = rawAiResponse.match(/\[\[\s*CART_SPEC\s*:([\s\S]*?)\]\]/i);
+      if (cartSpecMatch && cartSpecMatch[1]) {
+        cartSpecMatch[1].split(/[;,]/).forEach((pairStr) => {
+          const parts = pairStr.split("=");
+          if (parts.length === 2) {
+            const pid = parts[0].trim();
+            const gVal = parseInt(parts[1].trim(), 10);
+            if (pid && !isNaN(gVal)) {
+              specMapFromAiTag[pid] = gVal;
+            }
+          }
+        });
+      }
+
+      const aiResponse = rawAiResponse.replace(/\[\[\s*CART_SPEC\s*:[\s\S]*?\]\]/gi, "").trim();
+
+      // 4. Smart Quota Deduction (Exact match to ShopViewModel.kt)
+      const refusalText = "আমি শুধু জিয়ারুল স্টোরের কেনাকাটায় সাহায্য করতে পারি";
+      const isRefusalOrError =
+        aiResponse.includes(refusalText) ||
+        aiResponse.startsWith("দুঃখিত") ||
+        aiResponse.toLowerCase().includes("error");
+
+      if (!isRefusalOrError) {
+        incrementAiDailyQuota();
+      }
+
+      // 5. Extract product IDs & requested weights/packets
+      const matchedIdsSet = new Set();
+      const selectedProductGrams = {};
+      const respLower = aiResponse.toLowerCase();
+
+      inStock.forEach((product) => {
+        const nameBnClean = String(product.nameBn || "").trim();
+        const nameEnClean = String(product.name || "").trim();
+        const isMentioned =
+          Object.prototype.hasOwnProperty.call(specMapFromAiTag, product.id) ||
+          (nameBnClean.length >= 2 && respLower.includes(nameBnClean.toLowerCase())) ||
+          (nameEnClean.length >= 3 && respLower.includes(nameEnClean.toLowerCase()));
+
+        if (isMentioned) {
+          matchedIdsSet.add(product.id);
+          const spec = parseProductUnitSpec(product.unit);
+          const tagGrams = specMapFromAiTag[product.id] && specMapFromAiTag[product.id] !== 0 ? specMapFromAiTag[product.id] : null;
+          let inferredGrams = tagGrams !== null ? tagGrams : inferRequestedWeightOrPacketWeb(product, prompt, aiResponse);
+
+          if (inferredGrams !== null && inferredGrams < 0 && spec.hasPacketAndLoose) {
+            const absPack = -inferredGrams;
+            const validPack = spec.packetPrices.includes(absPack) ? absPack : spec.packetPrices[0];
+            inferredGrams = validPack ? -validPack : null;
+          }
+
+          if (inferredGrams !== null && inferredGrams !== 0) {
+            selectedProductGrams[product.id] = inferredGrams;
+          }
+        }
+      });
+
+      // 6. Save & render assistant response
+      isAiLoading = false;
+      saraMessages.push({
+        sender: "ai",
+        text: aiResponse,
+        matchedProductIds: Array.from(matchedIdsSet),
+        selectedProductGrams,
+        timestamp: Date.now()
+      });
+      saveAiChatHistory();
+      updateAiHeaderAndQuotaUI();
+      renderSaraMessages();
+    }
+
+    /**
+     * PARSE GEMINI MARKDOWN SYNTAX INTO CLEAN HTML WITH ZERO RAW ASTERISKS
+     * (Exact port of parseMarkdownToAnnotatedString in AiAssistantBottomSheet.kt)
+     */
+    function formatAiTextHtml(rawText) {
+      const lines = String(rawText || "").split(/\r?\n/);
+      const formattedLines = lines.map((line) => {
+        let trimmed = line.trim();
+        // 1. Strip headers like '### ', '## ', '# '
+        if (trimmed.startsWith("#")) {
+          trimmed = trimmed.replace(/^#+\s*/, "");
+        }
+        // 2. Format bullet points like '* ', '- ', '+ ' -> '• '
+        if (trimmed.startsWith("* ") || trimmed.startsWith("- ") || trimmed.startsWith("+ ")) {
+          trimmed = "• " + trimmed.substring(2).trim();
+        }
+        // 3. Escape HTML and convert **bold** / *bold* without leaving stray asterisks
+        const escaped = escapeHtml(trimmed);
+        const withBold = escaped.replace(/\*{1,3}(.*?)\*{1,3}/g, (_, group) => {
+          return `<strong>${group.replace(/\*/g, "")}</strong>`;
+        });
+        return withBold.replace(/\*/g, "");
+      });
+      return formattedLines.join("<br>");
+    }
+
+    function addAiSuggestedProductToCart(productId, delta, msgIdx = null) {
+      const p = productsList.find((x) => x.id === productId);
+      if (!p) return;
+      const spec = parseProductUnitSpec(p.unit);
+      const msgObj = msgIdx !== null ? saraMessages[msgIdx] : null;
+      const activeGrams = msgObj?.selectedProductGrams?.[productId] || null;
+
+      if (spec.isMultiMode) {
+        if (activeGrams && activeGrams !== 0) {
+          const cartKey = buildVariantCartKey(productId, activeGrams);
+          const existing = cartMap[cartKey];
+          const nextQty = (existing ? existing.quantity : 0) + delta;
+          const unitPrice = calculatePriceForGramsWeb(p, activeGrams);
+          const variantLabel = activeGrams < 0 ? `₹${-activeGrams} প্যাকেট` : `${formatWeightLabelWeb(p, activeGrams)} খুচরো`;
+          const fullTitle = `${p.name} (${variantLabel})`;
+
+          if (nextQty <= 0) {
+            delete cartMap[cartKey];
+          } else {
+            cartMap[cartKey] = {
+              cartKey,
+              productId: p.id,
+              title: fullTitle,
+              price: unitPrice,
+              selectedWeightGrams: activeGrams,
+              quantity: nextQty,
+              imageUrl: p.imageUrl || ""
+            };
+          }
+          saveCartState();
+          renderCustomerProducts();
+          renderCartBar();
+          renderSaraMessages();
+          const dispName = p.nameBn || p.name;
+          if (delta > 0) {
+            showToast(`${dispName} (${variantLabel}) কার্টে যোগ করা হয়েছে!`);
+          } else {
+            showToast(`${dispName} কার্ট থেকে কমানো হয়েছে`);
+          }
+        } else {
+          // No specific weight was requested yet -> open Weight & Packet Selector Modal!
+          openLooseProductModal(productId, msgIdx);
+        }
+      } else {
+        updateFixedCartQty(productId, delta);
+        const dispName = p.nameBn || p.name;
+        if (delta > 0) {
+          showToast(`${dispName} কার্টে যোগ করা হয়েছে!`);
+        } else {
+          showToast(`${dispName} কার্ট থেকে কমানো হয়েছে`);
+        }
+      }
+    }
+
+    function renderSaraMessages() {
+      const box = document.getElementById("saraChatMessages");
+      if (!box) return;
+
+      const assistantName = getAssistantName();
+
+      // Empty State Welcome Card (Exact match to AiAssistantBottomSheet.kt lines 263-347)
+      if (saraMessages.length === 0 && !isAiLoading) {
+        const quickPrompts = [
+          "☕ স্পেশাল মালাই চায়ের দাম কত?",
+          "🍲 খিচুড়ি বানাতে কী কী লাগবে?",
+          "🍪 আজকের তাজা স্ন্যাক্স কী আছে?"
+        ];
+        box.innerHTML = `
+          <div class="h-full min-h-[340px] flex flex-col items-center justify-center px-4 py-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#6366F1]/15 to-[#A855F7]/15 flex items-center justify-center mb-3">
+              <span class="material-icons-round text-[#6366F1] text-[32px]">auto_awesome</span>
+            </div>
+            <h4 class="font-bold text-[16px] text-[#1E293B]">নমস্কার! আমি ${escapeHtml(assistantName)} 👋😊</h4>
+            <p class="text-[13px] text-[#64748B] mt-1 max-w-[300px] leading-relaxed">
+              জিয়ারুল স্টোরের যে কোনো জিনিস বা রান্নার সামগ্রী সম্পর্কে আমাকে জিজ্ঞাসা করুন 🛒✨
+            </p>
+            <div class="mt-4 flex flex-col items-center gap-2 w-full">
+              ${quickPrompts
+                .map(
+                  (q) => `
+                  <button
+                    onclick="sendSaraQuickQuestion('${escapeQuotes(q)}')"
+                    class="px-4 py-2 rounded-[20px] bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] text-[#B83A1B] font-medium text-[12.5px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition"
+                  >
+                    ${escapeHtml(q)}
+                  </button>
+                `
+                )
+                .join("")}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const historyHtml = saraMessages
+        .map((m, msgIdx) => {
+          if (m.sender === "user") {
+            return `
+              <div class="flex justify-end">
+                <div class="max-w-[78%] px-3.5 py-2.5 rounded-t-[16px] rounded-bl-[16px] rounded-br-[4px] bg-[#6366F1] text-white text-[13.5px] font-normal shadow-sm leading-[1.35] whitespace-pre-line">${escapeHtml(m.text)}</div>
+              </div>
+            `;
+          }
+
+          const matchedProducts = (m.matchedProductIds || [])
+            .map((id) => productsList.find((p) => p.id === id && p.isAvailable))
+            .filter(Boolean);
+
+          // 1-TAP "ADD TO CART" PRODUCT CHIPS WITH WEIGHT / PACKET SELECTOR (Matches Phone App AiAssistantBottomSheet.kt)
+          const productCardsHtml =
+            matchedProducts.length > 0
+              ? `<div class="mt-1.5 pl-9 space-y-1.5">
+                  <p class="text-[10.5px] font-bold text-[#64748B]">সরাসরি কার্টে যোগ করুন:</p>
+                  ${matchedProducts
+                    .map((p) => {
+                      const spec = parseProductUnitSpec(p.unit);
+                      const activeGrams = m.selectedProductGrams?.[p.id] || null;
+
+                      let inCartQty = 0;
+                      if (spec.isMultiMode && activeGrams && activeGrams !== 0) {
+                        const vKey = buildVariantCartKey(p.id, activeGrams);
+                        inCartQty = cartMap[vKey] ? cartMap[vKey].quantity : 0;
+                      } else if (!spec.isMultiMode) {
+                        inCartQty = cartMap[p.id] ? cartMap[p.id].quantity : 0;
+                      }
+
+                      let subtitleText = "";
+                      if (activeGrams && activeGrams < 0) {
+                        const packPrice = -activeGrams;
+                        subtitleText = `₹${packPrice} প্যাকেট • ₹${packPrice}`;
+                      } else if (activeGrams && activeGrams > 0) {
+                        const calcPrice = calculatePriceForGramsWeb(p, activeGrams);
+                        const wLbl = formatWeightLabelWeb(p, activeGrams) + (spec.hasPacketAndLoose ? " খুচরো" : "");
+                        subtitleText = `${wLbl} • ₹${calcPrice}`;
+                      } else if (spec.hasPacketAndLoose) {
+                        const packs = spec.packetPrices.map((amt) => `₹${amt}`).join(", ");
+                        subtitleText = `₹${Math.round(p.price)} / ${spec.baseUnit} | প্যাক: ${packs}`;
+                      } else {
+                        subtitleText = `₹${Math.round(p.price)} / ${spec.baseUnit}`;
+                      }
+
+                      const displayTitle = p.nameBn || p.name;
+                      const cardBg = inCartQty > 0 ? "bg-[#F0FDF4] border-[#86EFAC]" : "bg-[#FFF7ED] border-[#FED7AA]";
+                      const titleColor = inCartQty > 0 ? "text-[#14532D]" : "text-[#7C2D12]";
+                      const priceColor = inCartQty > 0 ? "text-[#15803D]" : "text-[#C2410C]";
+
+                      return `
+                        <div class="w-[92%] px-3 py-2 rounded-[12px] border ${cardBg} flex items-center justify-between gap-2 transition">
+                          <div class="min-w-0 flex-1">
+                            <p class="font-bold text-[12.5px] ${titleColor} truncate">${escapeHtml(displayTitle)}</p>
+                            <p class="text-[11px] font-semibold ${priceColor}">${escapeHtml(subtitleText)}</p>
+                            ${
+                              spec.isMultiMode
+                                ? `<button
+                                     onclick="openLooseProductModal('${escapeQuotes(p.id)}', ${msgIdx})"
+                                     class="mt-1 inline-flex items-center px-1.5 py-0.5 rounded-[6px] bg-white border border-[#CBD5E1] hover:border-[#94A3B8] text-[#334155] font-bold text-[9.5px] transition"
+                                   >
+                                     ⚖️ ${activeGrams ? "ওজন/প্যাক বদলান" : "ওজন / প্যাক বেছে নিন"}
+                                   </button>`
+                                : ""
+                            }
+                          </div>
+                          ${
+                            inCartQty === 0
+                              ? `<button
+                                   onclick="addAiSuggestedProductToCart('${escapeQuotes(p.id)}', 1, ${msgIdx})"
+                                   class="h-[30px] px-2.5 rounded-[8px] bg-[#B83A1B] hover:bg-[#992D13] text-white font-bold text-[11px] flex items-center gap-1 shrink-0 transition"
+                                 >
+                                   <span class="material-icons-round text-[14px]">add</span>
+                                   <span>যোগ করুন</span>
+                                 </button>`
+                              : `<div class="h-[30px] px-1.5 rounded-[8px] bg-[#DCFCE7] border border-[#86EFAC] flex items-center gap-1.5 shrink-0">
+                                   <button onclick="addAiSuggestedProductToCart('${escapeQuotes(p.id)}', -1, ${msgIdx})" class="w-6 h-6 rounded-full hover:bg-green-200 flex items-center justify-center text-[#166534] font-bold">
+                                     <span class="material-icons-round text-[14px]">remove</span>
+                                   </button>
+                                   <span class="text-[12px] font-bold text-[#166534] px-1">${inCartQty}</span>
+                                   <button onclick="addAiSuggestedProductToCart('${escapeQuotes(p.id)}', 1, ${msgIdx})" class="w-6 h-6 rounded-full hover:bg-green-200 flex items-center justify-center text-[#166534] font-bold">
+                                     <span class="material-icons-round text-[14px]">add</span>
+                                   </button>
+                                 </div>`
+                          }
+                        </div>
+                      `;
+                    })
+                    .join("")}
+                 </div>`
+              : "";
+
+          return `
+            <div class="flex flex-col items-start">
+              <div class="flex items-start gap-2 w-full">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] flex items-center justify-center shrink-0 mt-0.5">
+                  <span class="material-icons-round text-white text-[16px]">smart_toy</span>
+                </div>
+                <div class="max-w-[82%] px-3.5 py-2.5 rounded-t-[16px] rounded-br-[16px] rounded-bl-[4px] bg-white border border-[#E2E8F0] text-[#1E293B] text-[13.5px] leading-[1.42]">${formatAiTextHtml(m.text)}</div>
+              </div>
+              ${productCardsHtml}
+            </div>
+          `;
+        })
+        .join("");
+
+      // Typing / Loading Indicator (Exact match to Phone Screenshot 3 / AiAssistantBottomSheet.kt lines 367-420)
+      const loadingHtml = isAiLoading
+        ? `
+          <div class="flex items-center gap-2 py-1">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] flex items-center justify-center shrink-0">
+              <span class="material-icons-round text-white text-[16px]">smart_toy</span>
+            </div>
+            <div class="px-3 py-2 rounded-[16px] bg-white border border-[#E2E8F0] flex items-center gap-2">
+              <span class="w-3.5 h-3.5 border-2 border-[#B83A1B] border-t-transparent rounded-full animate-spin shrink-0"></span>
+              <span class="text-[12px] text-[#64748B] font-medium">${escapeHtml(assistantName)} উত্তর প্রস্তুত করছে...</span>
+            </div>
+          </div>
+        `
+        : "";
+
+      box.innerHTML = historyHtml + loadingHtml;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    /*************************************************************************
+     * 10. NAVIGATION & HELPERS
+     *************************************************************************/
+    function switchCustomerTab(tab) {
+      activeCustomerTab = tab;
+      const homeSec = document.getElementById("customerTab_home");
+      const ordSec = document.getElementById("customerTab_orders");
+      const homeBtn = document.getElementById("bottomNav_home");
+      const ordBtn = document.getElementById("bottomNav_orders");
+
+      if (tab === "home") {
+        homeSec.classList.remove("hidden");
+        ordSec.classList.add("hidden");
+        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition";
+        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition";
+      } else {
+        homeSec.classList.add("hidden");
+        ordSec.classList.remove("hidden");
+        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition";
+        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition";
+        renderCustomerOrders();
+      }
+    }
+
+    function openStoreWhatsApp() {
+      const phone = (storeSettings.shopPhone || "919876543210").replace(/\D/g, "");
+      const msg = encodeURIComponent(`নমস্কার ${storeSettings.shopName}, আমি ওয়েবসাইট থেকে যোগাযোগ করছি।`);
+      window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+    }
+
+    function openPhotoZoomModal(imgUrl, title) {
+      document.getElementById("zoomModalImg").src = imgUrl;
+      document.getElementById("zoomModalTitle").textContent = title || "";
+      const modal = document.getElementById("photoZoomModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closePhotoZoomModal() {
+      const modal = document.getElementById("photoZoomModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function getStatusStyle(status) {
+      if (status === "Pending" || status === "New") return "bg-[#FFF3E0] text-[#E65100]";
+      if (status === "Accepted") return "bg-[#E0F2FE] text-[#0284C7]";
+      if (status === "Preparing") return "bg-[#FEF3C7] text-[#D97706]";
+      if (status === "Out for Delivery") return "bg-[#F3E8FF] text-[#7E22CE]";
+      if (status === "Completed") return "bg-[#DCFCE7] text-[#15803D]";
+      if (status === "Cancelled") return "bg-[#FEE2E2] text-[#DC2626]";
+      return "bg-slate-100 text-slate-700";
+    }
+
+    function formatOrderDate(ts) {
+      const d = new Date(Number(ts || Date.now()));
+      return d.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById("toastContainer");
+      const el = document.createElement("div");
+      el.className =
+        "px-4 py-2.5 rounded-[12px] bg-[#1E293B]/95 text-white font-bold text-[12.5px] shadow-xl border border-white/10 text-center transition-all duration-300";
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = "0";
+        setTimeout(() => el.remove(), 300);
+      }, 2800);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str);
+    }
+
+    function escapeQuotes(str) {
+      return String(str ?? "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    // Boot Customer Store Website
+    window.addEventListener("DOMContentLoaded", initFirebaseCustomerStore);
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/download-apk",
+      "destination": "/api/download-apk"
+    },
+    {
+      "source": "/",
+      "destination": "/JiyarulStore.html"
+    },
+    {
+      "source": "/store",
+      "destination": "/JiyarulStore.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/index.html"
+    }
+  ]
+}
