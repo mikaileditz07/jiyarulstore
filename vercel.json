@@ -2,19 +2,19 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/api/create-order",
+      "destination": "/api/create-order.js"
+    },
+    {
       "source": "/download-apk",
       "destination": "/api/download-apk"
     },
     {
-      "source": "/",
-      "destination": "/JiyarulStore.html"
+      "source": "/__/auth/:path*",
+      "destination": "https://jiyarul-store.firebaseapp.com/__/auth/:path*"
     },
     {
       "source": "/store",
-      "destination": "/JiyarulStore.html"
-    },
-    {
-      "source": "/admin",
       "destination": "/index.html"
     }
   ]
