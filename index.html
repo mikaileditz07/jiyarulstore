@@ -52,6 +52,11 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
+  <!-- Preconnect to Firebase Auth & Google OAuth for instant Mobile Popup readiness -->
+  <link rel="preconnect" href="https://jiyarul-store.firebaseapp.com" crossorigin>
+  <link rel="preconnect" href="https://apis.google.com" crossorigin>
+  <link rel="preconnect" href="https://accounts.google.com" crossorigin>
+
   <!-- Firebase JS SDK (Compat v10 for Firestore + Auth) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -705,7 +710,7 @@
           <div class="flex items-center gap-2 min-w-0">
             <span class="material-icons-round text-[#1D4ED8] text-[16px]">verified</span>
             <div class="min-w-0">
-              <p class="text-[10px] font-bold text-[#1E40AF]">Order Gmail ID (Verified)</p>
+              <p id="checkoutVerifiedEmailLabel" class="text-[10px] font-bold text-[#1E40AF]">Order Gmail ID (Verified)</p>
               <p id="checkoutVerifiedEmailText" class="text-[12px] font-extrabold text-[#0F172A] truncate"></p>
             </div>
           </div>
@@ -1196,6 +1201,12 @@
           <span class="material-icons-round text-[#16A34A] text-[16px]">check_circle</span>
         </div>
 
+        <!-- Live Key Verification Notice Box (Shown if user clicks Pay before Live Razorpay Key is active) -->
+        <div
+          id="rzpFallbackLiveWarningBox"
+          class="hidden rounded-[12px] bg-[#FFFBEB] border border-[#F59E0B] p-3 text-[11.5px] font-semibold text-[#92400E] leading-relaxed"
+        ></div>
+
         <!-- Primary Action Button -->
         <button
           type="button"
@@ -1413,15 +1424,32 @@
     /*************************************************************************
      * 3. AUTHENTICATION (ZERO DUMMY ACCOUNTS + STRICT PER-ACCOUNT ISOLATION)
      *************************************************************************/
+    function isGuestCustomerAccount(acc = currentCustomerAccount) {
+      if (!acc) return true;
+      if (acc.isGuest) return true;
+      const uid = String(acc.uid || "");
+      const name = String(acc.displayName || "").trim().toLowerCase();
+      return !acc.email || uid.startsWith("guest_") || name === "guest" || name === "guest customer";
+    }
+
     function getAccountStorageSuffix() {
       const email = (currentCustomerAccount?.email || "").trim().toLowerCase();
-      return email ? email.replace(/[^a-z0-9]/g, "_") : "guest";
+      if (email) return email.replace(/[^a-z0-9]/g, "_");
+      const uid = (currentCustomerAccount?.uid || localStorage.getItem("jiyarul_guest_id") || "").trim();
+      return uid ? uid.replace(/[^a-z0-9_]/gi, "_") : "guest";
     }
 
     function getAccountSavedProfile() {
       const key = `jiyarul_profile_v2_${getAccountStorageSuffix()}`;
       try {
-        return JSON.parse(localStorage.getItem(key) || "{}");
+        const prof = JSON.parse(localStorage.getItem(key) || "{}");
+        if (prof && typeof prof.name === "string") {
+          const lower = prof.name.trim().toLowerCase();
+          if (lower === "guest" || lower === "guest customer") {
+            prof.name = "";
+          }
+        }
+        return prof || {};
       } catch (e) {
         return {};
       }
@@ -1429,8 +1457,12 @@
 
     function saveAccountProfile(name, phone, address) {
       const key = `jiyarul_profile_v2_${getAccountStorageSuffix()}`;
+      const cleanName =
+        name && !["guest", "guest customer"].includes(String(name).trim().toLowerCase())
+          ? String(name).trim()
+          : "";
       try {
-        localStorage.setItem(key, JSON.stringify({ name, phone, address }));
+        localStorage.setItem(key, JSON.stringify({ name: cleanName, phone, address }));
       } catch (e) {}
     }
 
@@ -1452,6 +1484,14 @@
           localStorage.setItem(key, JSON.stringify(list));
         } catch (e) {}
       }
+      // Also record in device-level guest/local order IDs so orders placed in Guest Mode stay visible on this device
+      try {
+        const devList = JSON.parse(localStorage.getItem("jiyarul_device_order_ids_v3") || "[]");
+        if (Array.isArray(devList) && !devList.includes(orderId)) {
+          devList.unshift(orderId);
+          localStorage.setItem("jiyarul_device_order_ids_v3", JSON.stringify(devList));
+        }
+      } catch (e) {}
     }
 
     function toggleLoginWelcomeTheme() {
@@ -1509,10 +1549,15 @@
       }
     }
 
+    let isGoogleSignInInProgress = false;
+
     function setWelcomeButtonLoading(isLoading) {
+      isGoogleSignInInProgress = Boolean(isLoading);
+      const btn = document.getElementById("welcomeGoogleSignInBtn");
       const gIcon = document.getElementById("welcomeGoogleGIcon");
       const spinner = document.getElementById("welcomeSigningInSpinner");
       const text = document.getElementById("welcomeSignInBtnText");
+      if (btn) btn.disabled = Boolean(isLoading);
       if (isLoading) {
         gIcon.classList.add("hidden");
         spinner.classList.remove("hidden");
@@ -1549,9 +1594,10 @@
       setAuthenticatedCustomer(
         {
           uid: guestId,
-          displayName: "Guest Customer",
+          displayName: "Guest",
           email: "",
-          photoUrl: ""
+          photoUrl: "",
+          isGuest: true
         },
         false
       );
@@ -1566,7 +1612,17 @@
       const host = window.location.hostname || window.location.host;
 
       if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
-        showToast("লগইন উইন্ডো বন্ধ করা হয়েছে। আবার চেষ্টা করুন।");
+        showToast("লগইন উইন্ডো বন্ধ করা হয়েছে। আবার ট্যাপ করে লগইন করুন।");
+        return;
+      }
+
+      if (code === "auth/popup-blocked") {
+        showRealAuthError(
+          `<div class="space-y-1.5">` +
+          `<p class="font-bold text-[#FBBF24] text-[12.5px]">⚡ গুগল লগইন প্রস্তুত হয়েছে!</p>` +
+          `<p class="text-[11.5px] text-slate-200">আপনার গুগল একাউন্ট সিলেক্ট করতে উপরের সাদা <strong>"Sign in with Google"</strong> বাটনে আর একবার ট্যাপ করুন।</p>` +
+          `</div>`
+        );
         return;
       }
 
@@ -1576,7 +1632,7 @@
           `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ ডোমেইন ভেরিফিকেশন বাকি আছে:</p>` +
           `<p class="text-[11.5px] text-[#FCA5A5]"><code>${escapeHtml(host)}</code> ডোমেইনটি এখনো Firebase Console-এ অনুমোদিত নয়।</p>` +
           `<p class="text-[10.5px] text-slate-300">Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains-এ গিয়ে <strong>${escapeHtml(host)}</strong> যোগ করুন।</p>` +
-          `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
+          `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
           `</div>`
         );
         return;
@@ -1585,13 +1641,14 @@
       showRealAuthError(
         `<div class="space-y-1.5">` +
         `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || err?.message || "Auth Error")}):</p>` +
-        `<p class="text-[11px] text-slate-300">মোবাইল ব্রাউজারের প্রাইভেসি সেটিং বা নেটওয়ার্ক কারণে লগইন রিডাইরেক্ট হতে সমস্যা হতে পারে। আপনি সরাসরি কেনাকাটা করতে পারেন:</p>` +
-        `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
+        `<p class="text-[11px] text-slate-300">উপরের <strong>"Sign in with Google"</strong> বাটনে আবার ট্যাপ করুন অথবা সরাসরি স্টোরে প্রবেশ করুন:</p>` +
+        `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
         `</div>`
       );
     }
 
     function handleGoogleSignInClick() {
+      if (isGoogleSignInInProgress) return;
       showRealAuthError("");
 
       // When opened locally from PC (file://), directly open the store on clicking Sign In;
@@ -1617,20 +1674,57 @@
         return;
       }
 
+      try {
+        sessionStorage.removeItem("jiyarul_auth_redirect_pending");
+      } catch (e) {}
+
+      // CRITICAL FOR MOBILE CHROME:
+      // Firebase Auth v10 awaits its internal /__/auth/iframe before calling window.open().
+      // On mobile networks (e.g. 40 KB/s), that async delay causes Mobile Chrome to block window.open().
+      // By synchronously opening the popup window at millisecond 0 of the user tap and handing it
+      // to Firebase Auth's window.open call, Mobile Chrome NEVER blocks the popup and we never fall
+      // into cross-domain signInWithRedirect storage partitioning!
+      const nativeWindowOpen = window.open.bind(window);
+      let preOpenedPopup = null;
+      try {
+        preOpenedPopup = nativeWindowOpen("about:blank", "_blank", "width=500,height=620");
+        if (preOpenedPopup && preOpenedPopup.document) {
+          preOpenedPopup.document.write(
+            '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in with Google</title></head>' +
+            '<body style="margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#16110B;color:#FDFBF7;font-family:sans-serif;text-align:center;padding:24px;">' +
+            '<div style="width:38px;height:38px;border:3.5px solid rgba(255,255,255,0.18);border-top-color:#EA4335;border-radius:50%;animation:sp .75s linear infinite;margin-bottom:16px;"></div>' +
+            '<style>@keyframes sp{to{transform:rotate(360deg)}}</style>' +
+            '<div style="font-weight:700;font-size:16px;">Connecting to Google...</div>' +
+            '<div style="font-size:12.5px;color:#A69B8D;margin-top:6px;">Jiyarul Tea Stall &amp; Grocery</div>' +
+            '</body></html>'
+          );
+          preOpenedPopup.document.close();
+        }
+      } catch (e) {}
+
+      if (preOpenedPopup) {
+        window.open = function (url, target, features) {
+          window.open = nativeWindowOpen;
+          if (url && url !== "about:blank") {
+            try {
+              preOpenedPopup.location.replace(url);
+            } catch (e) {
+              preOpenedPopup.location.href = url;
+            }
+          }
+          return preOpenedPopup;
+        };
+      }
+
       setWelcomeButtonLoading(true);
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
 
-      try {
-        sessionStorage.setItem("jiyarul_auth_redirect_pending", "1");
-      } catch (e) {}
-
-      // Try popup first; if blocked on mobile/browser, seamlessly fallback to redirect
       auth
         .signInWithPopup(provider)
         .then((result) => {
-          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
-          const u = result.user;
+          window.open = nativeWindowOpen;
+          const u = result && result.user ? result.user : auth.currentUser;
           if (u && u.uid && u.email) {
             setAuthenticatedCustomer(
               {
@@ -1646,17 +1740,25 @@
           }
         })
         .catch((err) => {
-          const code = err && err.code ? String(err.code) : "";
-          if (code === "auth/popup-blocked" || code === "auth/cancelled-popup-request") {
-            // Popup blocked on mobile browser -> use real Google OAuth Redirect
-            try { sessionStorage.setItem("jiyarul_auth_redirect_pending", "1"); } catch (e) {}
-            auth.signInWithRedirect(provider).catch((rErr) => {
-              try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
-              handleAuthFailure(rErr);
-            });
+          window.open = nativeWindowOpen;
+          try {
+            if (preOpenedPopup && !preOpenedPopup.closed) {
+              preOpenedPopup.close();
+            }
+          } catch (e) {}
+          // Check if onAuthStateChanged already signed the user in on mobile tab return
+          if (auth && auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
+            setAuthenticatedCustomer(
+              {
+                uid: auth.currentUser.uid,
+                displayName: auth.currentUser.displayName || "Customer",
+                email: auth.currentUser.email.toLowerCase(),
+                photoUrl: auth.currentUser.photoURL || ""
+              },
+              true
+            );
             return;
           }
-          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
           handleAuthFailure(err);
         });
     }
@@ -1739,14 +1841,23 @@
       const latestMyOrder = myOrders[0];
       const savedProf = getAccountSavedProfile();
 
+      const myName =
+        savedProf.name ||
+        (!isGuestCustomerAccount() ? currentCustomerAccount?.displayName : "") ||
+        latestMyOrder?.customerName ||
+        "Guest User";
       const myPhone = savedProf.phone || latestMyOrder?.customerPhone || "";
       const myAddr = savedProf.address || latestMyOrder?.deliveryAddress || "";
+
+      document.getElementById("profileModalName").textContent = myName;
+      document.getElementById("profileModalEmail").textContent =
+        currentCustomerAccount?.email || "Guest Mode (লগইন করা নেই)";
 
       document.getElementById("profileModalPhoneText").textContent = myPhone
         ? (myPhone.startsWith("+91") ? myPhone : `+91 ${myPhone}`)
         : "নম্বর এখনো যোগ করা হয়নি";
       document.getElementById("profileModalAddressText").textContent = myAddr
-        ? myAddr.replace(/\s*\[UPI Paid\]$/i, "")
+        ? myAddr.replace(/\s*\[.*?Paid.*?\]$/i, "")
         : "ঠিকানা এখনো যোগ করা হয়নি";
       document.getElementById("profileModalMyOrdersBtnText").textContent = `My Orders (${myOrders.length})`;
 
@@ -1790,17 +1901,14 @@
         }
         db = firebase.firestore();
         auth = firebase.auth();
-        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
-        // Handle OAuth redirect completion on mobile browsers
-        auth.getRedirectResult().then((result) => {
-          let wasPending = false;
-          try {
-            wasPending = !!sessionStorage.getItem("jiyarul_auth_redirect_pending");
-            sessionStorage.removeItem("jiyarul_auth_redirect_pending");
-          } catch (e) {}
+        try {
+          sessionStorage.removeItem("jiyarul_auth_redirect_pending");
+        } catch (e) {}
 
+        // Pre-warm Firebase Auth internal /__/auth/iframe on page load and check any redirect result
+        auth.getRedirectResult().then((result) => {
           if (result && result.user && result.user.uid && result.user.email) {
             setAuthenticatedCustomer(
               {
@@ -1821,23 +1929,8 @@
               },
               true
             );
-          } else if (wasPending && !currentCustomerAccount) {
-            // Redirect completed but mobile storage partitioning cleared credentials
-            console.warn("OAuth redirect completed but credentials cleared by mobile storage partitioning.");
-            showRealAuthError(
-              `<div class="space-y-1.5">` +
-              `<p class="font-bold text-[#F87171] text-[12px]">⚠️ গুগল লগইন সেশন ডিটেক্ট করা যায়নি:</p>` +
-              `<p class="text-[11px] text-slate-300">মোবাইল ব্রাউজারের প্রাইভেসি পলিসির কারণে সেশন সেভ হয়নি। আপনি সরাসরি কোনো লগইন ছাড়াই কেনাকাটা করতে পারেন:</p>` +
-              `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
-              `</div>`
-            );
           }
-        }).catch((err) => {
-          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
-          setWelcomeButtonLoading(false);
-          console.error("Firebase getRedirectResult error:", err);
-          handleAuthFailure(err);
-        });
+        }).catch(() => {});
 
         // Listen to Real Firebase Auth state without wiping an existing verified session
         auth.onAuthStateChanged((user) => {
@@ -1884,7 +1977,8 @@
             shopPhone: d.shopPhone || storeSettings.shopPhone,
             storeTiming: d.storeTiming || storeSettings.storeTiming,
             assistantName: (d.assistantName || "").trim() || "Rijiya",
-            apkDownloadUrl: d.apkDownloadUrl || ""
+            apkDownloadUrl: d.apkDownloadUrl || "",
+            razorpayKeyId: (d.razorpayKeyId || storeSettings.razorpayKeyId || "").trim()
           };
           renderStoreHeaderAndBanners();
           renderSaraMessages();
@@ -2574,12 +2668,35 @@
       const phoneEl = document.getElementById("checkoutCustomerPhone");
       const addrEl = document.getElementById("checkoutCustomerAddress");
 
-      nameEl.value = savedProf.name || currentCustomerAccount?.displayName || "";
-      phoneEl.value = savedProf.phone || latestMyOrder?.customerPhone || "";
-      addrEl.value = savedProf.address || (latestMyOrder?.deliveryAddress || "").replace(/\s*\[UPI Paid\]$/i, "") || "";
+      const isGuest = isGuestCustomerAccount();
+      const cleanSavedName =
+        savedProf.name && !["guest", "guest customer"].includes(String(savedProf.name).trim().toLowerCase())
+          ? String(savedProf.name).trim()
+          : "";
+      const cleanLatestOrderName =
+        latestMyOrder?.customerName &&
+        !["guest", "guest customer", "customer"].includes(String(latestMyOrder.customerName).trim().toLowerCase())
+          ? String(latestMyOrder.customerName).trim()
+          : "";
+      const googleDisplayName = !isGuest ? (currentCustomerAccount?.displayName || "").trim() : "";
 
-      document.getElementById("checkoutVerifiedEmailText").textContent =
-        currentCustomerAccount?.email || "Not signed in";
+      // Never prefill "Guest" or "Guest Customer" into the name field!
+      nameEl.value = cleanSavedName || cleanLatestOrderName || googleDisplayName || "";
+      phoneEl.value = savedProf.phone || latestMyOrder?.customerPhone || "";
+      addrEl.value =
+        savedProf.address ||
+        (latestMyOrder?.deliveryAddress || "").replace(/\s*\[.*?Paid.*?\]$/i, "") ||
+        "";
+
+      const emailLabelEl = document.getElementById("checkoutVerifiedEmailLabel");
+      const emailTextEl = document.getElementById("checkoutVerifiedEmailText");
+      if (currentCustomerAccount?.email) {
+        if (emailLabelEl) emailLabelEl.textContent = "Order Gmail ID (Verified)";
+        if (emailTextEl) emailTextEl.textContent = currentCustomerAccount.email;
+      } else {
+        if (emailLabelEl) emailLabelEl.textContent = "Order Mode (Guest Checkout)";
+        if (emailTextEl) emailTextEl.textContent = "মোবাইল নম্বর OTP ভেরিফিকেশন সক্রিয়";
+      }
 
       onCustomerPhoneInputChanged();
 
@@ -2700,8 +2817,8 @@
       const phone = document.getElementById("checkoutCustomerPhone").value.trim();
       const addr = document.getElementById("checkoutCustomerAddress").value.trim();
 
-      if (!name) {
-        showToast("অনুগ্রহ করে আপনার নাম লিখুন!");
+      if (!name || ["guest", "guest customer"].includes(name.toLowerCase())) {
+        showToast("অনুগ্রহ করে আপনার আসল নাম লিখুন!");
         return false;
       }
       if (phone.length !== 10) {
@@ -2729,13 +2846,13 @@
       const phone = document.getElementById("checkoutCustomerPhone").value.trim();
       const addr = document.getElementById("checkoutCustomerAddress").value.trim();
 
-      // Save strictly under THIS logged-in Gmail account's profile
+      // Save strictly under THIS account's profile
       saveAccountProfile(name, phone, addr);
 
       const now = Date.now();
       const orderId = `ORD_${now}`;
       const customerEmail = (currentCustomerAccount?.email || "").toLowerCase();
-      const customerUid = currentCustomerAccount?.uid || `WEB_${customerEmail || phone}`;
+      const customerUid = currentCustomerAccount?.uid || localStorage.getItem("jiyarul_guest_id") || `WEB_${customerEmail || phone}`;
 
       const orderItems = items.map((it) => ({
         title: it.title,
@@ -2746,7 +2863,9 @@
         productId: it.productId || ""
       }));
 
-      const finalAddress = paymentMode === "UPI Paid" ? `${addr} [UPI Paid]` : addr;
+      const isPaidOnline =
+        paymentMode === "UPI Paid" || String(paymentMode || "").startsWith("Razorpay Paid");
+      const finalAddress = isPaidOnline ? `${addr} [${paymentMode}]` : addr;
 
       const orderDoc = {
         customerName: name,
@@ -2760,6 +2879,8 @@
         createdAt: now,
         updatedAt: now,
         isVerified: true,
+        paymentMode: paymentMode || "COD",
+        paymentStatus: isPaidOnline ? "PAID" : "COD",
         fcmToken: "WEB_CUSTOMER",
         deviceInfo: "JiyarulStore Website",
         customerUid,
@@ -2770,6 +2891,15 @@
 
       addAccountScopedOrderId(orderId);
       knownOrderStatuses[orderId] = "Pending";
+
+      // Optimistically insert into allOrdersList so "আমার অর্ডার (Orders)" shows it immediately
+      if (!allOrdersList.some((o) => o.id === orderId)) {
+        allOrdersList.unshift({
+          id: orderId,
+          ...orderDoc
+        });
+      }
+      renderCustomerOrders();
 
       if (db) {
         db.collection("orders")
@@ -2810,27 +2940,42 @@
     }
 
     /*************************************************************************
-     * 8. CUSTOMER LIVE ORDER TRACKING (STRICT PER-ACCOUNT ISOLATION!)
+     * 8. CUSTOMER LIVE ORDER TRACKING (SUPPORTS BOTH GOOGLE & GUEST MODE)
      *************************************************************************/
     function getMyOrdersFilteredList() {
-      if (!currentCustomerAccount || !currentCustomerAccount.email) {
+      if (!currentCustomerAccount) {
         return [];
       }
 
-      const myEmail = currentCustomerAccount.email.trim().toLowerCase();
+      const myEmail = (currentCustomerAccount.email || "").trim().toLowerCase();
       const myUid = (currentCustomerAccount.uid || "").trim();
       const myScopedIds = new Set(getAccountScopedOrderIds());
+      let deviceGuestOrderIds = new Set();
+      try {
+        const rawDeviceIds = JSON.parse(localStorage.getItem("jiyarul_device_order_ids_v3") || "[]");
+        if (Array.isArray(rawDeviceIds)) {
+          deviceGuestOrderIds = new Set(rawDeviceIds);
+        }
+      } catch (e) {}
 
       return allOrdersList.filter((o) => {
         const orderEmail = (o.customerEmail || "").trim().toLowerCase();
-        // If the order in Firestore has an email, it MUST match the logged-in Gmail!
-        if (orderEmail) {
-          return orderEmail === myEmail;
+
+        if (myEmail) {
+          // Signed-in with Google: match orders with this Gmail, OR matching UID, OR guest orders placed on this same device
+          if (orderEmail) {
+            return orderEmail === myEmail;
+          }
+          if (myUid && o.customerUid === myUid) return true;
+          if (myScopedIds.has(o.id) || deviceGuestOrderIds.has(o.id)) return true;
+          return false;
+        } else {
+          // Guest Mode: match orders placed by this guest UID or stored in this device's order IDs
+          if (orderEmail) return false;
+          if (myUid && o.customerUid === myUid) return true;
+          if (myScopedIds.has(o.id) || deviceGuestOrderIds.has(o.id)) return true;
+          return false;
         }
-        // Otherwise match by exact UID or account-scoped order ID
-        if (myUid && o.customerUid === myUid) return true;
-        if (myScopedIds.has(o.id)) return true;
-        return false;
       });
     }
 
@@ -2912,10 +3057,12 @@
       const myOrders = getMyOrdersFilteredList();
       const activeOrders = myOrders.filter((o) => o.status !== "Completed" && o.status !== "Cancelled");
 
-      // Update Subtitle with logged-in Gmail
+      // Update Subtitle with logged-in Gmail or Guest Mode
       const subEl = document.getElementById("myOrdersAccountSub");
-      if (subEl && currentCustomerAccount?.email) {
-        subEl.textContent = `অ্যাকাউন্ট: ${currentCustomerAccount.email} • লাইভ অর্ডার স্ট্যাটাস`;
+      if (subEl) {
+        subEl.textContent = currentCustomerAccount?.email
+          ? `অ্যাকাউন্ট: ${currentCustomerAccount.email} • লাইভ অর্ডার স্ট্যাটাস`
+          : `অ্যাকাউন্ট: Guest Mode • আপনার অর্ডারের লাইভ স্ট্যাটাস এখানে সাথে সাথে আপডেট হবে`;
       }
 
       // Update Bottom Nav Badge
@@ -3466,7 +3613,10 @@
 
       const custMetaEl = document.getElementById("rzpFallbackCustomerMeta");
       if (custMetaEl) {
-        const cName = ctx.customerName || currentCustomerAccount?.displayName || "Customer";
+        const cName =
+          ctx.customerName ||
+          (!isGuestCustomerAccount() ? currentCustomerAccount?.displayName : "") ||
+          "Customer";
         const cPhone = ctx.phone || "Instant Checkout";
         custMetaEl.textContent = `${cName} • ${cPhone}`;
       }
@@ -3474,6 +3624,12 @@
       const amtEl = document.getElementById("rzpFallbackAmountLabel");
       if (amtEl) {
         amtEl.textContent = `₹${Number(ctx.amount || 0).toFixed(2)}`;
+      }
+
+      const warnBox = document.getElementById("rzpFallbackLiveWarningBox");
+      if (warnBox) {
+        warnBox.classList.add("hidden");
+        warnBox.innerHTML = "";
       }
 
       selectRazorpayFallbackMethod("GPay");
@@ -3498,25 +3654,32 @@
       const ctx = rzpFallbackCurrentContext;
       const btn = document.getElementById("rzpFallbackConfirmBtn");
       const btnText = document.getElementById("rzpFallbackPayBtnText");
+      const warnBox = document.getElementById("rzpFallbackLiveWarningBox");
 
       if (btn) btn.disabled = true;
-      if (btnText) btnText.textContent = `Processing via ${rzpFallbackSelectedMethod}...`;
+      if (btnText) btnText.textContent = `Checking Razorpay Gateway...`;
 
-      await new Promise((r) => setTimeout(r, 650));
-
-      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
-      const generatedPaymentId = `pay_${Date.now().toString().slice(-6)}${randomSuffix}`;
+      await new Promise((r) => setTimeout(r, 450));
 
       if (btn) btn.disabled = false;
-      closeRazorpayFallbackModal(false);
+      selectRazorpayFallbackMethod(rzpFallbackSelectedMethod);
 
-      if (typeof ctx.onSuccess === "function") {
-        await ctx.onSuccess({
-          razorpay_payment_id: generatedPaymentId,
-          razorpay_order_id: `order_${Date.now()}`,
-          method: rzpFallbackSelectedMethod
-        });
+      // CRITICAL SAFETY: Never auto-confirm orders or settle Baki Khata from the fallback modal!
+      // Only real Razorpay SDK payments (when rzp_live_ / rzp_test_ key is active) can confirm paid orders or settle ledger dues.
+      const isCartOrder = ctx.paymentMode === "CART_CHECKOUT";
+      const warningHtml = isCartOrder
+        ? `⚠️ <strong>Razorpay অনলাইন পেমেন্ট এখনো অ্যাক্টিভ হয়নি (Merchant Verification চলছে)।</strong><br/>পেমেন্ট ছাড়া অর্ডার কনফার্ম হবে না। এখন অর্ডার করতে এই পপআপটি বন্ধ করে <strong>"অর্ডার কনফার্ম করুন (Cash)"</strong> বাটনে চাপুন।`
+        : `⚠️ <strong>Razorpay অনলাইন পেমেন্ট এখনো অ্যাক্টিভ হয়নি (Merchant Verification চলছে)।</strong><br/>রিয়েল পেমেন্ট ছাড়া বাকি খাতার ব্যালেন্স পরিবর্তন হবে না। Razorpay Live Key যুক্ত হলেই সরাসরি পেমেন্ট করা যাবে।`;
+
+      if (warnBox) {
+        warnBox.innerHTML = warningHtml;
+        warnBox.classList.remove("hidden");
       }
+      showToast(
+        isCartOrder
+          ? "Razorpay ভেরিফিকেশন চলছে! অনুগ্রহ করে 'অর্ডার কনফার্ম করুন (Cash)' ব্যবহার করুন।"
+          : "Razorpay ভেরিফিকেশন চলছে! রিয়েল পেমেন্ট ছাড়া খাতা আপডেট হবে না।"
+      );
     }
 
     async function initiateRazorpayCheckout({
@@ -3562,7 +3725,7 @@
             }
           }
         } catch (err) {
-          console.warn("Razorpay create-order backend notice (switching to custom checkout modal):", err);
+          console.warn("Razorpay create-order backend notice:", err);
         } finally {
           isBakiPaymentProcessing = false;
         }
@@ -3580,17 +3743,19 @@
         resolvedKeyId.startsWith("rzp_") &&
         resolvedKeyId !== "rzp_live_YOUR_KEY_ID";
 
-      // Launch Official Razorpay Checkout SDK when live/test order & key are configured
-      if (!isLocalFile && orderData && hasValidLiveOrTestKey && typeof window.Razorpay !== "undefined") {
+      // Launch Official Razorpay Checkout SDK whenever a valid rzp_live_ / rzp_test_ key is configured
+      if (hasValidLiveOrTestKey && typeof window.Razorpay !== "undefined") {
         const options = {
           key: resolvedKeyId,
           amount: Math.round(numericAmount * 100),
           currency: "INR",
           name: storeSettings.shopName || "Jiyarul Tea Stall & Grocery",
           description: description || `Baki Khata Settlement (${regNo})`,
-          order_id: orderData.orderId || orderData.id,
           prefill: {
-            name: customerName || currentCustomerAccount?.displayName || "",
+            name:
+              customerName ||
+              (!isGuestCustomerAccount() ? currentCustomerAccount?.displayName : "") ||
+              "",
             email: currentCustomerAccount?.email || "jiyaruljamader386@gmail.com",
             contact: phone || ""
           },
@@ -3620,6 +3785,10 @@
             }
           }
         };
+
+        if (orderData && (orderData.orderId || orderData.id)) {
+          options.order_id = orderData.orderId || orderData.id;
+        }
 
         try {
           const rzp = new window.Razorpay(options);
