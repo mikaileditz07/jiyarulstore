@@ -1550,6 +1550,77 @@
     }
 
     let isGoogleSignInInProgress = false;
+    let isAuthIframeReady = false;
+
+    function getVerifiedGoogleAccountsOnDevice() {
+      try {
+        const raw = JSON.parse(localStorage.getItem("jiyarul_verified_google_accounts_v3") || "[]");
+        return Array.isArray(raw) ? raw.filter((a) => a && a.uid && a.email) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveVerifiedGoogleAccountOnDevice(acc) {
+      if (!acc || !acc.uid || !acc.email || acc.isGuest) return;
+      try {
+        const list = getVerifiedGoogleAccountsOnDevice().filter(
+          (a) => a.email.toLowerCase() !== acc.email.toLowerCase()
+        );
+        list.unshift({
+          uid: acc.uid,
+          displayName: acc.displayName || "Customer",
+          email: acc.email.toLowerCase(),
+          photoUrl: acc.photoUrl || ""
+        });
+        localStorage.setItem("jiyarul_verified_google_accounts_v3", JSON.stringify(list.slice(0, 8)));
+      } catch (e) {}
+    }
+
+    function signInWithSavedVerifiedAccount(email) {
+      const targetEmail = String(email || "").trim().toLowerCase();
+      if (!targetEmail) return;
+      const found = getVerifiedGoogleAccountsOnDevice().find(
+        (a) => a.email.toLowerCase() === targetEmail
+      );
+      if (found) {
+        try {
+          localStorage.removeItem("jiyarul_guest_session");
+        } catch (e) {}
+        setAuthenticatedCustomer(found, true);
+      }
+    }
+
+    function buildSavedVerifiedAccountsQuickHtml() {
+      const savedList = getVerifiedGoogleAccountsOnDevice();
+      if (!savedList.length) return "";
+      const buttonsHtml = savedList
+        .map((a) => {
+          const init = (a.displayName || a.email || "G").trim().charAt(0).toUpperCase();
+          return (
+            `<button type="button" onclick="signInWithSavedVerifiedAccount('${escapeQuotes(a.email)}')" ` +
+            `class="w-full p-2 rounded-[10px] bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-2.5 text-left transition">` +
+            `<div class="w-7 h-7 rounded-full bg-[#C0392B] text-white font-bold text-[12px] flex items-center justify-center shrink-0 overflow-hidden">` +
+            (a.photoUrl
+              ? `<img src="${escapeAttr(a.photoUrl)}" class="w-full h-full object-cover" />`
+              : `<span>${escapeHtml(init)}</span>`) +
+            `</div>` +
+            `<div class="min-w-0 flex-1">` +
+            `<p class="font-bold text-[12px] text-white truncate">${escapeHtml(a.displayName)}</p>` +
+            `<p class="text-[10.5px] text-slate-300 truncate">${escapeHtml(a.email)}</p>` +
+            `</div>` +
+            `<span class="material-icons-round text-[#4ADE80] text-[16px]">login</span>` +
+            `</button>`
+          );
+        })
+        .join("");
+      return (
+        `<div class="pt-2 mt-2 border-t border-white/15 space-y-1.5">` +
+        `<p class="font-bold text-[#4ADE80] text-[11.5px]">✓ এই ফোনে পূর্বে ভেরিফাই করা গুগল একাউন্ট (ট্যাপ করে সাথে সাথে লগইন করুন):</p>` +
+        `<div class="space-y-1.5">${buttonsHtml}</div>` +
+        `</div>`
+      );
+    }
 
     function setWelcomeButtonLoading(isLoading) {
       isGoogleSignInInProgress = Boolean(isLoading);
@@ -1610,9 +1681,19 @@
       setWelcomeButtonLoading(false);
       const code = err && err.code ? String(err.code) : "";
       const host = window.location.hostname || window.location.host;
+      const savedQuickHtml = buildSavedVerifiedAccountsQuickHtml();
 
       if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
-        showToast("লগইন উইন্ডো বন্ধ করা হয়েছে। আবার ট্যাপ করে লগইন করুন।");
+        if (savedQuickHtml) {
+          showRealAuthError(
+            `<div class="space-y-1.5">` +
+            `<p class="text-[11.5px] text-slate-200">গুগল পপআপটি বন্ধ হয়ে গেছে। আপনার পূর্বের একাউন্টে সরাসরি প্রবেশ করতে নিচে ট্যাপ করুন:</p>` +
+            savedQuickHtml +
+            `</div>`
+          );
+        } else {
+          showToast("লগইন উইন্ডো বন্ধ করা হয়েছে। আবার ট্যাপ করে লগইন করুন।");
+        }
         return;
       }
 
@@ -1621,6 +1702,7 @@
           `<div class="space-y-1.5">` +
           `<p class="font-bold text-[#FBBF24] text-[12.5px]">⚡ গুগল লগইন প্রস্তুত হয়েছে!</p>` +
           `<p class="text-[11.5px] text-slate-200">আপনার গুগল একাউন্ট সিলেক্ট করতে উপরের সাদা <strong>"Sign in with Google"</strong> বাটনে আর একবার ট্যাপ করুন।</p>` +
+          savedQuickHtml +
           `</div>`
         );
         return;
@@ -1632,6 +1714,7 @@
           `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ ডোমেইন ভেরিফিকেশন বাকি আছে:</p>` +
           `<p class="text-[11.5px] text-[#FCA5A5]"><code>${escapeHtml(host)}</code> ডোমেইনটি এখনো Firebase Console-এ অনুমোদিত নয়।</p>` +
           `<p class="text-[10.5px] text-slate-300">Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains-এ গিয়ে <strong>${escapeHtml(host)}</strong> যোগ করুন।</p>` +
+          savedQuickHtml +
           `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
           `</div>`
         );
@@ -1641,7 +1724,8 @@
       showRealAuthError(
         `<div class="space-y-1.5">` +
         `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || err?.message || "Auth Error")}):</p>` +
-        `<p class="text-[11px] text-slate-300">উপরের <strong>"Sign in with Google"</strong> বাটনে আবার ট্যাপ করুন অথবা সরাসরি স্টোরে প্রবেশ করুন:</p>` +
+        `<p class="text-[11px] text-slate-300">উপরের <strong>"Sign in with Google"</strong> বাটনে আবার ট্যাপ করুন অথবা নিচের একাউন্ট ব্যবহার করুন:</p>` +
+        savedQuickHtml +
         `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
         `</div>`
       );
@@ -1678,54 +1762,47 @@
         sessionStorage.removeItem("jiyarul_auth_redirect_pending");
       } catch (e) {}
 
-      // CRITICAL FOR MOBILE CHROME:
-      // Firebase Auth v10 awaits its internal /__/auth/iframe before calling window.open().
-      // On mobile networks (e.g. 40 KB/s), that async delay causes Mobile Chrome to block window.open().
-      // By synchronously opening the popup window at millisecond 0 of the user tap and handing it
-      // to Firebase Auth's window.open call, Mobile Chrome NEVER blocks the popup and we never fall
-      // into cross-domain signInWithRedirect storage partitioning!
+      // Only pre-open a blank window if the internal Firebase /__/auth/iframe hasn't finished warming yet.
+      // Never call document.write() on preOpenedPopup so it never races with Firebase's location assignment!
       const nativeWindowOpen = window.open.bind(window);
       let preOpenedPopup = null;
-      try {
-        preOpenedPopup = nativeWindowOpen("about:blank", "_blank", "width=500,height=620");
-        if (preOpenedPopup && preOpenedPopup.document) {
-          preOpenedPopup.document.write(
-            '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign in with Google</title></head>' +
-            '<body style="margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#16110B;color:#FDFBF7;font-family:sans-serif;text-align:center;padding:24px;">' +
-            '<div style="width:38px;height:38px;border:3.5px solid rgba(255,255,255,0.18);border-top-color:#EA4335;border-radius:50%;animation:sp .75s linear infinite;margin-bottom:16px;"></div>' +
-            '<style>@keyframes sp{to{transform:rotate(360deg)}}</style>' +
-            '<div style="font-weight:700;font-size:16px;">Connecting to Google...</div>' +
-            '<div style="font-size:12.5px;color:#A69B8D;margin-top:6px;">Jiyarul Tea Stall &amp; Grocery</div>' +
-            '</body></html>'
-          );
-          preOpenedPopup.document.close();
-        }
-      } catch (e) {}
+      if (!isAuthIframeReady) {
+        try {
+          preOpenedPopup = nativeWindowOpen("about:blank", "_blank", "width=500,height=620");
+        } catch (e) {}
 
-      if (preOpenedPopup) {
-        window.open = function (url, target, features) {
-          window.open = nativeWindowOpen;
-          if (url && url !== "about:blank") {
-            try {
-              preOpenedPopup.location.replace(url);
-            } catch (e) {
-              preOpenedPopup.location.href = url;
+        if (preOpenedPopup) {
+          window.open = function (url, target, features) {
+            window.open = nativeWindowOpen;
+            if (url && url !== "about:blank") {
+              try {
+                preOpenedPopup.location.replace(url);
+              } catch (e) {
+                preOpenedPopup.location.href = url;
+              }
             }
-          }
-          return preOpenedPopup;
-        };
+            return preOpenedPopup;
+          };
+        }
       }
 
       setWelcomeButtonLoading(true);
       const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
+      // CRITICAL FIX FOR REPEAT ACCOUNT LOGIN ON MOBILE CHROME:
+      // Using "select_account consent" forces Google OAuth to ALWAYS present the "Continue" (consent)
+      // confirmation step even when logging back into a previously used Google account on the same phone!
+      provider.setCustomParameters({ prompt: "select_account consent" });
 
       auth
         .signInWithPopup(provider)
         .then((result) => {
           window.open = nativeWindowOpen;
+          isAuthIframeReady = true;
           const u = result && result.user ? result.user : auth.currentUser;
           if (u && u.uid && u.email) {
+            try {
+              localStorage.removeItem("jiyarul_guest_session");
+            } catch (e) {}
             setAuthenticatedCustomer(
               {
                 uid: u.uid,
@@ -1741,6 +1818,7 @@
         })
         .catch((err) => {
           window.open = nativeWindowOpen;
+          isAuthIframeReady = true;
           try {
             if (preOpenedPopup && !preOpenedPopup.closed) {
               preOpenedPopup.close();
@@ -1748,6 +1826,9 @@
           } catch (e) {}
           // Check if onAuthStateChanged already signed the user in on mobile tab return
           if (auth && auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
+            try {
+              localStorage.removeItem("jiyarul_guest_session");
+            } catch (e) {}
             setAuthenticatedCustomer(
               {
                 uid: auth.currentUser.uid,
@@ -1796,6 +1877,9 @@
       try {
         localStorage.setItem("jiyarul_real_firebase_user_v3", JSON.stringify(acc));
       } catch (e) {}
+      if (acc && acc.uid && acc.email && !acc.isGuest) {
+        saveVerifiedGoogleAccountOnDevice(acc);
+      }
 
       showRealAuthError("");
       setWelcomeButtonLoading(false);
@@ -1872,19 +1956,26 @@
       modal.classList.remove("flex");
     }
 
-    function signOutCustomerGoogle() {
+    async function signOutCustomerGoogle() {
       closeGoogleProfileModal();
       currentCustomerAccount = null;
       try {
         localStorage.removeItem("jiyarul_real_firebase_user_v3");
         localStorage.removeItem("jiyarul_guest_session");
+        sessionStorage.clear();
       } catch (e) {}
       setWelcomeButtonLoading(false);
       document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
       if (auth) {
-        auth.signOut().catch(() => {});
+        try {
+          await auth.signOut();
+        } catch (e) {}
       }
       showToast("আপনি সফলভাবে লগআউট করেছেন।");
+      // Reload page cleanly after signOut so Firebase's hidden /__/auth/iframe is 100% fresh for next login
+      setTimeout(() => {
+        window.location.reload();
+      }, 150);
     }
 
     /*************************************************************************
@@ -1909,6 +2000,7 @@
 
         // Pre-warm Firebase Auth internal /__/auth/iframe on page load and check any redirect result
         auth.getRedirectResult().then((result) => {
+          isAuthIframeReady = true;
           if (result && result.user && result.user.uid && result.user.email) {
             setAuthenticatedCustomer(
               {
@@ -1930,7 +2022,9 @@
               true
             );
           }
-        }).catch(() => {});
+        }).catch(() => {
+          isAuthIframeReady = true;
+        });
 
         // Listen to Real Firebase Auth state without wiping an existing verified session
         auth.onAuthStateChanged((user) => {
