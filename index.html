@@ -145,130 +145,131 @@
   <!-- ===================================================================== -->
   <!-- 1. APK-STYLE GOOGLE LOGIN WELCOME SCREEN                              -->
   <!-- ===================================================================== -->
-  <div
-    id="googleLoginWelcomeScreen"
-    class="fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]"
-  >
-    <!-- Top-Right Action Bar on Sign-In Page: Download App + Theme Toggle -->
-    <div class="fixed top-4 right-4 z-10 flex items-center gap-2.5">
-      <button
-        id="welcomeDownloadAppBtn"
-        onclick="triggerApkDirectDownload()"
-        class="download-app-pill px-3.5 py-2 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-lg shadow-[#2E7D32]/30 flex items-center gap-1.5 transition"
-        title="লগইন না করেই সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
-      >
-        <svg class="w-4 h-4 shrink-0 text-[#A5D6A7]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85l1.84 3.18C4.06 11.16 2.5 13.84 2.5 17h19c0-3.16-1.56-5.84-3.9-7.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
-        </svg>
-        <span
-          id="welcomeDownloadSpinnerIcon"
-          class="hidden w-3.5 h-3.5 rounded-full border-[2px] border-[#A5D6A7] border-t-transparent apk-spinner shrink-0"
-        ></span>
-        <span id="welcomeDownloadAppBtnText" class="font-extrabold text-[12px] tracking-tight whitespace-nowrap">Download App</span>
-        <svg id="welcomeDownloadArrowIcon" class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3"/>
-        </svg>
-      </button>
-
-      <button
-        id="loginThemeToggleBtn"
-        onclick="toggleLoginWelcomeTheme()"
-        class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]"
-        title="Toggle Theme"
-      >
-        <span id="loginThemeIcon" class="material-icons-round text-[22px]">light_mode</span>
-      </button>
-    </div>
-
-    <!-- Centered Login Card -->
     <div
-      id="loginWelcomeCard"
-      class="w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300"
+      id="googleLoginWelcomeScreen"
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]"
     >
-      <!-- Circular Logo Emblem -->
+      <!-- Top-Right Action Bar on Sign-In Page: Download App + Theme Toggle -->
+      <div class="fixed top-4 right-4 z-10 flex items-center gap-2.5">
+        <button
+          id="welcomeDownloadAppBtn"
+          onclick="triggerApkDirectDownload()"
+          class="download-app-pill px-3.5 py-2 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-lg shadow-[#2E7D32]/30 flex items-center gap-1.5 transition"
+          title="লগইন না করেই সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
+        >
+          <svg class="w-4 h-4 shrink-0 text-[#A5D6A7]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85l1.84 3.18C4.06 11.16 2.5 13.84 2.5 17h19c0-3.16-1.56-5.84-3.9-7.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/>
+          </svg>
+          <span
+            id="welcomeDownloadSpinnerIcon"
+            class="hidden w-3.5 h-3.5 rounded-full border-[2px] border-[#A5D6A7] border-t-transparent apk-spinner shrink-0"
+          ></span>
+          <span id="welcomeDownloadAppBtnText" class="font-extrabold text-[12px] tracking-tight whitespace-nowrap">Download App</span>
+          <svg id="welcomeDownloadArrowIcon" class="w-3.5 h-3.5 shrink-0 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3"/>
+          </svg>
+        </button>
+
+        <button
+          id="loginThemeToggleBtn"
+          onclick="toggleLoginWelcomeTheme()"
+          class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]"
+          title="Toggle Theme"
+        >
+          <span id="loginThemeIcon" class="material-icons-round text-[22px]">light_mode</span>
+        </button>
+      </div>
+
+      <!-- Centered Login Card -->
       <div
-        id="loginLogoCircle"
-        class="w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5"
+        id="loginWelcomeCard"
+        class="w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300"
       >
-        <span class="material-icons-round text-[#8B4513] text-[34px]">local_cafe</span>
+        <!-- Circular Logo Emblem -->
+        <div
+          id="loginLogoCircle"
+          class="w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5"
+        >
+          <span class="material-icons-round text-[#8B4513] text-[34px]">local_cafe</span>
+        </div>
+
+        <!-- Store Title + Official Blue Verified Badge (Inline beside title) -->
+        <h1
+          id="loginStoreTitle"
+          class="font-serif font-extrabold text-[22px] sm:text-[24px] text-[#FDFBF7] leading-snug"
+        >
+          <span id="loginStoreTitleText">Jiyarul Tea Stall &amp; Grocery</span>
+          <span
+            class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm align-middle inline-block ml-1 -mt-0.5"
+            title="Verified Store"
+          >verified</span>
+        </h1>
+
+        <!-- Bengali Subtitle -->
+        <p
+          id="loginStoreSubtitle"
+          class="mt-2.5 text-[14px] text-[#A69B8D] leading-relaxed"
+        >
+          চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
+        </p>
+
+        <!-- Pill-Shaped "Sign in with Google" Button -->
+        <button
+          id="welcomeGoogleSignInBtn"
+          onclick="handleGoogleSignInClick()"
+          class="mt-7 w-full h-[52px] rounded-full bg-white hover:bg-slate-50 active:scale-[0.99] border border-[#DADCE0] shadow-md px-5 flex items-center justify-center gap-3 transition"
+        >
+          <svg id="welcomeGoogleGIcon" class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+            <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
+          </svg>
+          <span
+            id="welcomeSigningInSpinner"
+            class="hidden w-[18px] h-[18px] rounded-full border-[2.4px] border-[#C0392B] border-t-transparent apk-spinner shrink-0"
+          ></span>
+          <span id="welcomeSignInBtnText" class="text-[15px] font-semibold text-[#3C4043]">Sign in with Google</span>
+        </button>
+
+        <!-- ----- Or ----- Divider -->
+        <div class="my-3.5 w-full flex items-center gap-3">
+          <div id="loginOrLineLeft" class="h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300"></div>
+          <span id="loginOrText" class="text-[12px] font-semibold text-[#7D7265] tracking-wider">Or</span>
+          <div id="loginOrLineRight" class="h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300"></div>
+        </div>
+
+        <!-- Instant Guest Browse Button -->
+        <button
+          id="welcomeGuestAccessBtn"
+          type="button"
+          onclick="continueAsGuest()"
+          class="w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13px] flex items-center justify-center gap-2 transition px-4"
+          title="লগইন ছাড়াই দোকান দেখুন (Browse as Guest)"
+        >
+          <span class="material-icons-round text-[18px] text-[#A5D6A7]">storefront</span>
+          <span>লগইন ছাড়াই দোকান দেখুন (Browse as Guest)</span>
+        </button>
+
+        <!-- Real Auth Error / Domain Info Banner (Only shown if Google Auth fails) -->
+        <div
+          id="realAuthErrorBox"
+          class="hidden mt-4 w-full rounded-[14px] bg-[#2A1215] border border-[#EF4444]/40 p-3 text-left text-[12px] text-[#FCA5A5] leading-relaxed"
+        ></div>
+
+        <!-- Subtle Security Footer -->
+        <div class="mt-5 flex items-center justify-center gap-1.5">
+          <span class="material-icons-round text-[#D99B26] text-[14px]">lock</span>
+          <span id="loginFooterText" class="text-[11.5px] text-[#7D7265]">
+            সম্পূর্ণ নিরাপদ ও আপনার ব্যক্তিগত ক্লাউডে সংরক্ষিত
+          </span>
+        </div>
       </div>
 
-      <!-- Store Title + Official Blue Verified Badge (Inline beside title) -->
-      <h1
-        id="loginStoreTitle"
-        class="font-serif font-extrabold text-[22px] sm:text-[24px] text-[#FDFBF7] leading-snug"
-      >
-        <span id="loginStoreTitleText">Jiyarul Tea Stall &amp; Grocery</span>
-        <span
-          class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm align-middle inline-block ml-1 -mt-0.5"
-          title="Verified Store"
-        >verified</span>
-      </h1>
-
-      <!-- Bengali Subtitle -->
-      <p
-        id="loginStoreSubtitle"
-        class="mt-2.5 text-[14px] text-[#A69B8D] leading-relaxed"
-      >
-        চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
-      </p>
-
-      <!-- Pill-Shaped "Sign in with Google" Button -->
-      <button
-        id="welcomeGoogleSignInBtn"
-        onclick="handleGoogleSignInClick()"
-        class="mt-7 w-full h-[52px] rounded-full bg-white hover:bg-slate-50 active:scale-[0.99] border border-[#DADCE0] shadow-md px-5 flex items-center justify-center gap-3 transition"
-      >
-        <svg id="welcomeGoogleGIcon" class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-          <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
-          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
-          <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
-          <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
-        </svg>
-        <span
-          id="welcomeSigningInSpinner"
-          class="hidden w-[18px] h-[18px] rounded-full border-[2.4px] border-[#C0392B] border-t-transparent apk-spinner shrink-0"
-        ></span>
-        <span id="welcomeSignInBtnText" class="text-[15px] font-semibold text-[#3C4043]">Sign in with Google</span>
-      </button>
-
-      <!-- ----- Or ----- Divider -->
-      <div class="my-3.5 w-full flex items-center gap-3">
-        <div id="loginOrLineLeft" class="h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300"></div>
-        <span id="loginOrText" class="text-[12px] font-semibold text-[#7D7265] tracking-wider">Or</span>
-        <div id="loginOrLineRight" class="h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300"></div>
-      </div>
-
-      <!-- Instant Guest Browse Button (English Only) -->
-      <button
-        id="welcomeGuestAccessBtn"
-        type="button"
-        onclick="continueAsGuest()"
-        class="w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13.5px] flex items-center justify-center gap-2 transition"
-        title="Browse store as a guest without signing in"
-      >
-        <span class="material-icons-round text-[18px] text-[#A5D6A7]">storefront</span>
-        <span>Browse as Guest</span>
-      </button>
-
-      <!-- Real Auth Error / Domain Info Banner (Only shown if Google Auth fails) -->
-      <div
-        id="realAuthErrorBox"
-        class="hidden mt-4 w-full rounded-[14px] bg-[#2A1215] border border-[#EF4444]/40 p-3 text-left text-[12px] text-[#FCA5A5] leading-relaxed"
-      ></div>
-
-      <!-- Subtle Security Footer -->
-      <div class="mt-5 flex items-center justify-center gap-1.5">
-        <span class="material-icons-round text-[#D99B26] text-[14px]">lock</span>
-        <span id="loginFooterText" class="text-[11.5px] text-[#7D7265]">
-          সম্পূর্ণ নিরাপদ ও আপনার ব্যক্তিগত ক্লাউডে সংরক্ষিত
-        </span>
-      </div>
-
-      <!-- Compliance Policy Footer on Login Screen -->
+      <!-- Clean Compliance Policy Footer Directly Beneath Login Card -->
       <div
         id="loginComplianceFooter"
-        class="mt-4 pt-3.5 w-full border-t border-[#2B2218] flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-[11px] text-[#7D7265] transition-colors duration-300"
+        class="mt-4 w-full max-w-[400px] px-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11.5px] font-medium text-[#7D7265] transition-colors duration-300"
       >
         <button
           type="button"
@@ -291,7 +292,7 @@
           onclick="openKycPolicyModal('refund')"
           class="hover:underline hover:text-[#D99B26] transition"
         >
-          Refund &amp; Cancellation Policy
+          Refund Policy
         </button>
         <span class="opacity-40">•</span>
         <button
@@ -303,7 +304,6 @@
         </button>
       </div>
     </div>
-  </div>
 
   <!-- ===================================================================== -->
   <!-- 2. STICKY TOP HEADER BAR (Exact 4th Screenshot UI + Download App)     -->
@@ -821,7 +821,7 @@
   <!-- ===================================================================== -->
   <!-- MODAL C: RAZORPAY KYC COMPLIANCE POLICY MODAL                         -->
   <!-- ===================================================================== -->
-  <div id="kycPolicyModal" onclick="if(event.target===this) closeKycPolicyModal()" class="fixed inset-0 z-[80] bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
+  <div id="kycPolicyModal" onclick="if(event.target===this) closeKycPolicyModal()" class="fixed inset-0 z-[95] bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
     <div class="w-full max-w-[520px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
       <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -1082,151 +1082,6 @@
     </div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- MODAL H: CLEAN CUSTOM RAZORPAY CHECKOUT MODAL (#razorpayFallbackModal) -->
-  <!-- ===================================================================== -->
-  <div
-    id="razorpayFallbackModal"
-    onclick="if(event.target===this) closeRazorpayFallbackModal(true)"
-    class="fixed inset-0 z-[65] bg-slate-900/65 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto"
-  >
-    <div class="w-full max-w-[410px] rounded-[22px] bg-white border border-[#E2E8F0] shadow-2xl overflow-hidden my-auto animate-fadeIn">
-      <!-- 1. Top Header: Warm Gradient + Cafe Icon + Store Name + Blue Verified Badge + Subtitle + Close (X) -->
-      <div class="px-4 py-3.5 bg-gradient-to-r from-[#C0392B] to-[#D35400] text-white flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-10 h-10 rounded-[12px] bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0 shadow-inner">
-            <span class="material-icons-round text-white text-[22px]">local_cafe</span>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center gap-1.5">
-              <h3 id="rzpFallbackStoreTitle" class="font-extrabold text-[15px] text-white truncate">
-                Jiyarul Tea Stall &amp; Grocery
-              </h3>
-              <span
-                class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm shrink-0"
-                title="Verified Store"
-              >verified</span>
-            </div>
-            <p id="rzpFallbackSubtitle" class="text-[11px] text-white/90 truncate mt-0.5">
-              Order Payment (1 items) — Jiyarul Tea Stall &amp; Grocery
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          onclick="closeRazorpayFallbackModal(true)"
-          class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white shrink-0 transition"
-          title="Close"
-        >
-          <span class="material-icons-round text-[18px]">close</span>
-        </button>
-      </div>
-
-      <!-- 2. Customer & Amount Bar -->
-      <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="w-7 h-7 rounded-full bg-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
-            <span class="material-icons-round text-[16px]">person</span>
-          </div>
-          <span id="rzpFallbackCustomerMeta" class="text-[12px] font-bold text-[#334155] truncate">
-            Customer • +91
-          </span>
-        </div>
-        <span id="rzpFallbackAmountLabel" class="font-extrabold text-[18px] text-[#0F172A] shrink-0">
-          ₹0.00
-        </span>
-      </div>
-
-      <!-- 3. Payment Method Selector Body -->
-      <div class="p-4 space-y-3.5">
-        <div class="flex items-center justify-between">
-          <span class="text-[10.5px] font-extrabold tracking-wider text-[#64748B] uppercase">
-            SELECT PAYMENT METHOD (UPI / CARDS)
-          </span>
-          <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1D4ED8] font-bold text-[10px]">
-            Instant UPI
-          </span>
-        </div>
-
-        <!-- 3-Column Interactive Grid: GPay, PhonePe, Paytm -->
-        <div class="grid grid-cols-3 gap-2.5">
-          <!-- GPay -->
-          <button
-            type="button"
-            id="rzpMethodBtn_GPay"
-            onclick="selectRazorpayFallbackMethod('GPay')"
-            class="rzp-method-card rounded-[14px] p-2.5 border-2 border-[#1D9BF0] bg-[#EFF6FF]/70 flex flex-col items-center justify-center gap-1.5 transition"
-          >
-            <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center font-extrabold text-[13px]">
-              <span class="text-[#4285F4]">G</span><span class="text-[#EA4335]">P</span><span class="text-[#FBBC05]">a</span><span class="text-[#34A853]">y</span>
-            </div>
-            <span class="font-bold text-[11.5px] text-[#0F172A]">GPay</span>
-          </button>
-
-          <!-- PhonePe -->
-          <button
-            type="button"
-            id="rzpMethodBtn_PhonePe"
-            onclick="selectRazorpayFallbackMethod('PhonePe')"
-            class="rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition"
-          >
-            <div class="w-9 h-9 rounded-full bg-[#5F259F] text-white shadow-sm flex items-center justify-center font-extrabold text-[14px]">
-              पे
-            </div>
-            <span class="font-bold text-[11.5px] text-[#0F172A]">PhonePe</span>
-          </button>
-
-          <!-- Paytm -->
-          <button
-            type="button"
-            id="rzpMethodBtn_Paytm"
-            onclick="selectRazorpayFallbackMethod('Paytm')"
-            class="rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition"
-          >
-            <div class="w-9 h-9 rounded-full bg-[#00BAF2] text-white shadow-sm flex items-center justify-center font-extrabold text-[10.5px] tracking-tight">
-              Paytm
-            </div>
-            <span class="font-bold text-[11.5px] text-[#0F172A]">Paytm</span>
-          </button>
-        </div>
-
-        <!-- Selected Mode Info Box -->
-        <div class="rounded-[12px] bg-[#F8FAFC] border border-[#E2E8F0] px-3 py-2.5 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-icons-round text-[#1D9BF0] text-[17px]">account_balance_wallet</span>
-            <span id="rzpSelectedMethodInfo" class="text-[12px] font-bold text-[#1E293B]">
-              Selected Mode: Google Pay (Instant UPI)
-            </span>
-          </div>
-          <span class="material-icons-round text-[#16A34A] text-[16px]">check_circle</span>
-        </div>
-
-        <!-- Live Key Verification Notice Box (Shown if user clicks Pay before Live Razorpay Key is active) -->
-        <div
-          id="rzpFallbackLiveWarningBox"
-          class="hidden rounded-[12px] bg-[#FFFBEB] border border-[#F59E0B] p-3 text-[11.5px] font-semibold text-[#92400E] leading-relaxed"
-        ></div>
-
-        <!-- Primary Action Button -->
-        <button
-          type="button"
-          id="rzpFallbackConfirmBtn"
-          onclick="confirmRazorpayFallbackPayment()"
-          class="w-full py-3 rounded-[14px] bg-[#16A34A] hover:bg-[#15803D] active:scale-[0.99] text-white font-extrabold text-[14px] flex items-center justify-center gap-2 shadow-md shadow-[#16A34A]/20 transition"
-        >
-          <span class="material-icons-round text-[18px]">lock</span>
-          <span id="rzpFallbackPayBtnText">Pay ₹0.00 via GPay</span>
-        </button>
-      </div>
-
-      <!-- 4. Footer -->
-      <div class="px-4 py-2.5 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[11px] font-semibold text-[#64748B]">
-        <span>🔒 100% Secure Checkout</span>
-        <span class="font-bold text-[#334155]">Powered by Razorpay</span>
-      </div>
-    </div>
-  </div>
-
   <!-- Toast Container -->
   <div id="toastContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[70] space-y-2 max-w-md w-full pointer-events-none px-4"></div>
 
@@ -1257,7 +1112,7 @@
       isOpen: true,
       notice: "আজকের স্পেশাল: খাঁটি দুধের স্পেশাল মালাই চা ও গরম সিঙ্গাড়া!",
       upiId: "jiyarul.tea@oksbi",
-      shopPhone: "919876543210",
+      shopPhone: "919062472159",
       storeTiming: "সকাল ৬:০০ - রাত ১০:৩০ (6:00 AM - 10:30 PM)",
       assistantName: "Rijiya",
       apkDownloadUrl: ""
@@ -1511,7 +1366,7 @@
       const orText = document.getElementById("loginOrText");
 
       if (loginWelcomeDarkMode) {
-        screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]";
+        screen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]";
         card.className = "w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300";
         title.className = "font-serif font-extrabold text-[22px] sm:text-[24px] text-[#FDFBF7] leading-snug";
         sub.className = "mt-2.5 text-[14px] text-[#A69B8D] leading-relaxed";
@@ -1520,16 +1375,16 @@
         icon.textContent = "light_mode";
         toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]";
         if (guestBtn) {
-          guestBtn.className = "w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13.5px] flex items-center justify-center gap-2 transition";
+          guestBtn.className = "w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13px] flex items-center justify-center gap-2 transition px-4";
         }
         if (orLineLeft) orLineLeft.className = "h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300";
         if (orLineRight) orLineRight.className = "h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300";
         if (orText) orText.className = "text-[12px] font-semibold text-[#7D7265] tracking-wider";
         if (complianceFooter) {
-          complianceFooter.className = "mt-4 pt-3.5 w-full border-t border-[#2B2218] flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-[11px] text-[#7D7265] transition-colors duration-300";
+          complianceFooter.className = "mt-4 w-full max-w-[400px] px-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11.5px] font-medium text-[#7D7265] transition-colors duration-300";
         }
       } else {
-        screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#FBF7F2]";
+        screen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-5 transition-colors duration-300 bg-[#FBF7F2]";
         card.className = "w-full max-w-[400px] rounded-[28px] bg-white border border-[#E8DFD3] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300";
         title.className = "font-serif font-extrabold text-[22px] sm:text-[24px] text-[#1F1610] leading-snug";
         sub.className = "mt-2.5 text-[14px] text-[#6E5E4F] leading-relaxed";
@@ -1538,13 +1393,13 @@
         icon.textContent = "dark_mode";
         toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/5 transition text-[#4A3B32]";
         if (guestBtn) {
-          guestBtn.className = "w-full h-[46px] rounded-full bg-[#F3EBE1] hover:bg-[#EAE0D4] active:scale-[0.99] border border-[#DCD0C1] text-[#2C2117] font-bold text-[13.5px] flex items-center justify-center gap-2 transition";
+          guestBtn.className = "w-full h-[46px] rounded-full bg-[#F3EBE1] hover:bg-[#EAE0D4] active:scale-[0.99] border border-[#DCD0C1] text-[#2C2117] font-bold text-[13px] flex items-center justify-center gap-2 transition px-4";
         }
         if (orLineLeft) orLineLeft.className = "h-[1px] flex-1 bg-[#E8DFD3] transition-colors duration-300";
         if (orLineRight) orLineRight.className = "h-[1px] flex-1 bg-[#E8DFD3] transition-colors duration-300";
         if (orText) orText.className = "text-[12px] font-semibold text-[#8C7B6B] tracking-wider";
         if (complianceFooter) {
-          complianceFooter.className = "mt-4 pt-3.5 w-full border-t border-[#E8DFD3] flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-[11px] text-[#8C7B6B] transition-colors duration-300";
+          complianceFooter.className = "mt-4 w-full max-w-[400px] px-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11.5px] font-medium text-[#8C7B6B] transition-colors duration-300";
         }
       }
     }
@@ -2870,7 +2725,7 @@
       );
     }
 
-    // Replace manual UPI QR with Automated Razorpay Payment Gateway for Cart Checkout
+    // Launch Official Razorpay Payment Gateway for Cart Checkout
     async function payCartOrderWithRazorpay() {
       if (!validateCheckoutInputs()) return;
       const { items, totalAmount } = getCartSummary();
@@ -2886,11 +2741,7 @@
         regNo: "CART_ORDER",
         paymentMode: "CART_CHECKOUT",
         selectedItemIds: items.map((i) => i.productId || i.title),
-        description: `Order Payment (${items.length} items) — Jiyarul Tea Stall & Grocery`,
-        onSuccess: (paymentResponse) => {
-          const payId = paymentResponse.razorpay_payment_id || "RZP_PAID";
-          submitCustomerOrder(`Razorpay Paid (${payId})`);
-        }
+        description: `Order Payment (${items.length} items) — Jiyarul Tea Stall & Grocery`
       });
     }
 
@@ -2931,7 +2782,7 @@
       return true;
     }
 
-    function submitCustomerOrder(paymentMode) {
+    function submitCustomerOrder(paymentMode, razorpayPaymentId = "") {
       if (!validateCheckoutInputs()) return;
       const { items, totalAmount } = getCartSummary();
       if (!items.length) return;
@@ -2958,8 +2809,16 @@
       }));
 
       const isPaidOnline =
-        paymentMode === "UPI Paid" || String(paymentMode || "").startsWith("Razorpay Paid");
-      const finalAddress = isPaidOnline ? `${addr} [${paymentMode}]` : addr;
+        Boolean(razorpayPaymentId) ||
+        paymentMode === "Paid" ||
+        paymentMode === "UPI Paid" ||
+        String(paymentMode || "").startsWith("Razorpay Paid");
+      const paymentLabel = isPaidOnline
+        ? razorpayPaymentId
+          ? `Razorpay Paid (${razorpayPaymentId})`
+          : paymentMode
+        : paymentMode || "COD";
+      const finalAddress = isPaidOnline ? `${addr} [${paymentLabel}]` : addr;
 
       const orderDoc = {
         customerName: name,
@@ -2968,13 +2827,15 @@
         deliveryAddress: finalAddress,
         items: orderItems,
         totalAmount: Number(totalAmount),
-        status: "Pending",
+        status: isPaidOnline ? "Paid" : "Pending",
         expectedTime: "",
         createdAt: now,
         updatedAt: now,
         isVerified: true,
-        paymentMode: paymentMode || "COD",
-        paymentStatus: isPaidOnline ? "PAID" : "COD",
+        paymentMode: paymentLabel,
+        paymentStatus: isPaidOnline ? "Paid" : "COD",
+        razorpay_payment_id: razorpayPaymentId || "",
+        paymentId: razorpayPaymentId || "",
         fcmToken: "WEB_CUSTOMER",
         deviceInfo: "JiyarulStore Website",
         customerUid,
@@ -2984,7 +2845,7 @@
       };
 
       addAccountScopedOrderId(orderId);
-      knownOrderStatuses[orderId] = "Pending";
+      knownOrderStatuses[orderId] = orderDoc.status;
 
       // Optimistically insert into allOrdersList so "আমার অর্ডার (Orders)" shows it immediately
       if (!allOrdersList.some((o) => o.id === orderId)) {
@@ -3017,7 +2878,7 @@
               type: "NEW_ORDER",
               topic: "admin_orders",
               orderId: orderId,
-              title: "নতুন অর্ডার এসেছে! (New Order)",
+              title: isPaidOnline ? "নতুন পেইড অর্ডার এসেছে! (Paid Order)" : "নতুন অর্ডার এসেছে! (New Order)",
               body: `Order #${shortId} • মোট ₹${Math.round(totalAmount)} • গ্রাহক: ${name}`,
               createdAt: now,
               processed: false
@@ -3029,7 +2890,11 @@
       closeUpiQrPaymentModal();
       closeCartCheckoutModal();
       playCustomerChimeSound();
-      showToast(`অর্ডার সফলভাবে পাঠানো হয়েছে! (#${orderId.slice(-6).toUpperCase()})`);
+      showToast(
+        isPaidOnline
+          ? `পেমেন্ট ও অর্ডার সফল হয়েছে! (#${orderId.slice(-6).toUpperCase()} • ID: ${razorpayPaymentId})`
+          : `অর্ডার সফলভাবে পাঠানো হয়েছে! (#${orderId.slice(-6).toUpperCase()})`
+      );
       switchCustomerTab("orders");
     }
 
@@ -3374,8 +3239,8 @@
     /*************************************************************************
      * 9. BAKI KHATA LOOKUP, DUAL RAZORPAY SETTLEMENT & KYC POLICY MODALS
      *************************************************************************/
-    // Public Razorpay Key ID fallback (Overridden automatically by /api/create-order response)
-    const RAZORPAY_PUBLIC_KEY_ID = "rzp_live_YOUR_KEY_ID";
+    // Official Razorpay Test Key ID
+    const RAZORPAY_PUBLIC_KEY_ID = "rzp_test_TxZNIAFVREUjc7";
 
     let hasSearchedCustomerBaki = false;
     let searchedBakiCustomer = null;
@@ -3653,262 +3518,237 @@
       return Array.from(paymentGroups.values()).sort((a, b) => b.timestamp - a.timestamp);
     }
 
-    let rzpFallbackCurrentContext = null;
-    let rzpFallbackSelectedMethod = "GPay";
+    // Unified Razorpay Payment Success Handler (Cart Orders, Baki Mode A & Baki Mode B)
+    async function handleRazorpayPaymentSuccess(razorpayPaymentId, paymentContext = {}) {
+      const paymentId = razorpayPaymentId || `pay_${Date.now()}`;
+      const now = Date.now();
+      const mode = paymentContext.paymentMode || "CART_CHECKOUT";
 
-    function selectRazorpayFallbackMethod(method) {
-      rzpFallbackSelectedMethod = method || "GPay";
-      const methods = ["GPay", "PhonePe", "Paytm"];
-      methods.forEach((m) => {
-        const btn = document.getElementById(`rzpMethodBtn_${m}`);
-        if (!btn) return;
-        if (m === rzpFallbackSelectedMethod) {
-          btn.className =
-            "rzp-method-card rounded-[14px] p-2.5 border-2 border-[#1D9BF0] bg-[#EFF6FF]/70 flex flex-col items-center justify-center gap-1.5 transition";
-        } else {
-          btn.className =
-            "rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition";
+      // 1. Cart Checkout Orders
+      if (mode === "CART_CHECKOUT") {
+        submitCustomerOrder(`Razorpay Paid (${paymentId})`, paymentId);
+        if (typeof paymentContext.onSuccess === "function") {
+          paymentContext.onSuccess({ razorpay_payment_id: paymentId });
         }
-      });
-
-      const labelMap = {
-        GPay: "Google Pay (Instant UPI)",
-        PhonePe: "PhonePe (Instant UPI)",
-        Paytm: "Paytm UPI / Wallet"
-      };
-      const infoEl = document.getElementById("rzpSelectedMethodInfo");
-      if (infoEl) {
-        infoEl.textContent = `Selected Mode: ${labelMap[rzpFallbackSelectedMethod] || "Google Pay (Instant UPI)"}`;
+        return;
       }
 
-      const amt = rzpFallbackCurrentContext ? Number(rzpFallbackCurrentContext.amount || 0) : 0;
-      const btnTextEl = document.getElementById("rzpFallbackPayBtnText");
-      if (btnTextEl) {
-        btnTextEl.textContent = `Pay ₹${amt.toFixed(2)} via ${rzpFallbackSelectedMethod}`;
+      // 2. Baki Khata Ledger (Mode A - Settle Selected Items)
+      if (mode === "SELECTIVE_ITEMS") {
+        const c = paymentContext.customer || searchedBakiCustomer;
+        const itemIds = Array.isArray(paymentContext.selectedItemIds) ? paymentContext.selectedItemIds : [];
+        const payableAmount = Number(paymentContext.amount || 0);
+
+        khataTransactions.forEach((tx) => {
+          if (itemIds.includes(tx.id)) {
+            tx.status = "SETTLED";
+            tx.settledAt = now;
+            tx.paymentId = paymentId;
+            tx.razorpay_payment_id = paymentId;
+            tx.paymentMode = "SELECTIVE_ITEMS";
+          }
+        });
+
+        const updatedBalance = c ? computeCustomerOutstandingBalance(c.id).pendingTotal : 0;
+
+        if (db && c) {
+          try {
+            const batch = db.batch();
+            itemIds.forEach((id) => {
+              const ref = db.collection("khata_transactions").doc(id);
+              batch.update(ref, {
+                status: "SETTLED",
+                settledAt: now,
+                paymentId: paymentId,
+                razorpay_payment_id: paymentId,
+                paymentMode: "SELECTIVE_ITEMS"
+              });
+            });
+            const custRef = db.collection("khata_customers").doc(c.id);
+            batch.set(
+              custRef,
+              {
+                totalDue: updatedBalance,
+                outstandingBalance: updatedBalance,
+                lastPaymentId: paymentId,
+                lastPaymentAt: now,
+                updatedAt: now
+              },
+              { merge: true }
+            );
+            await batch.commit();
+          } catch (err) {
+            console.error("Firestore batch update error:", err);
+          }
+        }
+
+        selectedBakiTxIds.clear();
+        isCustomerBakiBalanceRevealed = true;
+        playCustomerChimeSound();
+        showToast(`পেমেন্ট সফল হয়েছে! ₹${payableAmount} পরিশোধিত (ID: ${paymentId})`);
+        renderCustomerBakiLookup();
+
+        if (typeof paymentContext.onSuccess === "function") {
+          paymentContext.onSuccess({ razorpay_payment_id: paymentId });
+        }
+        return;
+      }
+
+      // 3. Baki Khata Ledger (Mode B - Custom Amount Payment)
+      if (mode === "CUSTOM_PARTIAL") {
+        const c = paymentContext.customer || searchedBakiCustomer;
+        const customAmount = Number(paymentContext.amount || 0);
+        if (!c) return;
+
+        const { pendingTotal } = computeCustomerOutstandingBalance(c.id);
+        const newTxId = `PAY_${now}`;
+
+        const creditEntry = {
+          id: newTxId,
+          customerId: c.id,
+          type: "PAYMENT_RECEIVED",
+          description: "Online Payment (Razorpay)",
+          notes: "Online Payment (Razorpay)",
+          amount: customAmount,
+          paymentId: paymentId,
+          razorpay_payment_id: paymentId,
+          paymentMode: "CUSTOM_PARTIAL",
+          timestamp: now,
+          settledAt: now,
+          status: "SETTLED"
+        };
+
+        khataTransactions.unshift(creditEntry);
+        const remainingAfterPayment = Math.max(0, Number((pendingTotal - customAmount).toFixed(2)));
+
+        if (db) {
+          try {
+            const batch = db.batch();
+            const newDocRef = db.collection("khata_transactions").doc(newTxId);
+            batch.set(newDocRef, creditEntry);
+
+            if (remainingAfterPayment === 0) {
+              khataTransactions.forEach((tx) => {
+                if (
+                  tx.customerId === c.id &&
+                  tx.type !== "PAYMENT_RECEIVED" &&
+                  String(tx.status || "").toUpperCase() !== "SETTLED"
+                ) {
+                  tx.status = "SETTLED";
+                  tx.settledAt = now;
+                  const itemRef = db.collection("khata_transactions").doc(tx.id);
+                  batch.update(itemRef, {
+                    status: "SETTLED",
+                    settledAt: now,
+                    razorpay_payment_id: paymentId,
+                    paymentId: paymentId
+                  });
+                }
+              });
+            }
+
+            const custRef = db.collection("khata_customers").doc(c.id);
+            batch.set(
+              custRef,
+              {
+                totalDue: remainingAfterPayment,
+                outstandingBalance: remainingAfterPayment,
+                lastPaymentId: paymentId,
+                lastPaymentAt: now,
+                updatedAt: now
+              },
+              { merge: true }
+            );
+
+            await batch.commit();
+          } catch (err) {
+            console.error("Firestore custom payment error:", err);
+          }
+        }
+
+        customBakiPayAmountInput = "";
+        selectedBakiTxIds.clear();
+        isCustomerBakiBalanceRevealed = true;
+        playCustomerChimeSound();
+        showToast(`₹${customAmount} অনলাইন পেমেন্ট সফল! বর্তমান বকেয়া: ₹${remainingAfterPayment.toFixed(2)}`);
+        renderCustomerBakiLookup();
+
+        if (typeof paymentContext.onSuccess === "function") {
+          paymentContext.onSuccess({ razorpay_payment_id: paymentId });
+        }
       }
     }
 
-    function openRazorpayFallbackModal(ctx) {
-      rzpFallbackCurrentContext = ctx;
-      const modal = document.getElementById("razorpayFallbackModal");
-      if (!modal) return;
-
-      const storeTitleEl = document.getElementById("rzpFallbackStoreTitle");
-      if (storeTitleEl) {
-        storeTitleEl.textContent = storeSettings.shopName || "Jiyarul Tea Stall & Grocery";
-      }
-
-      const subEl = document.getElementById("rzpFallbackSubtitle");
-      if (subEl) {
-        subEl.textContent =
-          ctx.description ||
-          `Baki Khata Settlement (${ctx.regNo || ""}) — ${storeSettings.shopName || "Jiyarul Tea Stall & Grocery"}`;
-      }
-
-      const custMetaEl = document.getElementById("rzpFallbackCustomerMeta");
-      if (custMetaEl) {
-        const cName =
-          ctx.customerName ||
-          (!isGuestCustomerAccount() ? currentCustomerAccount?.displayName : "") ||
-          "Customer";
-        const cPhone = ctx.phone || "Instant Checkout";
-        custMetaEl.textContent = `${cName} • ${cPhone}`;
-      }
-
-      const amtEl = document.getElementById("rzpFallbackAmountLabel");
-      if (amtEl) {
-        amtEl.textContent = `₹${Number(ctx.amount || 0).toFixed(2)}`;
-      }
-
-      const warnBox = document.getElementById("rzpFallbackLiveWarningBox");
-      if (warnBox) {
-        warnBox.classList.add("hidden");
-        warnBox.innerHTML = "";
-      }
-
-      selectRazorpayFallbackMethod("GPay");
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-    }
-
-    function closeRazorpayFallbackModal(wasCancelled) {
-      const modal = document.getElementById("razorpayFallbackModal");
-      if (modal) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
-      if (wasCancelled) {
-        showToast("পেমেন্ট প্রক্রিয়া বাতিল করা হয়েছে।");
-      }
-      rzpFallbackCurrentContext = null;
-    }
-
-    async function confirmRazorpayFallbackPayment() {
-      if (!rzpFallbackCurrentContext) return;
-      const ctx = rzpFallbackCurrentContext;
-      const btn = document.getElementById("rzpFallbackConfirmBtn");
-      const btnText = document.getElementById("rzpFallbackPayBtnText");
-      const warnBox = document.getElementById("rzpFallbackLiveWarningBox");
-
-      if (btn) btn.disabled = true;
-      if (btnText) btnText.textContent = `Checking Razorpay Gateway...`;
-
-      await new Promise((r) => setTimeout(r, 450));
-
-      if (btn) btn.disabled = false;
-      selectRazorpayFallbackMethod(rzpFallbackSelectedMethod);
-
-      // CRITICAL SAFETY: Never auto-confirm orders or settle Baki Khata from the fallback modal!
-      // Only real Razorpay SDK payments (when rzp_live_ / rzp_test_ key is active) can confirm paid orders or settle ledger dues.
-      const isCartOrder = ctx.paymentMode === "CART_CHECKOUT";
-      const warningHtml = isCartOrder
-        ? `⚠️ <strong>Razorpay অনলাইন পেমেন্ট এখনো অ্যাক্টিভ হয়নি (Merchant Verification চলছে)।</strong><br/>পেমেন্ট ছাড়া অর্ডার কনফার্ম হবে না। এখন অর্ডার করতে এই পপআপটি বন্ধ করে <strong>"অর্ডার কনফার্ম করুন (Cash)"</strong> বাটনে চাপুন।`
-        : `⚠️ <strong>Razorpay অনলাইন পেমেন্ট এখনো অ্যাক্টিভ হয়নি (Merchant Verification চলছে)।</strong><br/>রিয়েল পেমেন্ট ছাড়া বাকি খাতার ব্যালেন্স পরিবর্তন হবে না। Razorpay Live Key যুক্ত হলেই সরাসরি পেমেন্ট করা যাবে।`;
-
-      if (warnBox) {
-        warnBox.innerHTML = warningHtml;
-        warnBox.classList.remove("hidden");
-      }
-      showToast(
-        isCartOrder
-          ? "Razorpay ভেরিফিকেশন চলছে! অনুগ্রহ করে 'অর্ডার কনফার্ম করুন (Cash)' ব্যবহার করুন।"
-          : "Razorpay ভেরিফিকেশন চলছে! রিয়েল পেমেন্ট ছাড়া খাতা আপডেট হবে না।"
-      );
-    }
-
-    async function initiateRazorpayCheckout({
-      amount,
-      customerName,
-      phone,
-      regNo,
-      paymentMode,
-      selectedItemIds,
-      description,
-      onSuccess
-    }) {
+    async function initiateRazorpayCheckout(paymentContext = {}) {
       if (isBakiPaymentProcessing) return;
+      const {
+        amount,
+        customerName,
+        phone,
+        regNo,
+        paymentMode,
+        selectedItemIds,
+        description
+      } = paymentContext;
+
       const numericAmount = Number(Number(amount).toFixed(2));
       if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
         showToast("অনুগ্রহ করে সঠিক পেমেন্ট অ্যামাউন্ট দিন (₹1 বা তার বেশি)।");
         return;
       }
 
-      const isLocalFile = window.location.protocol === "file:";
-      let orderData = null;
-
-      // 1. Live Production Mode (Deployed on Vercel Web / Android APK): Call POST /api/create-order
-      if (!isLocalFile) {
-        isBakiPaymentProcessing = true;
-        try {
-          const resp = await fetch("/api/create-order", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              amount: numericAmount,
-              customerName: customerName || "Customer",
-              phone: phone || "",
-              regNo: regNo || "",
-              paymentMode: paymentMode || "SELECTIVE_ITEMS",
-              selectedItemIds: selectedItemIds || []
-            })
-          });
-          if (resp.ok) {
-            const parsed = await resp.json();
-            if (parsed && parsed.success && (parsed.orderId || parsed.id)) {
-              orderData = parsed;
-            }
-          }
-        } catch (err) {
-          console.warn("Razorpay create-order backend notice:", err);
-        } finally {
-          isBakiPaymentProcessing = false;
-        }
+      if (typeof window.Razorpay === "undefined") {
+        showToast("Razorpay পেমেন্ট গেটওয়ে লোড হচ্ছে, অনুগ্রহ করে একটু পর আবার চেষ্টা করুন।");
+        return;
       }
 
-      const resolvedKeyId =
-        orderData?.keyId ||
-        storeSettings.razorpayKeyId ||
-        window.RAZORPAY_KEY_ID ||
-        RAZORPAY_PUBLIC_KEY_ID;
+      const currentUser = currentCustomerAccount && !isGuestCustomerAccount() ? currentCustomerAccount : null;
+      const currentUserPhone =
+        phone ||
+        document.getElementById("checkoutCustomerPhone")?.value?.trim() ||
+        "9062472159";
+      const paymentDescription =
+        description || "Order Payment — Jiyarul Tea Stall & Grocery";
 
-      const hasValidLiveOrTestKey =
-        resolvedKeyId &&
-        typeof resolvedKeyId === "string" &&
-        resolvedKeyId.startsWith("rzp_") &&
-        resolvedKeyId !== "rzp_live_YOUR_KEY_ID";
-
-      // Launch Official Razorpay Checkout SDK whenever a valid rzp_live_ / rzp_test_ key is configured
-      if (hasValidLiveOrTestKey && typeof window.Razorpay !== "undefined") {
-        const options = {
-          key: resolvedKeyId,
-          amount: Math.round(numericAmount * 100),
-          currency: "INR",
-          name: storeSettings.shopName || "Jiyarul Tea Stall & Grocery",
-          description: description || `Baki Khata Settlement (${regNo})`,
-          prefill: {
-            name:
-              customerName ||
-              (!isGuestCustomerAccount() ? currentCustomerAccount?.displayName : "") ||
-              "",
-            email: currentCustomerAccount?.email || "jiyaruljamader386@gmail.com",
-            contact: phone || ""
-          },
-          notes: {
-            customerName: String(customerName || ""),
-            phone: String(phone || ""),
-            regNo: String(regNo || ""),
-            paymentMode: String(paymentMode || ""),
-            selectedItemIds: Array.isArray(selectedItemIds) ? selectedItemIds.join(",") : ""
-          },
-          retry: {
-            enabled: true,
-            max_count: 3
-          },
-          theme: {
-            color: "#C0392B",
-            backdrop_color: "rgba(15, 23, 42, 0.65)"
-          },
-          handler: function (response) {
-            if (typeof onSuccess === "function") {
-              onSuccess(response);
-            }
-          },
-          modal: {
-            ondismiss: function () {
-              showToast("পেমেন্ট প্রক্রিয়া বাতিল করা হয়েছে।");
-            }
-          }
-        };
-
-        if (orderData && (orderData.orderId || orderData.id)) {
-          options.order_id = orderData.orderId || orderData.id;
-        }
-
-        try {
-          const rzp = new window.Razorpay(options);
-          rzp.on("payment.failed", function (respErr) {
-            const reason = respErr?.error?.description || "পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।";
-            showToast(`পেমেন্ট ব্যর্থ: ${reason}`);
+      const options = {
+        key: RAZORPAY_PUBLIC_KEY_ID,
+        amount: Math.round(numericAmount * 100), // Amount in paise
+        currency: "INR",
+        name: "Jiyarul Tea Stall & Grocery",
+        description: paymentDescription,
+        image: "https://jiyarulstore-web.vercel.app/logo.png",
+        theme: { color: "#C0392B" },
+        prefill: {
+          name: customerName || currentUser?.displayName || "Customer",
+          contact: currentUserPhone || "9062472159",
+          email: currentUser?.email || "customer@jiyarulstore.com"
+        },
+        notes: {
+          customerName: String(customerName || currentUser?.displayName || "Customer"),
+          phone: String(currentUserPhone || "9062472159"),
+          regNo: String(regNo || ""),
+          paymentMode: String(paymentMode || ""),
+          selectedItemIds: Array.isArray(selectedItemIds) ? selectedItemIds.join(",") : ""
+        },
+        handler: function (response) {
+          handleRazorpayPaymentSuccess(response.razorpay_payment_id, {
+            ...paymentContext,
+            amount: numericAmount
           });
-          rzp.open();
-          return;
-        } catch (e) {
-          console.warn("Official Razorpay SDK fallback to custom checkout modal:", e);
+        },
+        modal: {
+          ondismiss: function () {
+            console.log("Razorpay checkout modal closed by user.");
+          }
         }
-      }
+      };
 
-      // 2. Local Testing Mode (file:// or when backend keys are not yet connected):
-      // Automatically open the Clean Custom Razorpay Checkout Modal (#razorpayFallbackModal)
-      openRazorpayFallbackModal({
-        amount: numericAmount,
-        customerName,
-        phone,
-        regNo,
-        paymentMode,
-        selectedItemIds,
-        description,
-        onSuccess
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", function (respErr) {
+        const reason = respErr?.error?.description || "পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।";
+        showToast(`পেমেন্ট ব্যর্থ: ${reason}`);
       });
+      rzp.open();
     }
 
     // MODE A: Selective Item Settlement (Checkbox Flow)
@@ -3937,53 +3777,13 @@
 
       await initiateRazorpayCheckout({
         amount: payableAmount,
+        customer: c,
         customerName: c.name,
-        phone: c.phone || "",
+        phone: c.phone || "9062472159",
         regNo: c.regNo,
         paymentMode: "SELECTIVE_ITEMS",
         selectedItemIds: itemIds,
-        description: `Baki Settlement (${itemIds.length} items) • Reg ${c.regNo}`,
-        onSuccess: async (response) => {
-          const paymentId = response?.razorpay_payment_id || `pay_${Date.now()}`;
-          const now = Date.now();
-
-          // Update local state immediately for responsive UI
-          khataTransactions.forEach((tx) => {
-            if (itemIds.includes(tx.id)) {
-              tx.status = "SETTLED";
-              tx.settledAt = now;
-              tx.paymentId = paymentId;
-              tx.razorpay_payment_id = paymentId;
-              tx.paymentMode = "SELECTIVE_ITEMS";
-            }
-          });
-
-          // Update Firestore batch for all selected transaction IDs
-          if (db) {
-            try {
-              const batch = db.batch();
-              itemIds.forEach((id) => {
-                const ref = db.collection("khata_transactions").doc(id);
-                batch.update(ref, {
-                  status: "SETTLED",
-                  settledAt: now,
-                  paymentId: paymentId,
-                  razorpay_payment_id: paymentId,
-                  paymentMode: "SELECTIVE_ITEMS"
-                });
-              });
-              await batch.commit();
-            } catch (err) {
-              console.error("Firestore batch update error:", err);
-            }
-          }
-
-          selectedBakiTxIds.clear();
-          isCustomerBakiBalanceRevealed = true;
-          playCustomerChimeSound();
-          showToast(`পেমেন্ট সফল হয়েছে! ₹${payableAmount} পরিশোধিত (ID: ${paymentId})`);
-          renderCustomerBakiLookup();
-        }
+        description: `Baki Settlement (${itemIds.length} items) • Reg ${c.regNo}`
       });
     }
 
@@ -4015,76 +3815,13 @@
 
       await initiateRazorpayCheckout({
         amount: customAmount,
+        customer: c,
         customerName: c.name,
-        phone: c.phone || "",
+        phone: c.phone || "9062472159",
         regNo: c.regNo,
         paymentMode: "CUSTOM_PARTIAL",
         selectedItemIds: [],
-        description: `Custom Baki Payment (₹${customAmount}) • Reg ${c.regNo}`,
-        onSuccess: async (response) => {
-          const paymentId = response?.razorpay_payment_id || `pay_${Date.now()}`;
-          const now = Date.now();
-          const newTxId = `PAY_${now}`;
-
-          const creditEntry = {
-            id: newTxId,
-            customerId: c.id,
-            type: "PAYMENT_RECEIVED",
-            description: "Online Payment (Razorpay)",
-            notes: "Online Payment (Razorpay)",
-            amount: customAmount,
-            paymentId: paymentId,
-            razorpay_payment_id: paymentId,
-            paymentMode: "CUSTOM_PARTIAL",
-            timestamp: now,
-            settledAt: now,
-            status: "SETTLED"
-          };
-
-          // Insert credit ledger entry locally
-          khataTransactions.unshift(creditEntry);
-
-          const remainingAfterPayment = Math.max(0, Number((pendingTotal - customAmount).toFixed(2)));
-
-          // Persist to Firestore
-          if (db) {
-            try {
-              const batch = db.batch();
-              const newDocRef = db.collection("khata_transactions").doc(newTxId);
-              batch.set(newDocRef, creditEntry);
-
-              // If the customer paid off the entire remaining balance, mark remaining PENDING DUE items as SETTLED
-              if (remainingAfterPayment === 0) {
-                khataTransactions.forEach((tx) => {
-                  if (
-                    tx.customerId === c.id &&
-                    tx.type !== "PAYMENT_RECEIVED" &&
-                    String(tx.status || "").toUpperCase() !== "SETTLED"
-                  ) {
-                    tx.status = "SETTLED";
-                    tx.settledAt = now;
-                    const itemRef = db.collection("khata_transactions").doc(tx.id);
-                    batch.update(itemRef, {
-                      status: "SETTLED",
-                      settledAt: now
-                    });
-                  }
-                });
-              }
-
-              await batch.commit();
-            } catch (err) {
-              console.error("Firestore custom payment error:", err);
-            }
-          }
-
-          customBakiPayAmountInput = "";
-          selectedBakiTxIds.clear();
-          isCustomerBakiBalanceRevealed = true;
-          playCustomerChimeSound();
-          showToast(`₹${customAmount} অনলাইন পেমেন্ট সফল! বর্তমান বকেয়া: ₹${remainingAfterPayment.toFixed(2)}`);
-          renderCustomerBakiLookup();
-        }
+        description: `Custom Baki Payment (₹${customAmount}) • Reg ${c.regNo}`
       });
     }
 
@@ -4521,15 +4258,14 @@
             <div>
               <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Phone Numbers</p>
               <p class="font-semibold text-[13px] text-[#1E293B]">
-                • Primary: <a href="tel:+919093154681" class="text-[#2563EB] hover:underline">+91-9093154681</a><br/>
+                • Primary: <a href="tel:+919062472159" class="text-[#2563EB] hover:underline">+91-9062472159</a><br/>
                 • Alternate / WhatsApp: <a href="https://wa.me/919062472159" target="_blank" rel="noopener" class="text-[#16A34A] hover:underline">+91-9062472159</a>
               </p>
             </div>
             <div>
               <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Email Support</p>
               <p class="font-semibold text-[13px] text-[#1E293B]">
-                • Primary: <a href="mailto:jiyaruljamader386@gmail.com" class="text-[#2563EB] hover:underline">jiyaruljamader386@gmail.com</a><br/>
-                • Alternate: <a href="mailto:mikailjamader786@gmail.com" class="text-[#2563EB] hover:underline">mikailjamader786@gmail.com</a>
+                • Email: <a href="mailto:jiyaruljamader386@gmail.com" class="text-[#2563EB] hover:underline">jiyaruljamader386@gmail.com</a>
               </p>
             </div>
             <div>
@@ -5296,6 +5032,7 @@ RULES:
     }
 
     function getStatusStyle(status) {
+      if (status === "Paid" || status === "PAID") return "bg-[#DCFCE7] text-[#15803D]";
       if (status === "Pending" || status === "New") return "bg-[#FFF3E0] text-[#E65100]";
       if (status === "Accepted") return "bg-[#E0F2FE] text-[#0284C7]";
       if (status === "Preparing") return "bg-[#FEF3C7] text-[#D97706]";
