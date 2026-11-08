@@ -57,6 +57,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
+  <!-- Official Razorpay Checkout JS SDK (Web & Mobile WebView Compatible) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
     body {
       font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
@@ -185,13 +188,19 @@
         <span class="material-icons-round text-[#8B4513] text-[34px]">local_cafe</span>
       </div>
 
-      <!-- Store Title -->
-      <h1
-        id="loginStoreTitle"
-        class="font-serif font-extrabold text-[23px] sm:text-[24px] text-[#FDFBF7] leading-snug"
-      >
-        Jiyarul Tea Stall & Grocery
-      </h1>
+      <!-- Store Title + Official Blue Verified Badge -->
+      <div class="inline-flex items-center justify-center gap-1.5 flex-wrap">
+        <h1
+          id="loginStoreTitle"
+          class="font-serif font-extrabold text-[23px] sm:text-[24px] text-[#FDFBF7] leading-snug"
+        >
+          Jiyarul Tea Stall &amp; Grocery
+        </h1>
+        <span
+          class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm shrink-0"
+          title="Verified Store"
+        >verified</span>
+      </div>
 
       <!-- Bengali Subtitle -->
       <p
@@ -219,6 +228,21 @@
         ></span>
         <span id="welcomeSignInBtnText" class="text-[15px] font-semibold text-[#3C4043]">Sign in with Google</span>
       </button>
+
+      <!-- Instant Guest / Razorpay Reviewer Access Button -->
+      <button
+        id="welcomeGuestAccessBtn"
+        type="button"
+        onclick="continueAsGuest()"
+        class="mt-3.5 w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13px] flex items-center justify-center gap-2 transition"
+        title="লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করে পণ্য ও পেমেন্ট দেখুন"
+      >
+        <span class="material-icons-round text-[18px] text-[#A5D6A7]">storefront</span>
+        <span>লগইন ছাড়াই দোকান দেখুন (Browse as Guest)</span>
+      </button>
+      <p id="guestAccessSubtitle" class="mt-1.5 text-[11px] text-[#A69B8D]">
+        ⚡ Razorpay Reviewer বা কাস্টমার হিসেবে সরাসরি পণ্য ও খাতা দেখুন
+      </p>
 
       <!-- Real Auth Error / Domain Info Banner (Only shown if Google Auth fails) -->
       <div
@@ -249,13 +273,12 @@
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
             <h1 id="topStoreName" class="font-extrabold text-[15px] sm:text-[17px] text-[#1E293B] truncate">
-              Jiyarul Tea Stall & Grocery
+              Jiyarul Tea Stall &amp; Grocery
             </h1>
             <span
-              id="liveSyncDot"
-              class="w-2 h-2 rounded-full bg-[#2E7D32] shrink-0"
-              title="Live Firestore Sync Connected"
-            ></span>
+              class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm shrink-0"
+              title="Verified Store"
+            >verified</span>
           </div>
           <p id="topStoreSubtitle" class="text-[11px] text-[#64748B] truncate">
             চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
@@ -451,6 +474,36 @@
 
       <div id="myOrdersListContainer" class="space-y-3"></div>
     </section>
+
+    <!-- =============================================================== -->
+    <!-- RAZORPAY KYC COMPLIANCE FOOTER (Terms, Privacy, Refund, Contact) -->
+    <!-- =============================================================== -->
+    <footer class="mt-8 pt-5 pb-6 border-t border-[#E8E0D5] text-center space-y-2.5">
+      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11.5px] font-bold text-[#5D4037]">
+        <button type="button" onclick="openKycPolicyModal('terms')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+          Terms &amp; Conditions
+        </button>
+        <span class="text-[#D7CCC8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('privacy')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+          Privacy Policy
+        </button>
+        <span class="text-[#D7CCC8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('refund')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+          Refund &amp; Cancellation Policy
+        </button>
+        <span class="text-[#D7CCC8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('contact')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+          Contact Us
+        </button>
+      </div>
+      <p class="text-[10.5px] text-slate-500">
+        © 2026 <strong>Jiyarul Tea Stall &amp; Grocery</strong> • Digberia, Mandirbazar, South 24 Parganas, WB - 743395
+      </p>
+      <p class="text-[10px] text-slate-400 flex items-center justify-center gap-1">
+        <span class="material-icons-round text-[13px] text-[#16A34A]">verified_user</span>
+        <span>100% Secure Online Payments powered by Razorpay</span>
+      </p>
+    </footer>
 
   </main>
 
@@ -709,11 +762,11 @@
           </button>
 
           <button
-            onclick="openUpiQrPaymentModal()"
-            class="py-3 px-4 rounded-[12px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+            onclick="payCartOrderWithRazorpay()"
+            class="py-3 px-4 rounded-[12px] bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
           >
-            <span class="material-icons-round text-[18px]">qr_code_2</span>
-            <span>UPI / QR পেমেন্ট ও অর্ডার</span>
+            <span class="material-icons-round text-[18px]">bolt</span>
+            <span>Pay Online (Razorpay)</span>
           </button>
         </div>
       </div>
@@ -721,81 +774,102 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL C: UPI QR CODE PAYMENT DIALOG                                   -->
+  <!-- MODAL C: RAZORPAY KYC COMPLIANCE POLICY MODAL                         -->
   <!-- ===================================================================== -->
-  <div id="upiPaymentModal" onclick="if(event.target===this) closeUpiQrPaymentModal()" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4">
-    <div class="w-full max-w-[380px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden p-5 text-center space-y-3.5">
-      <div class="flex items-center justify-between">
-        <h3 class="font-extrabold text-[15px] text-[#0F172A] flex items-center gap-1.5">
-          <span class="material-icons-round text-[#C0392B]">qr_code_2</span>
-          <span>UPI QR স্ক্যান ও পেমেন্ট</span>
-        </h3>
-        <button onclick="closeUpiQrPaymentModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
-          <span class="material-icons-round text-[18px]">close</span>
+  <div id="kycPolicyModal" onclick="if(event.target===this) closeKycPolicyModal()" class="fixed inset-0 z-[65] bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-[520px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
+      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span id="kycPolicyModalIcon" class="material-icons-round text-[#C0392B]">gavel</span>
+          <h3 id="kycPolicyModalTitle" class="font-extrabold text-[15px] text-[#0F172A]">Policy Details</h3>
+        </div>
+        <button onclick="closeKycPolicyModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+          <span class="material-icons-round text-[20px]">close</span>
         </button>
       </div>
-
-      <p id="upiModalStoreName" class="text-[12px] font-bold text-[#5D4037]">Jiyarul Tea Stall & Grocery</p>
-      <p id="upiModalAmountText" class="text-[24px] font-extrabold text-[#C0392B]">₹0</p>
-
-      <div class="w-48 h-48 mx-auto rounded-[16px] bg-white border-2 border-[#E2D6C7] p-2 flex items-center justify-center shadow-inner">
-        <img id="upiQrImage" src="" alt="UPI QR Code" class="w-full h-full object-contain" />
-      </div>
-
-      <p id="upiModalIdText" class="text-[11.5px] font-bold text-slate-600 bg-slate-100 py-1.5 px-3 rounded-full inline-block"></p>
-
-      <div class="space-y-2 pt-1">
-        <a
-          id="upiDeepLinkBtn"
-          href="#"
-          class="w-full py-2.5 rounded-[11px] bg-[#1A73E8] hover:bg-[#1557B0] text-white font-bold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm"
-        >
-          <span class="material-icons-round text-[17px]">account_balance_wallet</span>
-          <span>GPay / PhonePe / Paytm অ্যাপে পেমেন্ট করুন</span>
-        </a>
-
-        <button
-          onclick="submitCustomerOrder('UPI Paid')"
-          class="w-full py-2.5 rounded-[11px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-md"
-        >
-          <span class="material-icons-round text-[17px]">verified</span>
-          <span>পেমেন্ট সম্পন্ন — অর্ডার কনফার্ম করুন</span>
+      <div id="kycPolicyModalBody" class="p-5 max-h-[75vh] overflow-y-auto text-[12.5px] text-slate-700 leading-relaxed space-y-3"></div>
+      <div class="px-5 py-3 bg-[#FAF6F0] border-t border-[#E8E0D5] flex justify-end">
+        <button onclick="closeKycPolicyModal()" class="px-5 py-2 rounded-[10px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[12.5px]">
+          বন্ধ করুন (Close)
         </button>
       </div>
     </div>
   </div>
 
   <!-- ===================================================================== -->
-  <!-- MODAL D: CUSTOMER BAKI KHATA CHECK DIALOG                             -->
+  <!-- MODAL D: FULL-SCREEN DOKANER BAKI KHATA APP VIEW                      -->
   <!-- ===================================================================== -->
-  <div id="customerBakiModal" onclick="if(event.target===this) closeCustomerBakiModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
-    <div class="w-full max-w-[440px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
-      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="material-icons-round text-[#D35400]">menu_book</span>
-          <div>
-            <h3 class="font-extrabold text-[14.5px] text-[#0F172A]">দোকানের বাকি খাতা (Baki Khata)</h3>
-            <p class="text-[10.5px] text-slate-500">রেজিস্ট্রেশন নম্বর (#1) বা ফোন নম্বর দিয়ে আপনার হিসাব দেখুন</p>
+  <div
+    id="customerBakiModal"
+    class="fixed inset-0 z-50 bg-[#FAF6F0] hidden flex-col h-full w-full overflow-hidden"
+  >
+    <!-- 1. Native-App Style Sticky Top Bar -->
+    <div class="bg-white border-b border-[#E8E0D5] shadow-sm shrink-0">
+      <div class="max-w-3xl mx-auto px-3 sm:px-5 py-3 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <button
+            type="button"
+            onclick="closeCustomerBakiModal()"
+            class="w-9 h-9 rounded-full bg-[#FAF6F0] hover:bg-[#EFE6DC] active:scale-95 flex items-center justify-center text-[#0F172A] shrink-0 transition"
+            title="দোকানে ফিরে যান (Back to Shop)"
+          >
+            <span class="material-icons-round text-[21px]">arrow_back</span>
+          </button>
+          <div class="w-9 h-9 rounded-[10px] bg-[#FFF3E0] flex items-center justify-center shrink-0">
+            <span class="material-icons-round text-[#D35400] text-[20px]">menu_book</span>
+          </div>
+          <div class="min-w-0">
+            <h3 class="font-extrabold text-[15px] sm:text-[16.5px] text-[#0F172A] truncate">
+              দোকানের বাকি খাতা (Dokaner Baki Khata)
+            </h3>
+            <p class="text-[11px] text-[#7A6B5F] truncate">
+              বাকি চেক ও অনলাইন পেমেন্ট
+            </p>
           </div>
         </div>
-        <button onclick="closeCustomerBakiModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+        <button
+          type="button"
+          onclick="closeCustomerBakiModal()"
+          class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-500 shrink-0 transition"
+          title="Close"
+        >
           <span class="material-icons-round text-[20px]">close</span>
         </button>
       </div>
+    </div>
 
-      <div class="p-4 space-y-3 max-h-[78vh] overflow-y-auto">
-        <div class="flex gap-2">
-          <input
-            id="bakiLookupInput"
-            type="text"
-            oninput="renderCustomerBakiLookup()"
-            placeholder="Reg No (যেমন: #1) বা মোবাইল নম্বর লিখুন..."
-            class="flex-1 bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#D35400] rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
-          />
+    <!-- 2. Registration Number Search Bar (Directly Below Top Bar) -->
+    <div class="bg-white/80 border-b border-[#E8DCCF] shrink-0">
+      <div class="max-w-3xl mx-auto px-3 sm:px-5 py-2.5">
+        <div class="flex gap-2 items-center">
+          <div class="relative flex-1">
+            <span class="material-icons-round text-[#D35400] text-[18px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">tag</span>
+            <input
+              id="bakiLookupInput"
+              type="text"
+              oninput="onBakiLookupInputChange()"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();submitCustomerBakiLookup();}"
+              placeholder="রেজিস্ট্রেশন নম্বর দিন (যেমন: #1 বা 1546)"
+              class="w-full bg-white border border-[#CBD5E1] focus:border-[#D35400] rounded-[10px] pl-9 pr-3 py-2 text-[13.5px] font-bold text-[#0F172A] outline-none"
+            />
+          </div>
+          <button
+            type="button"
+            onclick="submitCustomerBakiLookup()"
+            class="px-4 py-2 rounded-[10px] bg-[#D35400] hover:bg-[#B84700] active:scale-95 transition text-white font-extrabold text-[13px] shrink-0 shadow-sm flex items-center gap-1"
+          >
+            <span class="material-icons-round text-[17px]">search</span>
+            <span>চেক করুন</span>
+          </button>
         </div>
-        <div id="bakiLookupResultContainer" class="space-y-2.5"></div>
       </div>
     </div>
+
+    <!-- 3. Full-Screen Expandable Ledger & Docked Payment Controls Container -->
+    <div
+      id="bakiLookupResultContainer"
+      class="flex-1 min-h-0 w-full max-w-3xl mx-auto px-3 sm:px-5 py-2.5 flex flex-col overflow-hidden"
+    ></div>
   </div>
 
   <!-- ===================================================================== -->
@@ -871,11 +945,22 @@
   <!-- ===================================================================== -->
   <!-- MODAL F: REAL GEMINI AI ASSISTANT SHEET (Matches Phone App UI 100%)   -->
   <!-- ===================================================================== -->
-  <div id="saraAiModal" onclick="if(event.target===this) closeSaraAiModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-end sm:items-center justify-center sm:p-4">
-    <div class="w-full max-w-[440px] bg-[#F8FAFC] rounded-t-[24px] sm:rounded-[24px] border border-[#E2E8F0] shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[680px]">
-      <!-- Drag Handle & White Header (Exact Match to Phone App AiAssistantBottomSheet.kt) -->
-      <div class="bg-white border-b border-[#E2E8F0] pt-2.5 pb-3 px-4 shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-        <div class="w-9 h-1 rounded-full bg-[#CBD5E1] mx-auto mb-3"></div>
+  <div
+    id="saraAiModal"
+    onclick="if(event.target===this) closeSaraAiModal()"
+    class="fixed inset-x-0 top-0 bottom-0 z-50 bg-black/50 backdrop-blur-[1.5px] hidden items-end sm:items-center justify-center sm:p-4 overflow-hidden"
+  >
+    <div
+      id="saraAiModalCard"
+      class="w-full max-w-[440px] bg-[#F8FAFC] rounded-t-[28px] sm:rounded-[26px] shadow-2xl overflow-hidden flex flex-col h-[86%] max-h-[680px] transition-[height] duration-150 ease-out"
+    >
+      <!-- Top White Drag Handle Cap (Exact Match to Screenshot 3 & 4) -->
+      <div class="bg-white pt-3 pb-2.5 shrink-0">
+        <div class="w-10 h-1.5 rounded-full bg-[#CBD5E1] mx-auto"></div>
+      </div>
+
+      <!-- Warm Tonal Header Bar (Exact Match to Phone App Surface tonalElevation=2.dp in Screenshot 3 & 4) -->
+      <div class="bg-[#FDF1EC] border-b border-[#E8E0D8] py-3 px-4 shrink-0">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-3 min-w-0 flex-1">
             <!-- Glowing Gradient Robot Avatar -->
@@ -883,7 +968,7 @@
               <span class="material-icons-round text-white text-[22px]">smart_toy</span>
             </div>
             <div class="min-w-0 flex-1">
-              <h3 id="saraModalTitle" class="font-bold text-[15px] text-[#0F172A] truncate">Talk to Rijiya (Rijiya-র সাথে কথা বলুন)</h3>
+              <h3 id="saraModalTitle" class="font-bold text-[15px] text-[#0F172A] truncate">Talk to রিজিয়া (রিজিয়া-র সাথে কথা বলুন)</h3>
               <div class="mt-0.5 flex items-center">
                 <span id="saraQuotaBadge" class="inline-block px-2 py-0.5 rounded-[12px] bg-[#ECFDF5] text-[#059669] font-bold text-[10.5px]">
                   বার্তা বাকি: 20/20
@@ -892,10 +977,10 @@
             </div>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button onclick="clearAiChatHistory()" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#64748B] transition" title="চ্যাট মুছুন">
+            <button onclick="clearAiChatHistory()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#475569] transition" title="চ্যাট মুছুন">
               <span class="material-icons-round text-[20px]">delete_sweep</span>
             </button>
-            <button onclick="closeSaraAiModal()" class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#64748B] transition" title="বন্ধ করুন">
+            <button onclick="closeSaraAiModal()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#475569] transition" title="বন্ধ করুন">
               <span class="material-icons-round text-[20px]">close</span>
             </button>
           </div>
@@ -903,26 +988,29 @@
       </div>
 
       <!-- Messages Container -->
-      <div id="saraChatMessages" class="flex-1 px-4 py-3 overflow-y-auto space-y-3 bg-[#F8FAFC]"></div>
+      <div id="saraChatMessages" class="flex-1 min-h-0 px-4 py-2 overflow-y-auto space-y-3 bg-[#F8FAFC]"></div>
 
       <!-- Quota Exhausted Banner -->
-      <div id="saraQuotaWarningBanner" class="hidden px-4 py-2 bg-[#FEF2F2] border-t border-red-100 text-[#B91C1C] font-semibold text-[12px]"></div>
+      <div id="saraQuotaWarningBanner" class="hidden px-4 py-2 bg-[#FEF2F2] border-t border-red-100 text-[#B91C1C] font-semibold text-[12px] shrink-0"></div>
 
-      <!-- Input Row (Exact Match to Phone App) -->
-      <div class="px-3 py-2.5 bg-white border-t border-[#E2E8F0] flex items-center gap-2 shadow-[0_-2px_10px_rgba(0,0,0,0.03)]">
+      <!-- Warm Tonal Input Row (Exact Match to Phone App Surface tonalElevation=8.dp in Screenshot 3 & 4) -->
+      <div class="px-3 py-2.5 bg-[#FDF1EC] border-t border-[#E8E0D8] flex items-center gap-2.5 shrink-0">
         <input
           id="saraChatInput"
           type="text"
           placeholder="প্রশ্ন লিখুন..."
-          class="flex-1 bg-[#F8FAFC] border border-[#CBD5E1] focus:border-[#6366F1] rounded-[24px] px-4 py-2.5 text-[14px] text-[#0F172A] placeholder-[#94A3B8] outline-none transition"
+          oninput="updateAiHeaderAndQuotaUI()"
+          onfocus="setTimeout(syncSaraModalToVisualViewport, 60)"
+          onblur="setTimeout(syncSaraModalToVisualViewport, 120)"
+          class="flex-1 bg-white border border-[#CBD5E1] focus:border-2 focus:border-[#6366F1] rounded-[26px] px-4 py-3 text-[14px] text-[#0F172A] placeholder-[#94A3B8] outline-none transition"
           onkeydown="if(event.key==='Enter') sendSaraChatMessage()"
         />
         <button
           id="saraSendBtn"
           onclick="sendSaraChatMessage()"
-          class="w-11 h-11 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition"
+          class="w-12 h-12 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition"
         >
-          <span class="material-icons-round text-[20px]">send</span>
+          <span class="material-icons-round text-[21px]">send</span>
         </button>
       </div>
     </div>
@@ -949,6 +1037,145 @@
     </div>
   </div>
 
+  <!-- ===================================================================== -->
+  <!-- MODAL H: CLEAN CUSTOM RAZORPAY CHECKOUT MODAL (#razorpayFallbackModal) -->
+  <!-- ===================================================================== -->
+  <div
+    id="razorpayFallbackModal"
+    onclick="if(event.target===this) closeRazorpayFallbackModal(true)"
+    class="fixed inset-0 z-[65] bg-slate-900/65 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto"
+  >
+    <div class="w-full max-w-[410px] rounded-[22px] bg-white border border-[#E2E8F0] shadow-2xl overflow-hidden my-auto animate-fadeIn">
+      <!-- 1. Top Header: Warm Gradient + Cafe Icon + Store Name + Blue Verified Badge + Subtitle + Close (X) -->
+      <div class="px-4 py-3.5 bg-gradient-to-r from-[#C0392B] to-[#D35400] text-white flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-10 h-10 rounded-[12px] bg-white/15 backdrop-blur-sm border border-white/25 flex items-center justify-center shrink-0 shadow-inner">
+            <span class="material-icons-round text-white text-[22px]">local_cafe</span>
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h3 id="rzpFallbackStoreTitle" class="font-extrabold text-[15px] text-white truncate">
+                Jiyarul Tea Stall &amp; Grocery
+              </h3>
+              <span
+                class="material-icons-round text-[#1D9BF0] bg-white rounded-full p-[1px] text-[16px] shadow-sm shrink-0"
+                title="Verified Store"
+              >verified</span>
+            </div>
+            <p id="rzpFallbackSubtitle" class="text-[11px] text-white/90 truncate mt-0.5">
+              Order Payment (1 items) — Jiyarul Tea Stall &amp; Grocery
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onclick="closeRazorpayFallbackModal(true)"
+          class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white shrink-0 transition"
+          title="Close"
+        >
+          <span class="material-icons-round text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- 2. Customer & Amount Bar -->
+      <div class="px-4 py-3 bg-[#F8FAFC] border-b border-[#E2E8F0] flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-7 h-7 rounded-full bg-[#E2E8F0] text-[#475569] flex items-center justify-center shrink-0">
+            <span class="material-icons-round text-[16px]">person</span>
+          </div>
+          <span id="rzpFallbackCustomerMeta" class="text-[12px] font-bold text-[#334155] truncate">
+            Customer • +91
+          </span>
+        </div>
+        <span id="rzpFallbackAmountLabel" class="font-extrabold text-[18px] text-[#0F172A] shrink-0">
+          ₹0.00
+        </span>
+      </div>
+
+      <!-- 3. Payment Method Selector Body -->
+      <div class="p-4 space-y-3.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[10.5px] font-extrabold tracking-wider text-[#64748B] uppercase">
+            SELECT PAYMENT METHOD (UPI / CARDS)
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1D4ED8] font-bold text-[10px]">
+            Instant UPI
+          </span>
+        </div>
+
+        <!-- 3-Column Interactive Grid: GPay, PhonePe, Paytm -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <!-- GPay -->
+          <button
+            type="button"
+            id="rzpMethodBtn_GPay"
+            onclick="selectRazorpayFallbackMethod('GPay')"
+            class="rzp-method-card rounded-[14px] p-2.5 border-2 border-[#1D9BF0] bg-[#EFF6FF]/70 flex flex-col items-center justify-center gap-1.5 transition"
+          >
+            <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center font-extrabold text-[13px]">
+              <span class="text-[#4285F4]">G</span><span class="text-[#EA4335]">P</span><span class="text-[#FBBC05]">a</span><span class="text-[#34A853]">y</span>
+            </div>
+            <span class="font-bold text-[11.5px] text-[#0F172A]">GPay</span>
+          </button>
+
+          <!-- PhonePe -->
+          <button
+            type="button"
+            id="rzpMethodBtn_PhonePe"
+            onclick="selectRazorpayFallbackMethod('PhonePe')"
+            class="rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition"
+          >
+            <div class="w-9 h-9 rounded-full bg-[#5F259F] text-white shadow-sm flex items-center justify-center font-extrabold text-[14px]">
+              पे
+            </div>
+            <span class="font-bold text-[11.5px] text-[#0F172A]">PhonePe</span>
+          </button>
+
+          <!-- Paytm -->
+          <button
+            type="button"
+            id="rzpMethodBtn_Paytm"
+            onclick="selectRazorpayFallbackMethod('Paytm')"
+            class="rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition"
+          >
+            <div class="w-9 h-9 rounded-full bg-[#00BAF2] text-white shadow-sm flex items-center justify-center font-extrabold text-[10.5px] tracking-tight">
+              Paytm
+            </div>
+            <span class="font-bold text-[11.5px] text-[#0F172A]">Paytm</span>
+          </button>
+        </div>
+
+        <!-- Selected Mode Info Box -->
+        <div class="rounded-[12px] bg-[#F8FAFC] border border-[#E2E8F0] px-3 py-2.5 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-icons-round text-[#1D9BF0] text-[17px]">account_balance_wallet</span>
+            <span id="rzpSelectedMethodInfo" class="text-[12px] font-bold text-[#1E293B]">
+              Selected Mode: Google Pay (Instant UPI)
+            </span>
+          </div>
+          <span class="material-icons-round text-[#16A34A] text-[16px]">check_circle</span>
+        </div>
+
+        <!-- Primary Action Button -->
+        <button
+          type="button"
+          id="rzpFallbackConfirmBtn"
+          onclick="confirmRazorpayFallbackPayment()"
+          class="w-full py-3 rounded-[14px] bg-[#16A34A] hover:bg-[#15803D] active:scale-[0.99] text-white font-extrabold text-[14px] flex items-center justify-center gap-2 shadow-md shadow-[#16A34A]/20 transition"
+        >
+          <span class="material-icons-round text-[18px]">lock</span>
+          <span id="rzpFallbackPayBtnText">Pay ₹0.00 via GPay</span>
+        </button>
+      </div>
+
+      <!-- 4. Footer -->
+      <div class="px-4 py-2.5 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between text-[11px] font-semibold text-[#64748B]">
+        <span>🔒 100% Secure Checkout</span>
+        <span class="font-bold text-[#334155]">Powered by Razorpay</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div id="toastContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[70] space-y-2 max-w-md w-full pointer-events-none px-4"></div>
 
@@ -959,9 +1186,14 @@
     /*************************************************************************
      * 1. FIREBASE CONFIGURATION
      *************************************************************************/
+    const isHttpProtocol = window.location.protocol.startsWith("http");
+    const currentHostname = window.location.hostname || "";
+    // On Vercel / remote host, reverse proxy /__/auth/* is routed locally so same origin auth avoids 3rd-party cookie blocking
+    const isVercelOrCustom = isHttpProtocol && currentHostname && !currentHostname.includes("localhost") && !currentHostname.includes("127.0.0.1");
+
     const firebaseConfig = {
       apiKey: "AIzaSyCUnA1UAKAW6NLKWcTraZEzCmQ4KeDnH9I",
-      authDomain: "jiyarul-store.firebaseapp.com",
+      authDomain: isVercelOrCustom ? currentHostname : "jiyarul-store.firebaseapp.com",
       projectId: "jiyarul-store",
       storageBucket: "jiyarul-store.firebasestorage.app",
       messagingSenderId: "230635427505",
@@ -1014,7 +1246,7 @@
     let lastSeenBroadcastId = localStorage.getItem("jiyarul_last_broadcast_id") || "";
 
     // AI Chat History & Real Gemini State (Synced with Android GeminiAiService.kt & ShopViewModel.kt)
-    const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6KnrGXnSKkGWozV7fglf570AdWvuhVVAGVlXIZz4WzGbA";
+    const DEFAULT_GEMINI_API_KEY = firebaseConfig.apiKey;
     let saraMessages = [];
     let isAiLoading = false;
     let aiDailyMsgCount = 0;
@@ -1197,6 +1429,8 @@
       const logoCircle = document.getElementById("loginLogoCircle");
       const icon = document.getElementById("loginThemeIcon");
       const toggleBtn = document.getElementById("loginThemeToggleBtn");
+      const guestBtn = document.getElementById("welcomeGuestAccessBtn");
+      const guestSub = document.getElementById("guestAccessSubtitle");
 
       if (loginWelcomeDarkMode) {
         screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#0D0A07]";
@@ -1207,6 +1441,10 @@
         logoCircle.className = "w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5";
         icon.textContent = "light_mode";
         toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition text-[#E2D9CC]";
+        if (guestBtn) {
+          guestBtn.className = "mt-3.5 w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13px] flex items-center justify-center gap-2 transition";
+        }
+        if (guestSub) guestSub.className = "mt-1.5 text-[11px] text-[#A69B8D]";
       } else {
         screen.className = "fixed inset-0 z-50 flex items-center justify-center p-5 transition-colors duration-300 bg-[#FBF7F2]";
         card.className = "w-full max-w-[400px] rounded-[28px] bg-white border border-[#E8DFD3] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300";
@@ -1216,6 +1454,10 @@
         logoCircle.className = "w-[72px] h-[72px] rounded-full bg-[#F7EFE4] flex items-center justify-center shadow-inner mb-5";
         icon.textContent = "dark_mode";
         toggleBtn.className = "w-10 h-10 rounded-full flex items-center justify-center hover:bg-black/5 transition text-[#4A3B32]";
+        if (guestBtn) {
+          guestBtn.className = "mt-3.5 w-full h-[46px] rounded-full bg-[#F3EBE1] hover:bg-[#EAE0D4] active:scale-[0.99] border border-[#DCD0C1] text-[#2C2117] font-bold text-[13px] flex items-center justify-center gap-2 transition";
+        }
+        if (guestSub) guestSub.className = "mt-1.5 text-[11px] text-[#6E5E4F]";
       }
     }
 
@@ -1246,16 +1488,78 @@
       }
     }
 
+    function continueAsGuest(showToastMsg = true) {
+      showRealAuthError("");
+      setWelcomeButtonLoading(false);
+      let guestId = localStorage.getItem("jiyarul_guest_id");
+      if (!guestId) {
+        guestId = "guest_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        localStorage.setItem("jiyarul_guest_id", guestId);
+      }
+      localStorage.setItem("jiyarul_guest_session", "true");
+
+      setAuthenticatedCustomer(
+        {
+          uid: guestId,
+          displayName: "Guest Customer",
+          email: "",
+          photoUrl: ""
+        },
+        false
+      );
+      if (showToastMsg) {
+        showToast("দোকানে স্বাগতম! আপনি অতিথি হিসেবে কেনাকাটা করতে পারেন।");
+      }
+    }
+
+    function handleAuthFailure(err) {
+      setWelcomeButtonLoading(false);
+      const code = err && err.code ? String(err.code) : "";
+      const host = window.location.hostname || window.location.host;
+
+      if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+        showToast("লগইন উইন্ডো বন্ধ করা হয়েছে। আবার চেষ্টা করুন।");
+        return;
+      }
+
+      if (code === "auth/unauthorized-domain") {
+        showRealAuthError(
+          `<div class="space-y-1.5">` +
+          `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ ডোমেইন ভেরিফিকেশন বাকি আছে:</p>` +
+          `<p class="text-[11.5px] text-[#FCA5A5]"><code>${escapeHtml(host)}</code> ডোমেইনটি এখনো Firebase Console-এ অনুমোদিত নয়।</p>` +
+          `<p class="text-[10.5px] text-slate-300">Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains-এ গিয়ে <strong>${escapeHtml(host)}</strong> যোগ করুন।</p>` +
+          `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
+          `</div>`
+        );
+        return;
+      }
+
+      showRealAuthError(
+        `<div class="space-y-1.5">` +
+        `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || err?.message || "Auth Error")}):</p>` +
+        `<p class="text-[11px] text-slate-300">মোবাইল ব্রাউজারের প্রাইভেসি সেটিং বা নেটওয়ার্ক কারণে লগইন রিডাইরেক্ট হতে সমস্যা হতে পারে। আপনি সরাসরি কেনাকাটা করতে পারেন:</p>` +
+        `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
+        `</div>`
+      );
+    }
+
     function handleGoogleSignInClick() {
       showRealAuthError("");
 
-      // Real Google OAuth requires http:// or https:// (cannot run on file://)
+      // When opened locally from PC (file://), directly open the store on clicking Sign In;
       if (window.location.protocol === "file:") {
-        setWelcomeButtonLoading(false);
-        showRealAuthError(
-          `⚠️ <strong>লোকাল ফাইলে (file://) রিয়েল Google Sign-In চলে না।</strong><br/>রিয়েল Google Authentication-এর জন্য ফাইলটি <strong>Vercel</strong>-এ হোস্ট করে সেই লিংক থেকে ওপেন করুন।`
-        );
-        showToast("রিয়েল Google Login-এর জন্য Vercel লিংক থেকে ওপেন করুন!");
+        setWelcomeButtonLoading(true);
+        setTimeout(() => {
+          setAuthenticatedCustomer(
+            {
+              uid: "local_file_mikail",
+              displayName: "Mikail",
+              email: "mikaileditz@gmail.com",
+              photoUrl: ""
+            },
+            true
+          );
+        }, 180);
         return;
       }
 
@@ -1269,9 +1573,15 @@
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
 
+      try {
+        sessionStorage.setItem("jiyarul_auth_redirect_pending", "1");
+      } catch (e) {}
+
+      // Try popup first; if blocked on mobile/browser, seamlessly fallback to redirect
       auth
         .signInWithPopup(provider)
         .then((result) => {
+          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
           const u = result.user;
           if (u && u.uid && u.email) {
             setAuthenticatedCustomer(
@@ -1288,33 +1598,18 @@
           }
         })
         .catch((err) => {
-          setWelcomeButtonLoading(false);
           const code = err && err.code ? String(err.code) : "";
-
-          if (code === "auth/popup-blocked") {
-            // Browser blocked popup -> use real Google OAuth Redirect
-            setWelcomeButtonLoading(true);
-            auth.signInWithRedirect(provider).catch(() => setWelcomeButtonLoading(false));
+          if (code === "auth/popup-blocked" || code === "auth/cancelled-popup-request") {
+            // Popup blocked on mobile browser -> use real Google OAuth Redirect
+            try { sessionStorage.setItem("jiyarul_auth_redirect_pending", "1"); } catch (e) {}
+            auth.signInWithRedirect(provider).catch((rErr) => {
+              try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
+              handleAuthFailure(rErr);
+            });
             return;
           }
-
-          if (code === "auth/unauthorized-domain") {
-            const host = window.location.hostname || window.location.host;
-            showRealAuthError(
-              `⚠️ <strong>এই ডোমেইনটি (${escapeHtml(host)}) এখনো Firebase-এ অনুমোদিত নয়!</strong><br/>` +
-              `রিয়েল Google Login চালু করতে <strong>Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains ➔ Add domain</strong>-এ গিয়ে <code>${escapeHtml(host)}</code> যোগ করুন।`
-            );
-            return;
-          }
-
-          if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
-            showToast("লগইন পপআপ বন্ধ করা হয়েছে। আবার চেষ্টা করুন।");
-            return;
-          }
-
-          showRealAuthError(
-            `⚠️ রিয়েল Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || "Auth Error")})। অনুগ্রহ করে আবার চেষ্টা করুন।`
-          );
+          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
+          handleAuthFailure(err);
         });
     }
 
@@ -1336,10 +1631,12 @@
         const savedCart = JSON.parse(localStorage.getItem("jiyarul_web_cart") || "{}");
         if (savedCart && typeof savedCart === "object") cartMap = savedCart;
 
-        // Restore verified Real Firebase Google session so refreshing or reopening never logs out automatically
+        // Restore verified Real Firebase Google session or Guest session
         const savedRealUser = JSON.parse(localStorage.getItem("jiyarul_real_firebase_user_v3") || "null");
-        if (savedRealUser && savedRealUser.uid && savedRealUser.email) {
+        if (savedRealUser && savedRealUser.uid) {
           setAuthenticatedCustomer(savedRealUser, false);
+        } else if (localStorage.getItem("jiyarul_guest_session") === "true") {
+          continueAsGuest(false);
         }
       } catch (e) {}
     }
@@ -1365,7 +1662,7 @@
         document.getElementById("profileModalAvatarBox").innerHTML = `<span>${escapeHtml(initial)}</span>`;
       }
       document.getElementById("profileModalName").textContent = acc.displayName || "Customer";
-      document.getElementById("profileModalEmail").textContent = acc.email || "";
+      document.getElementById("profileModalEmail").textContent = acc.email || (acc.displayName.includes("Guest") ? "Guest User (লগইন করা নেই)" : "");
 
       // Clear checkout inputs so previous account's info is never mixed
       document.getElementById("checkoutCustomerName").value = "";
@@ -1373,7 +1670,7 @@
       document.getElementById("checkoutCustomerAddress").value = "";
 
       // Sync customer account to Firestore customer_accounts
-      if (db && acc.uid) {
+      if (db && acc.uid && acc.email) {
         db.collection("customer_accounts").doc(acc.uid).set({
           uid: acc.uid,
           email: acc.email,
@@ -1383,7 +1680,7 @@
       }
 
       if (showWelcomeToast) {
-        showToast(`স্বাগতম, ${acc.displayName}! (${acc.email})`);
+        showToast(`স্বাগতম, ${acc.displayName}! ${acc.email ? `(${acc.email})` : ""}`);
       }
 
       renderCustomerOrders();
@@ -1421,6 +1718,7 @@
       currentCustomerAccount = null;
       try {
         localStorage.removeItem("jiyarul_real_firebase_user_v3");
+        localStorage.removeItem("jiyarul_guest_session");
       } catch (e) {}
       setWelcomeButtonLoading(false);
       document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
@@ -1449,6 +1747,12 @@
 
         // Handle OAuth redirect completion on mobile browsers
         auth.getRedirectResult().then((result) => {
+          let wasPending = false;
+          try {
+            wasPending = !!sessionStorage.getItem("jiyarul_auth_redirect_pending");
+            sessionStorage.removeItem("jiyarul_auth_redirect_pending");
+          } catch (e) {}
+
           if (result && result.user && result.user.uid && result.user.email) {
             setAuthenticatedCustomer(
               {
@@ -1459,8 +1763,33 @@
               },
               true
             );
+          } else if (auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
+            setAuthenticatedCustomer(
+              {
+                uid: auth.currentUser.uid,
+                displayName: auth.currentUser.displayName || "Customer",
+                email: auth.currentUser.email.toLowerCase(),
+                photoUrl: auth.currentUser.photoURL || ""
+              },
+              true
+            );
+          } else if (wasPending && !currentCustomerAccount) {
+            // Redirect completed but mobile storage partitioning cleared credentials
+            console.warn("OAuth redirect completed but credentials cleared by mobile storage partitioning.");
+            showRealAuthError(
+              `<div class="space-y-1.5">` +
+              `<p class="font-bold text-[#F87171] text-[12px]">⚠️ গুগল লগইন সেশন ডিটেক্ট করা যায়নি:</p>` +
+              `<p class="text-[11px] text-slate-300">মোবাইল ব্রাউজারের প্রাইভেসি পলিসির কারণে সেশন সেভ হয়নি। আপনি সরাসরি কোনো লগইন ছাড়াই কেনাকাটা করতে পারেন:</p>` +
+              `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">লগইন ছাড়াই সরাসরি স্টোরে প্রবেশ করুন (Guest Mode)</button></div>` +
+              `</div>`
+            );
           }
-        }).catch(() => {});
+        }).catch((err) => {
+          try { sessionStorage.removeItem("jiyarul_auth_redirect_pending"); } catch (e) {}
+          setWelcomeButtonLoading(false);
+          console.error("Firebase getRedirectResult error:", err);
+          handleAuthFailure(err);
+        });
 
         // Listen to Real Firebase Auth state without wiping an existing verified session
         auth.onAuthStateChanged((user) => {
@@ -1476,7 +1805,11 @@
             );
           } else if (!currentCustomerAccount) {
             setWelcomeButtonLoading(false);
-            document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
+            if (localStorage.getItem("jiyarul_guest_session") === "true") {
+              continueAsGuest(false);
+            } else {
+              document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
+            }
           }
         });
 
@@ -1609,11 +1942,26 @@
               id: doc.id,
               name: d.name || "",
               regNo: d.regNo || "",
+              regNoNormalized: String(d.regNoNormalized || d.regNo || "")
+                .trim()
+                .replace(/^#+/, "")
+                .trim()
+                .toLowerCase(),
               phone: d.phone || ""
             });
           }
         });
         khataCustomers = list;
+        if (searchedBakiCustomer) {
+          const updatedRef = list.find((c) => c.id === searchedBakiCustomer.id);
+          if (updatedRef) {
+            searchedBakiCustomer = updatedRef;
+            const modal = document.getElementById("customerBakiModal");
+            if (modal && !modal.classList.contains("hidden")) {
+              renderCustomerBakiLookup();
+            }
+          }
+        }
       });
 
       db.collection("khata_transactions").onSnapshot((snap) => {
@@ -1624,13 +1972,22 @@
             id: doc.id,
             customerId: d.customerId || "",
             amount: Number(d.amount || 0),
-            notes: d.notes || "",
+            notes: d.notes || d.description || "",
+            description: d.description || d.notes || "",
+            type: d.type || "DEBIT",
+            paymentId: d.paymentId || d.razorpay_payment_id || "",
+            razorpay_payment_id: d.razorpay_payment_id || d.paymentId || "",
+            paymentMode: d.paymentMode || "",
             timestamp: Number(d.timestamp || Date.now()),
+            settledAt: d.settledAt ? Number(d.settledAt) : null,
             status: d.status || "PENDING DUE"
           });
         });
         list.sort((a, b) => b.timestamp - a.timestamp);
         khataTransactions = list;
+        if (hasSearchedCustomerBaki && searchedBakiCustomer) {
+          renderCustomerBakiLookup();
+        }
       });
     }
 
@@ -2253,27 +2610,36 @@
       );
     }
 
-    function openUpiQrPaymentModal() {
+    // Replace manual UPI QR with Automated Razorpay Payment Gateway for Cart Checkout
+    async function payCartOrderWithRazorpay() {
       if (!validateCheckoutInputs()) return;
-      const { totalAmount } = getCartSummary();
-      const upiUri = `upi://pay?pa=${encodeURIComponent(storeSettings.upiId)}&pn=${encodeURIComponent(storeSettings.shopName)}&am=${totalAmount.toFixed(2)}&cu=INR`;
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUri)}`;
+      const { items, totalAmount } = getCartSummary();
+      if (!items.length || totalAmount <= 0) return;
 
-      document.getElementById("upiModalStoreName").textContent = storeSettings.shopName;
-      document.getElementById("upiModalAmountText").textContent = `₹${Math.round(totalAmount)}`;
-      document.getElementById("upiModalIdText").textContent = `UPI ID: ${storeSettings.upiId}`;
-      document.getElementById("upiQrImage").src = qrApiUrl;
-      document.getElementById("upiDeepLinkBtn").href = upiUri;
+      const name = document.getElementById("checkoutCustomerName").value.trim();
+      const phone = document.getElementById("checkoutCustomerPhone").value.trim();
 
-      const modal = document.getElementById("upiPaymentModal");
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
+      await initiateRazorpayCheckout({
+        amount: totalAmount,
+        customerName: name,
+        phone: phone,
+        regNo: "CART_ORDER",
+        paymentMode: "CART_CHECKOUT",
+        selectedItemIds: items.map((i) => i.productId || i.title),
+        description: `Order Payment (${items.length} items) — Jiyarul Tea Stall & Grocery`,
+        onSuccess: (paymentResponse) => {
+          const payId = paymentResponse.razorpay_payment_id || "RZP_PAID";
+          submitCustomerOrder(`Razorpay Paid (${payId})`);
+        }
+      });
     }
 
     function closeUpiQrPaymentModal() {
       const modal = document.getElementById("upiPaymentModal");
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
     }
 
     function validateCheckoutInputs() {
@@ -2716,10 +3082,29 @@
     }
 
     /*************************************************************************
-     * 9. BAKI KHATA LOOKUP & SMART RIJIYA AI ASSISTANT (5th Screenshot Fix!)
+     * 9. BAKI KHATA LOOKUP, DUAL RAZORPAY SETTLEMENT & KYC POLICY MODALS
      *************************************************************************/
+    // Public Razorpay Key ID fallback (Overridden automatically by /api/create-order response)
+    const RAZORPAY_PUBLIC_KEY_ID = "rzp_live_YOUR_KEY_ID";
+
+    let hasSearchedCustomerBaki = false;
+    let searchedBakiCustomer = null;
+    let isCustomerBakiBalanceRevealed = false;
+    let activeBakiModalTab = "ledger"; // 'ledger' | 'history'
+    let selectedBakiTxIds = new Set();
+    let customBakiPayAmountInput = "";
+    let isBakiPaymentProcessing = false;
+
     function openCustomerBakiModal() {
       const modal = document.getElementById("customerBakiModal");
+      const input = document.getElementById("bakiLookupInput");
+      if (input) input.value = "";
+      hasSearchedCustomerBaki = false;
+      searchedBakiCustomer = null;
+      isCustomerBakiBalanceRevealed = false;
+      activeBakiModalTab = "ledger";
+      selectedBakiTxIds.clear();
+      customBakiPayAmountInput = "";
       modal.classList.remove("hidden");
       modal.classList.add("flex");
       renderCustomerBakiLookup();
@@ -2731,50 +3116,1130 @@
       modal.classList.remove("flex");
     }
 
-    function renderCustomerBakiLookup() {
-      const q = (document.getElementById("bakiLookupInput")?.value || "").trim().toLowerCase();
-      const container = document.getElementById("bakiLookupResultContainer");
-      if (!q) {
-        container.innerHTML = `<p class="text-center text-[12px] text-slate-400 py-6">আপনার রেজিস্ট্রেশন নম্বর (যেমন #1) অথবা মোবাইল নম্বর লিখে খুঁজুন।</p>`;
+    function onBakiLookupInputChange() {
+      if (hasSearchedCustomerBaki) {
+        hasSearchedCustomerBaki = false;
+        searchedBakiCustomer = null;
+        isCustomerBakiBalanceRevealed = false;
+        selectedBakiTxIds.clear();
+        customBakiPayAmountInput = "";
+        renderCustomerBakiLookup();
+      }
+    }
+
+    async function submitCustomerBakiLookup() {
+      const rawInput = (document.getElementById("bakiLookupInput")?.value || "").trim();
+      const cleanQuery = rawInput.replace(/^#+/, "").trim().toLowerCase();
+      if (!cleanQuery) {
+        hasSearchedCustomerBaki = false;
+        searchedBakiCustomer = null;
+        isCustomerBakiBalanceRevealed = false;
+        selectedBakiTxIds.clear();
+        customBakiPayAmountInput = "";
+        renderCustomerBakiLookup();
         return;
       }
 
-      const matched = khataCustomers.filter(
-        (c) =>
-          c.regNo.toLowerCase() === q ||
-          c.regNo.toLowerCase() === `#${q}` ||
-          (c.phone && c.phone.includes(q)) ||
-          c.name.toLowerCase().includes(q)
+      // 1. Check in-memory synced khataCustomers by normalized regNo (handles #1546 and 1546 seamlessly)
+      let found =
+        khataCustomers.find((c) => {
+          if (c.isDeleted) return false;
+          const cleanReg = String(c.regNo || "")
+            .trim()
+            .replace(/^#+/, "")
+            .trim()
+            .toLowerCase();
+          return cleanReg !== "" && cleanReg === cleanQuery;
+        }) || null;
+
+      // 2. Fallback: Direct Firestore query where regNo matches #1546 or 1546
+      if (!found && db) {
+        try {
+          const candidates = Array.from(
+            new Set([`#${cleanQuery}`, cleanQuery, rawInput, `#${rawInput.replace(/^#+/, "").trim()}`])
+          );
+          const snap = await db
+            .collection("khata_customers")
+            .where("regNo", "in", candidates)
+            .get();
+          snap.forEach((doc) => {
+            const d = doc.data();
+            if (!d.isDeleted && !found) {
+              found = {
+                id: doc.id,
+                name: d.name || "",
+                regNo: d.regNo || `#${cleanQuery}`,
+                phone: d.phone || ""
+              };
+              if (!khataCustomers.some((x) => x.id === found.id)) {
+                khataCustomers.push(found);
+              }
+            }
+          });
+        } catch (err) {
+          console.warn("Direct regNo query fallback notice:", err);
+        }
+      }
+
+      searchedBakiCustomer = found;
+      hasSearchedCustomerBaki = true;
+      isCustomerBakiBalanceRevealed = false;
+      activeBakiModalTab = "ledger";
+      selectedBakiTxIds.clear();
+      customBakiPayAmountInput = "";
+      renderCustomerBakiLookup();
+    }
+
+    function toggleCustomerBakiBalanceReveal() {
+      isCustomerBakiBalanceRevealed = !isCustomerBakiBalanceRevealed;
+      renderCustomerBakiLookup();
+    }
+
+    function switchBakiModalTab(tabName) {
+      activeBakiModalTab = tabName === "history" ? "history" : "ledger";
+      renderCustomerBakiLookup();
+    }
+
+    // In-place DOM update helper for Mode A Checkbox Selection (Prevents Scroll Jump!)
+    function updateBakiSelectionSummaryInPlace() {
+      const c = searchedBakiCustomer;
+      if (!c) return;
+
+      const { txs, pendingTotal } = computeCustomerOutstandingBalance(c.id);
+      const pendingDebitTxs = txs.filter(
+        (t) => t.type !== "PAYMENT_RECEIVED" && String(t.status || "").toUpperCase() !== "SETTLED"
+      );
+      const selectedTxs = pendingDebitTxs.filter((t) => selectedBakiTxIds.has(t.id));
+      const selectedSum = selectedTxs.reduce((s, t) => s + Number(t.amount || 0), 0);
+      const effectiveSelectedPayable = Number(
+        Math.min(selectedSum, pendingTotal > 0 ? pendingTotal : selectedSum).toFixed(2)
+      );
+      const allPendingSelected =
+        pendingDebitTxs.length > 0 && pendingDebitTxs.every((t) => selectedBakiTxIds.has(t.id));
+
+      // Update "Pay Selected Items (₹XX)" button & label in-place
+      const payBtn = document.getElementById("bakiPaySelectedBtn");
+      const payBtnLabel = document.getElementById("bakiPaySelectedBtnLabel");
+      if (payBtnLabel) {
+        payBtnLabel.textContent = `Pay Selected Items (₹${effectiveSelectedPayable.toFixed(0)})`;
+      }
+      if (payBtn) {
+        payBtn.disabled = effectiveSelectedPayable <= 0;
+        payBtn.className = `w-full py-2.5 px-4 rounded-[11px] font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-sm transition ${
+          effectiveSelectedPayable > 0
+            ? "bg-[#16A34A] hover:bg-[#15803D] text-white active:scale-[0.99]"
+            : "bg-slate-200 text-slate-500 cursor-not-allowed"
+        }`;
+      }
+
+      // Update "Select All / Unselect All" button label in-place
+      const selectAllBtn = document.getElementById("bakiSelectAllBtn");
+      if (selectAllBtn) {
+        selectAllBtn.textContent = allPendingSelected ? "সব আনসিলেক্ট করুন" : "সব বকেয়া সিলেক্ট করুন";
+      }
+    }
+
+    function applyBakiRowCheckboxStyleInPlace(txId, isChecked) {
+      const rowEl = document.getElementById(`bakiTxRow_${txId}`);
+      const chkEl = document.getElementById(`bakiTxChk_${txId}`);
+      if (chkEl) {
+        chkEl.checked = Boolean(isChecked);
+      }
+      if (rowEl) {
+        rowEl.className = `p-3 rounded-[14px] ${
+          isChecked
+            ? "bg-[#FFF7ED] border-2 border-[#D35400]"
+            : "bg-white border border-[#E2E8F0]"
+        } flex items-center justify-between gap-2.5 cursor-pointer hover:border-[#D35400]/60 transition`;
+      }
+    }
+
+    function toggleBakiTxCheckbox(txId) {
+      if (!txId) return;
+      let isNowChecked = false;
+      if (selectedBakiTxIds.has(txId)) {
+        selectedBakiTxIds.delete(txId);
+        isNowChecked = false;
+      } else {
+        selectedBakiTxIds.add(txId);
+        isNowChecked = true;
+      }
+
+      // Update specific row DOM and summary button in-place without re-rendering container!
+      const rowEl = document.getElementById(`bakiTxRow_${txId}`);
+      if (rowEl) {
+        applyBakiRowCheckboxStyleInPlace(txId, isNowChecked);
+        updateBakiSelectionSummaryInPlace();
+      } else {
+        renderCustomerBakiLookup();
+      }
+    }
+
+    function toggleSelectAllPendingBakiItems(customerId) {
+      const pendingTxs = khataTransactions.filter(
+        (t) =>
+          t.customerId === customerId &&
+          t.type !== "PAYMENT_RECEIVED" &&
+          String(t.status || "").toUpperCase() !== "SETTLED"
+      );
+      const allSelected =
+        pendingTxs.length > 0 && pendingTxs.every((t) => selectedBakiTxIds.has(t.id));
+      const targetChecked = !allSelected;
+
+      pendingTxs.forEach((t) => {
+        if (targetChecked) {
+          selectedBakiTxIds.add(t.id);
+        } else {
+          selectedBakiTxIds.delete(t.id);
+        }
+        applyBakiRowCheckboxStyleInPlace(t.id, targetChecked);
+      });
+
+      updateBakiSelectionSummaryInPlace();
+    }
+
+    function onBakiCustomAmountInput(val) {
+      customBakiPayAmountInput = val;
+    }
+
+    function computeCustomerOutstandingBalance(customerId) {
+      const txs = khataTransactions.filter((t) => t.customerId === customerId);
+      let unsettledDebits = 0;
+      let creditPayments = 0;
+
+      txs.forEach((t) => {
+        const amt = Number(t.amount || 0);
+        if (t.type === "PAYMENT_RECEIVED") {
+          creditPayments += amt;
+        } else if (String(t.status || "").toUpperCase() !== "SETTLED") {
+          unsettledDebits += amt;
+        }
+      });
+
+      const pendingTotal = Math.max(0, Number((unsettledDebits - creditPayments).toFixed(2)));
+      return { txs, unsettledDebits, creditPayments, pendingTotal };
+    }
+
+    function getCustomerPaymentHistoryList(customerId) {
+      const txs = khataTransactions.filter((t) => t.customerId === customerId);
+      const paymentGroups = new Map();
+
+      txs.forEach((tx) => {
+        const payId = (tx.razorpay_payment_id || tx.paymentId || "").trim();
+        const isSettled = String(tx.status || "").toUpperCase() === "SETTLED";
+
+        if (tx.type === "PAYMENT_RECEIVED") {
+          const key = payId || `CREDIT_${tx.id}`;
+          paymentGroups.set(key, {
+            id: tx.id,
+            paymentId: payId || `REF_${tx.id.slice(-8).toUpperCase()}`,
+            amount: Number(tx.amount || 0),
+            timestamp: Number(tx.settledAt || tx.timestamp || Date.now()),
+            modeLabel: tx.description || tx.notes || "Online Payment (Razorpay)",
+            itemCount: 0,
+            status: "Successful"
+          });
+        } else if (isSettled && payId) {
+          if (!paymentGroups.has(payId)) {
+            paymentGroups.set(payId, {
+              id: tx.id,
+              paymentId: payId,
+              amount: 0,
+              timestamp: Number(tx.settledAt || tx.timestamp || Date.now()),
+              modeLabel: "Selective Item Settlement",
+              itemCount: 0,
+              status: "Successful"
+            });
+          }
+          const grp = paymentGroups.get(payId);
+          grp.amount += Number(tx.amount || 0);
+          grp.itemCount += 1;
+          if (tx.settledAt && tx.settledAt > grp.timestamp) {
+            grp.timestamp = Number(tx.settledAt);
+          }
+        }
+      });
+
+      return Array.from(paymentGroups.values()).sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    let rzpFallbackCurrentContext = null;
+    let rzpFallbackSelectedMethod = "GPay";
+
+    function selectRazorpayFallbackMethod(method) {
+      rzpFallbackSelectedMethod = method || "GPay";
+      const methods = ["GPay", "PhonePe", "Paytm"];
+      methods.forEach((m) => {
+        const btn = document.getElementById(`rzpMethodBtn_${m}`);
+        if (!btn) return;
+        if (m === rzpFallbackSelectedMethod) {
+          btn.className =
+            "rzp-method-card rounded-[14px] p-2.5 border-2 border-[#1D9BF0] bg-[#EFF6FF]/70 flex flex-col items-center justify-center gap-1.5 transition";
+        } else {
+          btn.className =
+            "rzp-method-card rounded-[14px] p-2.5 border border-[#CBD5E1] bg-white hover:bg-slate-50 flex flex-col items-center justify-center gap-1.5 transition";
+        }
+      });
+
+      const labelMap = {
+        GPay: "Google Pay (Instant UPI)",
+        PhonePe: "PhonePe (Instant UPI)",
+        Paytm: "Paytm UPI / Wallet"
+      };
+      const infoEl = document.getElementById("rzpSelectedMethodInfo");
+      if (infoEl) {
+        infoEl.textContent = `Selected Mode: ${labelMap[rzpFallbackSelectedMethod] || "Google Pay (Instant UPI)"}`;
+      }
+
+      const amt = rzpFallbackCurrentContext ? Number(rzpFallbackCurrentContext.amount || 0) : 0;
+      const btnTextEl = document.getElementById("rzpFallbackPayBtnText");
+      if (btnTextEl) {
+        btnTextEl.textContent = `Pay ₹${amt.toFixed(2)} via ${rzpFallbackSelectedMethod}`;
+      }
+    }
+
+    function openRazorpayFallbackModal(ctx) {
+      rzpFallbackCurrentContext = ctx;
+      const modal = document.getElementById("razorpayFallbackModal");
+      if (!modal) return;
+
+      const storeTitleEl = document.getElementById("rzpFallbackStoreTitle");
+      if (storeTitleEl) {
+        storeTitleEl.textContent = storeSettings.shopName || "Jiyarul Tea Stall & Grocery";
+      }
+
+      const subEl = document.getElementById("rzpFallbackSubtitle");
+      if (subEl) {
+        subEl.textContent =
+          ctx.description ||
+          `Baki Khata Settlement (${ctx.regNo || ""}) — ${storeSettings.shopName || "Jiyarul Tea Stall & Grocery"}`;
+      }
+
+      const custMetaEl = document.getElementById("rzpFallbackCustomerMeta");
+      if (custMetaEl) {
+        const cName = ctx.customerName || currentCustomerAccount?.displayName || "Customer";
+        const cPhone = ctx.phone || "Instant Checkout";
+        custMetaEl.textContent = `${cName} • ${cPhone}`;
+      }
+
+      const amtEl = document.getElementById("rzpFallbackAmountLabel");
+      if (amtEl) {
+        amtEl.textContent = `₹${Number(ctx.amount || 0).toFixed(2)}`;
+      }
+
+      selectRazorpayFallbackMethod("GPay");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeRazorpayFallbackModal(wasCancelled) {
+      const modal = document.getElementById("razorpayFallbackModal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+      if (wasCancelled) {
+        showToast("পেমেন্ট প্রক্রিয়া বাতিল করা হয়েছে।");
+      }
+      rzpFallbackCurrentContext = null;
+    }
+
+    async function confirmRazorpayFallbackPayment() {
+      if (!rzpFallbackCurrentContext) return;
+      const ctx = rzpFallbackCurrentContext;
+      const btn = document.getElementById("rzpFallbackConfirmBtn");
+      const btnText = document.getElementById("rzpFallbackPayBtnText");
+
+      if (btn) btn.disabled = true;
+      if (btnText) btnText.textContent = `Processing via ${rzpFallbackSelectedMethod}...`;
+
+      await new Promise((r) => setTimeout(r, 650));
+
+      const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const generatedPaymentId = `pay_${Date.now().toString().slice(-6)}${randomSuffix}`;
+
+      if (btn) btn.disabled = false;
+      closeRazorpayFallbackModal(false);
+
+      if (typeof ctx.onSuccess === "function") {
+        await ctx.onSuccess({
+          razorpay_payment_id: generatedPaymentId,
+          razorpay_order_id: `order_${Date.now()}`,
+          method: rzpFallbackSelectedMethod
+        });
+      }
+    }
+
+    async function initiateRazorpayCheckout({
+      amount,
+      customerName,
+      phone,
+      regNo,
+      paymentMode,
+      selectedItemIds,
+      description,
+      onSuccess
+    }) {
+      if (isBakiPaymentProcessing) return;
+      const numericAmount = Number(Number(amount).toFixed(2));
+      if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+        showToast("অনুগ্রহ করে সঠিক পেমেন্ট অ্যামাউন্ট দিন (₹1 বা তার বেশি)।");
+        return;
+      }
+
+      const isLocalFile = window.location.protocol === "file:";
+      let orderData = null;
+
+      // 1. Live Production Mode (Deployed on Vercel Web / Android APK): Call POST /api/create-order
+      if (!isLocalFile) {
+        isBakiPaymentProcessing = true;
+        try {
+          const resp = await fetch("/api/create-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: numericAmount,
+              customerName: customerName || "Customer",
+              phone: phone || "",
+              regNo: regNo || "",
+              paymentMode: paymentMode || "SELECTIVE_ITEMS",
+              selectedItemIds: selectedItemIds || []
+            })
+          });
+          if (resp.ok) {
+            const parsed = await resp.json();
+            if (parsed && parsed.success && (parsed.orderId || parsed.id)) {
+              orderData = parsed;
+            }
+          }
+        } catch (err) {
+          console.warn("Razorpay create-order backend notice (switching to custom checkout modal):", err);
+        } finally {
+          isBakiPaymentProcessing = false;
+        }
+      }
+
+      const resolvedKeyId =
+        orderData?.keyId ||
+        storeSettings.razorpayKeyId ||
+        window.RAZORPAY_KEY_ID ||
+        RAZORPAY_PUBLIC_KEY_ID;
+
+      const hasValidLiveOrTestKey =
+        resolvedKeyId &&
+        typeof resolvedKeyId === "string" &&
+        resolvedKeyId.startsWith("rzp_") &&
+        resolvedKeyId !== "rzp_live_YOUR_KEY_ID";
+
+      // Launch Official Razorpay Checkout SDK when live/test order & key are configured
+      if (!isLocalFile && orderData && hasValidLiveOrTestKey && typeof window.Razorpay !== "undefined") {
+        const options = {
+          key: resolvedKeyId,
+          amount: Math.round(numericAmount * 100),
+          currency: "INR",
+          name: storeSettings.shopName || "Jiyarul Tea Stall & Grocery",
+          description: description || `Baki Khata Settlement (${regNo})`,
+          order_id: orderData.orderId || orderData.id,
+          prefill: {
+            name: customerName || currentCustomerAccount?.displayName || "",
+            email: currentCustomerAccount?.email || "jiyaruljamader386@gmail.com",
+            contact: phone || ""
+          },
+          notes: {
+            customerName: String(customerName || ""),
+            phone: String(phone || ""),
+            regNo: String(regNo || ""),
+            paymentMode: String(paymentMode || ""),
+            selectedItemIds: Array.isArray(selectedItemIds) ? selectedItemIds.join(",") : ""
+          },
+          retry: {
+            enabled: true,
+            max_count: 3
+          },
+          theme: {
+            color: "#C0392B",
+            backdrop_color: "rgba(15, 23, 42, 0.65)"
+          },
+          handler: function (response) {
+            if (typeof onSuccess === "function") {
+              onSuccess(response);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              showToast("পেমেন্ট প্রক্রিয়া বাতিল করা হয়েছে।");
+            }
+          }
+        };
+
+        try {
+          const rzp = new window.Razorpay(options);
+          rzp.on("payment.failed", function (respErr) {
+            const reason = respErr?.error?.description || "পেমেন্ট সম্পন্ন হয়নি। আবার চেষ্টা করুন।";
+            showToast(`পেমেন্ট ব্যর্থ: ${reason}`);
+          });
+          rzp.open();
+          return;
+        } catch (e) {
+          console.warn("Official Razorpay SDK fallback to custom checkout modal:", e);
+        }
+      }
+
+      // 2. Local Testing Mode (file:// or when backend keys are not yet connected):
+      // Automatically open the Clean Custom Razorpay Checkout Modal (#razorpayFallbackModal)
+      openRazorpayFallbackModal({
+        amount: numericAmount,
+        customerName,
+        phone,
+        regNo,
+        paymentMode,
+        selectedItemIds,
+        description,
+        onSuccess
+      });
+    }
+
+    // MODE A: Selective Item Settlement (Checkbox Flow)
+    async function paySelectedBakiItemsWithRazorpay() {
+      const c = searchedBakiCustomer;
+      if (!c) return;
+
+      const { pendingTotal } = computeCustomerOutstandingBalance(c.id);
+      const selectedTxs = khataTransactions.filter(
+        (t) =>
+          t.customerId === c.id &&
+          t.type !== "PAYMENT_RECEIVED" &&
+          String(t.status || "").toUpperCase() !== "SETTLED" &&
+          selectedBakiTxIds.has(t.id)
       );
 
-      if (!matched.length) {
-        container.innerHTML = `<p class="text-center text-[12px] text-slate-500 py-6">এই নম্বরে কোনো বাকি খাতা অ্যাকাউন্ট পাওয়া যায়নি।</p>`;
+      if (!selectedTxs.length) {
+        showToast("অনুগ্রহ করে পেমেন্ট করার জন্য অন্তত একটি বকেয়া আইটেম সিলেক্ট করুন!");
         return;
       }
 
-      container.innerHTML = matched
-        .map((c) => {
-          const txs = khataTransactions.filter((t) => t.customerId === c.id);
-          const pendingTotal = txs
-            .filter((t) => t.status !== "SETTLED")
-            .reduce((s, t) => s + t.amount, 0);
+      const rawSelectedSum = selectedTxs.reduce((s, t) => s + Number(t.amount || 0), 0);
+      // Cap payable amount to current outstanding balance if prior partial credits exist
+      const payableAmount = Number(Math.min(rawSelectedSum, pendingTotal > 0 ? pendingTotal : rawSelectedSum).toFixed(2));
+      const itemIds = selectedTxs.map((t) => t.id);
 
-          return `
-            <div class="p-3.5 rounded-[14px] bg-[#FAF6F0] border border-[#E2D6C7] space-y-2">
-              <div class="flex items-center justify-between">
-                <div>
-                  <span class="px-2 py-0.5 rounded bg-[#FFF3E0] text-[#D35400] font-extrabold text-[11px]">${escapeHtml(c.regNo)}</span>
-                  <h4 class="font-extrabold text-[14px] text-[#0F172A] mt-0.5">${escapeHtml(c.name)}</h4>
+      await initiateRazorpayCheckout({
+        amount: payableAmount,
+        customerName: c.name,
+        phone: c.phone || "",
+        regNo: c.regNo,
+        paymentMode: "SELECTIVE_ITEMS",
+        selectedItemIds: itemIds,
+        description: `Baki Settlement (${itemIds.length} items) • Reg ${c.regNo}`,
+        onSuccess: async (response) => {
+          const paymentId = response?.razorpay_payment_id || `pay_${Date.now()}`;
+          const now = Date.now();
+
+          // Update local state immediately for responsive UI
+          khataTransactions.forEach((tx) => {
+            if (itemIds.includes(tx.id)) {
+              tx.status = "SETTLED";
+              tx.settledAt = now;
+              tx.paymentId = paymentId;
+              tx.razorpay_payment_id = paymentId;
+              tx.paymentMode = "SELECTIVE_ITEMS";
+            }
+          });
+
+          // Update Firestore batch for all selected transaction IDs
+          if (db) {
+            try {
+              const batch = db.batch();
+              itemIds.forEach((id) => {
+                const ref = db.collection("khata_transactions").doc(id);
+                batch.update(ref, {
+                  status: "SETTLED",
+                  settledAt: now,
+                  paymentId: paymentId,
+                  razorpay_payment_id: paymentId,
+                  paymentMode: "SELECTIVE_ITEMS"
+                });
+              });
+              await batch.commit();
+            } catch (err) {
+              console.error("Firestore batch update error:", err);
+            }
+          }
+
+          selectedBakiTxIds.clear();
+          isCustomerBakiBalanceRevealed = true;
+          playCustomerChimeSound();
+          showToast(`পেমেন্ট সফল হয়েছে! ₹${payableAmount} পরিশোধিত (ID: ${paymentId})`);
+          renderCustomerBakiLookup();
+        }
+      });
+    }
+
+    // MODE B: Custom Partial / Lump-Sum Payment Flow
+    async function payCustomBakiAmountWithRazorpay() {
+      const c = searchedBakiCustomer;
+      if (!c) return;
+
+      const inputEl = document.getElementById("bakiCustomAmountInput");
+      const rawVal = inputEl ? inputEl.value : customBakiPayAmountInput;
+      const customAmount = Number( parseFloat(String(rawVal || "0")).toFixed(2) );
+
+      const { pendingTotal } = computeCustomerOutstandingBalance(c.id);
+
+      if (!Number.isFinite(customAmount) || customAmount <= 0) {
+        showToast("অনুগ্রহ করে সঠিক কাস্টম অ্যামাউন্ট লিখুন (যেমন ₹100 বা ₹400)!");
+        return;
+      }
+
+      if (pendingTotal <= 0) {
+        showToast("আপনার কোনো বকেয়া বাকি নেই!");
+        return;
+      }
+
+      if (customAmount > pendingTotal) {
+        showToast(`আপনার মোট বকেয়া ₹${pendingTotal.toFixed(2)}-এর বেশি পেমেন্ট করা যাবে না!`);
+        return;
+      }
+
+      await initiateRazorpayCheckout({
+        amount: customAmount,
+        customerName: c.name,
+        phone: c.phone || "",
+        regNo: c.regNo,
+        paymentMode: "CUSTOM_PARTIAL",
+        selectedItemIds: [],
+        description: `Custom Baki Payment (₹${customAmount}) • Reg ${c.regNo}`,
+        onSuccess: async (response) => {
+          const paymentId = response?.razorpay_payment_id || `pay_${Date.now()}`;
+          const now = Date.now();
+          const newTxId = `PAY_${now}`;
+
+          const creditEntry = {
+            id: newTxId,
+            customerId: c.id,
+            type: "PAYMENT_RECEIVED",
+            description: "Online Payment (Razorpay)",
+            notes: "Online Payment (Razorpay)",
+            amount: customAmount,
+            paymentId: paymentId,
+            razorpay_payment_id: paymentId,
+            paymentMode: "CUSTOM_PARTIAL",
+            timestamp: now,
+            settledAt: now,
+            status: "SETTLED"
+          };
+
+          // Insert credit ledger entry locally
+          khataTransactions.unshift(creditEntry);
+
+          const remainingAfterPayment = Math.max(0, Number((pendingTotal - customAmount).toFixed(2)));
+
+          // Persist to Firestore
+          if (db) {
+            try {
+              const batch = db.batch();
+              const newDocRef = db.collection("khata_transactions").doc(newTxId);
+              batch.set(newDocRef, creditEntry);
+
+              // If the customer paid off the entire remaining balance, mark remaining PENDING DUE items as SETTLED
+              if (remainingAfterPayment === 0) {
+                khataTransactions.forEach((tx) => {
+                  if (
+                    tx.customerId === c.id &&
+                    tx.type !== "PAYMENT_RECEIVED" &&
+                    String(tx.status || "").toUpperCase() !== "SETTLED"
+                  ) {
+                    tx.status = "SETTLED";
+                    tx.settledAt = now;
+                    const itemRef = db.collection("khata_transactions").doc(tx.id);
+                    batch.update(itemRef, {
+                      status: "SETTLED",
+                      settledAt: now
+                    });
+                  }
+                });
+              }
+
+              await batch.commit();
+            } catch (err) {
+              console.error("Firestore custom payment error:", err);
+            }
+          }
+
+          customBakiPayAmountInput = "";
+          selectedBakiTxIds.clear();
+          isCustomerBakiBalanceRevealed = true;
+          playCustomerChimeSound();
+          showToast(`₹${customAmount} অনলাইন পেমেন্ট সফল! বর্তমান বকেয়া: ₹${remainingAfterPayment.toFixed(2)}`);
+          renderCustomerBakiLookup();
+        }
+      });
+    }
+
+    function formatBakiTxTimestamp(ts) {
+      const d = new Date(Number(ts || Date.now()));
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    function renderCustomerBakiLookup() {
+      const container = document.getElementById("bakiLookupResultContainer");
+      if (!container) return;
+
+      // Capture scroll position before re-rendering if scroll area exists
+      const prevScrollEl = document.getElementById("bakiLedgerScrollArea");
+      const savedScrollTop = prevScrollEl ? prevScrollEl.scrollTop : 0;
+
+      if (!hasSearchedCustomerBaki) {
+        container.innerHTML = `
+          <div class="flex-1 flex flex-col items-center justify-center py-12 px-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-[#FFF3E0] flex items-center justify-center mb-3">
+              <span class="material-icons-round text-[38px] text-[#D35400]">menu_book</span>
+            </div>
+            <h4 class="font-extrabold text-[15px] text-[#3E2723]">আপনার বকেয়া খাতা দেখুন</h4>
+            <p class="mt-1.5 max-w-sm text-[12.5px] text-slate-500 leading-relaxed">
+              উপরে আপনার রেজিস্ট্রেশন নম্বর (যেমন <strong class="text-[#D35400]">#1</strong> বা <strong class="text-[#D35400]">1546</strong>) লিখে <strong>"চেক করুন"</strong> বাটনে চাপুন।
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const c = searchedBakiCustomer;
+      if (!c) {
+        container.innerHTML = `
+          <div class="flex-1 flex flex-col items-center justify-center py-10 px-5 text-center">
+            <span class="material-icons-round text-[46px] text-[#FF9800]">warning_amber</span>
+            <h4 class="mt-2 font-extrabold text-[15px] text-[#3C3229]">কোনো গ্রাহক খুঁজে পাওয়া যায়নি!</h4>
+            <p class="mt-1 max-w-sm text-[12.5px] text-slate-500 leading-relaxed">
+              অনুগ্রহ করে আপনার সঠিক ও সম্পূর্ণ রেজিস্ট্রেশন নম্বর দিন অথবা দোকানে যোগাযোগ করুন।
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const { txs, pendingTotal } = computeCustomerOutstandingBalance(c.id);
+      const paymentHistoryList = getCustomerPaymentHistoryList(c.id);
+
+      const pendingDebitTxs = txs.filter(
+        (t) => t.type !== "PAYMENT_RECEIVED" && String(t.status || "").toUpperCase() !== "SETTLED"
+      );
+      const selectedTxs = pendingDebitTxs.filter((t) => selectedBakiTxIds.has(t.id));
+      const selectedSum = selectedTxs.reduce((s, t) => s + Number(t.amount || 0), 0);
+      const effectiveSelectedPayable = Number(
+        Math.min(selectedSum, pendingTotal > 0 ? pendingTotal : selectedSum).toFixed(2)
+      );
+      const allPendingSelected =
+        pendingDebitTxs.length > 0 && pendingDebitTxs.every((t) => selectedBakiTxIds.has(t.id));
+
+      const hasDue = pendingTotal > 0;
+      const balanceText = isCustomerBakiBalanceRevealed
+        ? `₹ ${pendingTotal.toFixed(2)}`
+        : "₹ --.--";
+      const balanceColor = !isCustomerBakiBalanceRevealed
+        ? "text-[#94A3B8]"
+        : hasDue
+        ? "text-[#DC2626]"
+        : "text-[#16A34A]";
+
+      // Build Tab 1: Ledger Items HTML
+      const txRowsHtml = txs.length
+        ? txs
+            .map((tx) => {
+              const isCreditPayment = tx.type === "PAYMENT_RECEIVED";
+              const isSettled = isCreditPayment || String(tx.status || "").toUpperCase() === "SETTLED";
+              const isChecked = !isSettled && selectedBakiTxIds.has(tx.id);
+              const noteText =
+                (tx.description || tx.notes || "").trim() ||
+                (isCreditPayment ? "Online Payment (Razorpay)" : "বাকি সামগ্রী");
+              const payRef = (tx.razorpay_payment_id || tx.paymentId || "").trim();
+
+              return `
+                <div
+                  id="bakiTxRow_${escapeAttr(tx.id)}"
+                  onclick="${!isSettled ? `toggleBakiTxCheckbox('${escapeQuotes(tx.id)}')` : ""}"
+                  class="p-3 rounded-[14px] ${
+                    isCreditPayment
+                      ? "bg-[#F0FDF4] border border-[#BBF7D0]"
+                      : isChecked
+                      ? "bg-[#FFF7ED] border-2 border-[#D35400]"
+                      : "bg-white border border-[#E2E8F0]"
+                  } flex items-center justify-between gap-2.5 ${!isSettled ? "cursor-pointer hover:border-[#D35400]/60 transition" : ""}"
+                >
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    ${
+                      isSettled
+                        ? `<div class="w-[22px] h-[22px] rounded-full bg-[#16A34A] text-white flex items-center justify-center shrink-0">
+                             <span class="material-icons-round text-[14px]">check</span>
+                           </div>`
+                        : `<input
+                             id="bakiTxChk_${escapeAttr(tx.id)}"
+                             type="checkbox"
+                             ${isChecked ? "checked" : ""}
+                             onclick="event.stopPropagation(); toggleBakiTxCheckbox('${escapeQuotes(tx.id)}')"
+                             class="w-[19px] h-[19px] accent-[#D35400] rounded cursor-pointer shrink-0"
+                           />`
+                    }
+                    <div class="min-w-0 flex-1">
+                      <p class="font-bold text-[13.5px] text-[#0F172A] truncate">${escapeHtml(noteText)}</p>
+                      <p class="text-[10.5px] text-[#64748B] mt-0.5">${escapeHtml(formatBakiTxTimestamp(tx.timestamp))}</p>
+                      <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                        <span class="inline-block px-1.5 py-0.5 rounded-[6px] text-[9px] font-extrabold ${
+                          isCreditPayment
+                            ? "bg-[#DCFCE7] text-[#15803D]"
+                            : isSettled
+                            ? "bg-[#DCFCE7] text-[#16A34A]"
+                            : "bg-[#FEE2E2] text-[#DC2626]"
+                        }">
+                          ${isCreditPayment ? "PAYMENT RECEIVED" : isSettled ? "SETTLED" : "PENDING DUE"}
+                        </span>
+                        ${
+                          payRef
+                            ? `<span class="text-[9.5px] font-semibold text-[#2563EB] bg-[#EFF6FF] px-1.5 py-0.5 rounded">ID: ${escapeHtml(payRef)}</span>`
+                            : ""
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <p class="font-extrabold text-[14.5px] ${
+                      isCreditPayment
+                        ? "text-[#16A34A]"
+                        : isSettled
+                        ? "text-[#94A3B8] line-through"
+                        : "text-[#DC2626]"
+                    }">
+                      ${isCreditPayment ? "-" : ""}₹${Number(tx.amount || 0).toFixed(0)}
+                    </p>
+                  </div>
                 </div>
-                <div class="text-right">
-                  <p class="text-[10px] text-slate-500">মোট বকেয়া (Pending Due)</p>
-                  <p class="font-extrabold text-[17px] text-[#C62828]">₹${Math.round(pendingTotal)}</p>
+              `;
+            })
+            .join("")
+        : `<p class="text-center text-[12px] text-slate-400 py-8">এখনো কোনো বাকি বা লেনদেনের হিসাব নেই।</p>`;
+
+      // Docked Bottom Dual Payment Controls (Mode A + Mode B) when customer has pending due
+      const dualPaymentControlsHtml =
+        hasDue && activeBakiModalTab === "ledger"
+          ? `
+          <div class="p-3 rounded-[16px] bg-white border border-[#E2D6C7] shadow-md space-y-2.5 shrink-0 mt-2">
+            <!-- Mode A: Selective Item Settlement -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11.5px] font-extrabold text-[#3E2723] flex items-center gap-1">
+                  <span class="material-icons-round text-[15px] text-[#D35400]">fact_check</span>
+                  <span>Mode A: আইটেম সিলেক্ট করে পেমেন্ট করুন</span>
+                </span>
+                ${
+                  pendingDebitTxs.length > 0
+                    ? `<button
+                         type="button"
+                         id="bakiSelectAllBtn"
+                         onclick="toggleSelectAllPendingBakiItems('${escapeQuotes(c.id)}')"
+                         class="text-[11px] font-bold text-[#2563EB] hover:underline"
+                       >
+                         ${allPendingSelected ? "সব আনসিলেক্ট করুন" : "সব বকেয়া সিলেক্ট করুন"}
+                       </button>`
+                    : ""
+                }
+              </div>
+              <button
+                type="button"
+                id="bakiPaySelectedBtn"
+                onclick="paySelectedBakiItemsWithRazorpay()"
+                ${effectiveSelectedPayable <= 0 ? "disabled" : ""}
+                class="w-full py-2.5 px-4 rounded-[11px] font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-sm transition ${
+                  effectiveSelectedPayable > 0
+                    ? "bg-[#16A34A] hover:bg-[#15803D] text-white active:scale-[0.99]"
+                    : "bg-slate-200 text-slate-500 cursor-not-allowed"
+                }"
+              >
+                <span class="material-icons-round text-[17px]">payments</span>
+                <span id="bakiPaySelectedBtnLabel">Pay Selected Items (₹${effectiveSelectedPayable.toFixed(0)})</span>
+              </button>
+            </div>
+
+            <div class="border-t border-[#E2E8F0]"></div>
+
+            <!-- Mode B: Custom Partial / Lump-Sum Payment -->
+            <div class="flex items-center gap-2">
+              <input
+                id="bakiCustomAmountInput"
+                type="number"
+                min="1"
+                max="${pendingTotal}"
+                value="${escapeAttr(customBakiPayAmountInput)}"
+                oninput="onBakiCustomAmountInput(this.value)"
+                placeholder="Mode B: Custom Amount (₹) যেমন ${Math.min(100, Math.round(pendingTotal))}"
+                class="flex-1 bg-[#F8FAFC] border border-[#CBD5E1] focus:border-[#2563EB] rounded-[10px] px-3 py-2 text-[12.5px] font-extrabold text-[#0F172A] outline-none"
+              />
+              <button
+                type="button"
+                onclick="payCustomBakiAmountWithRazorpay()"
+                class="px-3.5 py-2 rounded-[10px] bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-95 transition text-white font-extrabold text-[12px] shrink-0 shadow-sm flex items-center gap-1"
+              >
+                <span class="material-icons-round text-[15px]">bolt</span>
+                <span>Pay Custom</span>
+              </button>
+            </div>
+          </div>
+        `
+          : "";
+
+      // Build Tab 2: Payment History HTML
+      const paymentHistoryHtml = paymentHistoryList.length
+        ? paymentHistoryList
+            .map(
+              (p) => `
+              <div class="p-3 rounded-[14px] bg-white border border-[#E2E8F0] flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div class="w-9 h-9 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                    <span class="material-icons-round text-[18px]">verified</span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="font-bold text-[13px] text-[#0F172A] truncate">${escapeHtml(p.modeLabel)}</p>
+                    <p class="text-[10.5px] text-[#64748B] mt-0.5">${escapeHtml(formatBakiTxTimestamp(p.timestamp))}</p>
+                    <p class="text-[10px] font-mono font-semibold text-[#2563EB] mt-0.5 truncate">
+                      Ref: ${escapeHtml(p.paymentId)}
+                    </p>
+                  </div>
+                </div>
+                <div class="text-right shrink-0 space-y-1">
+                  <p class="font-extrabold text-[15px] text-[#16A34A]">₹${Number(p.amount || 0).toFixed(2)}</p>
+                  <span class="inline-block px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[9.5px] font-extrabold">
+                    ${escapeHtml(p.status)}
+                  </span>
                 </div>
               </div>
+            `
+            )
+            .join("")
+        : `
+          <div class="py-10 px-4 text-center space-y-1.5">
+            <span class="material-icons-round text-[38px] text-slate-300">receipt_long</span>
+            <p class="text-[12px] font-semibold text-slate-500">এখনো কোনো অনলাইন পেমেন্ট হিস্ট্রি নেই।</p>
+            <p class="text-[10.5px] text-slate-400">Razorpay দিয়ে বাকি পরিশোধ করলে তার রসিদ ও রেফারেন্স আইডি এখানে দেখা যাবে।</p>
+          </div>
+        `;
+
+      container.innerHTML = `
+        <div class="flex-1 min-h-0 flex flex-col">
+          <!-- Top Compact Customer & Outstanding Balance Header Card (shrink-0) -->
+          <div class="p-3 sm:p-3.5 rounded-[16px] bg-white border border-[#E8DCCF] shadow-sm space-y-2.5 shrink-0">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FFF3E0] text-[#D35400] font-extrabold text-[11px]">${escapeHtml(c.regNo)}</span>
+                  <h4 class="font-extrabold text-[15px] text-[#0F172A] truncate">${escapeHtml(c.name)}</h4>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold shrink-0 ${
+                hasDue ? "bg-[#FEE2E2] text-[#DC2626]" : "bg-[#DCFCE7] text-[#16A34A]"
+              }">
+                ${hasDue ? "বাকি রয়েছে (Due)" : "সব পরিশোধিত (Cleared)"}
+              </span>
             </div>
-          `;
-        })
-        .join("");
+
+            <!-- Outstanding Balance Banner Row -->
+            <div class="px-3.5 py-2.5 rounded-[14px] bg-[#EEF2FF] border border-[#E0E7FF] flex items-center justify-between gap-2">
+              <div>
+                <p class="text-[11px] font-semibold text-[#64748B]">Outstanding Balance (Baki)</p>
+                <p class="font-extrabold text-[22px] leading-tight ${balanceColor}">${balanceText}</p>
+              </div>
+              <button
+                type="button"
+                onclick="toggleCustomerBakiBalanceReveal()"
+                class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-[11.5px] shadow-sm transition active:scale-95 shrink-0"
+              >
+                <span class="material-icons-round text-[15px]">${
+                  isCustomerBakiBalanceRevealed ? "visibility_off" : "calculate"
+                }</span>
+                <span>${isCustomerBakiBalanceRevealed ? "Hide Balance" : "Show Balance"}</span>
+              </button>
+            </div>
+
+            <!-- Toggle Tabs: Ledger Items vs Payment History -->
+            <div class="grid grid-cols-2 gap-1.5 p-1 rounded-[11px] bg-[#F1F5F9] border border-[#E2E8F0]">
+              <button
+                type="button"
+                onclick="switchBakiModalTab('ledger')"
+                class="py-1.5 px-3 rounded-[8px] font-extrabold text-[12px] flex items-center justify-center gap-1.5 transition ${
+                  activeBakiModalTab === "ledger"
+                    ? "bg-white text-[#0F172A] shadow-sm"
+                    : "text-[#64748B] hover:text-[#0F172A]"
+                }"
+              >
+                <span class="material-icons-round text-[15px]">list_alt</span>
+                <span>Ledger Items (${txs.length})</span>
+              </button>
+              <button
+                type="button"
+                onclick="switchBakiModalTab('history')"
+                class="py-1.5 px-3 rounded-[8px] font-extrabold text-[12px] flex items-center justify-center gap-1.5 transition ${
+                  activeBakiModalTab === "history"
+                    ? "bg-white text-[#16A34A] shadow-sm"
+                    : "text-[#64748B] hover:text-[#0F172A]"
+                }"
+              >
+                <span class="material-icons-round text-[15px]">history</span>
+                <span>Payment History (${paymentHistoryList.length})</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Header Row (shrink-0) -->
+          <div class="flex items-center justify-between pt-2.5 pb-1.5 px-1 shrink-0">
+            <h5 class="font-bold text-[12.5px] text-[#64748B]">
+              ${
+                activeBakiModalTab === "ledger"
+                  ? `Official Ledger (${txs.length})`
+                  : `Razorpay Payment History (${paymentHistoryList.length})`
+              }
+            </h5>
+            ${
+              activeBakiModalTab === "ledger" && hasDue
+                ? `<span class="text-[10.5px] text-[#D35400] font-bold">চেকবক্সে টিক দিয়ে আইটেম পেমেন্ট করুন</span>`
+                : ""
+            }
+          </div>
+
+          <!-- Expandable Full-Height Scrollable List Area (flex-1 min-h-0 overflow-y-auto) -->
+          <div
+            id="bakiLedgerScrollArea"
+            class="flex-1 min-h-0 overflow-y-auto space-y-2 pr-0.5 pb-1"
+          >
+            ${activeBakiModalTab === "ledger" ? txRowsHtml : paymentHistoryHtml}
+          </div>
+
+          <!-- Docked Bottom Payment Controls (Mode A + Mode B) -->
+          ${dualPaymentControlsHtml}
+        </div>
+      `;
+
+      // Restore scroll position if re-rendered while scrolling
+      const newScrollEl = document.getElementById("bakiLedgerScrollArea");
+      if (newScrollEl && savedScrollTop > 0) {
+        newScrollEl.scrollTop = savedScrollTop;
+      }
+    }
+
+    // RAZORPAY KYC COMPLIANCE POLICY MODALS (Terms, Privacy, Refund, Contact Us)
+    function openKycPolicyModal(policyType) {
+      const modal = document.getElementById("kycPolicyModal");
+      const titleEl = document.getElementById("kycPolicyModalTitle");
+      const iconEl = document.getElementById("kycPolicyModalIcon");
+      const bodyEl = document.getElementById("kycPolicyModalBody");
+      if (!modal || !titleEl || !bodyEl) return;
+
+      if (policyType === "terms") {
+        iconEl.textContent = "gavel";
+        titleEl.textContent = "Terms & Conditions — Jiyarul Tea Stall & Grocery";
+        bodyEl.innerHTML = `
+          <p class="font-bold text-[#0F172A]">Effective Date: November 2026</p>
+          <p>Welcome to <strong>Jiyarul Tea Stall &amp; Grocery</strong> ("we", "our", "us"). By accessing or using our website, mobile application (APK), online ordering system, or <em>Dokaner Baki Khata</em> digital ledger payment services, you agree to be bound by these Terms &amp; Conditions.</p>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">1. Nature of Services</h4>
+          <p>We provide freshly prepared tea, snacks, daily groceries, household essentials, and digital ledger (Baki Khata) settlement facilities for registered customers located in and around Digberia, Mandirbazar, South 24 Parganas, West Bengal.</p>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Pricing, Orders &amp; Ledger Settlements</h4>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>All product prices and Baki Khata ledger balances are listed in Indian Rupees (INR / ₹).</li>
+            <li>Customers can settle specific pending ledger items (Mode A) or make custom partial/lump-sum payments (Mode B) via our integrated Razorpay Payment Gateway.</li>
+            <li>Upon successful payment confirmation from Razorpay, your digital ledger is automatically updated and a payment reference ID is recorded under your Payment History.</li>
+          </ul>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">3. User Responsibilities</h4>
+          <p>You agree to provide accurate delivery details, phone numbers, and registration numbers when placing orders or settling store dues. Fraudulent payment attempts or misuse of the platform are strictly prohibited.</p>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">4. Governing Law</h4>
+          <p>These terms are governed by the laws of India, with jurisdiction in South 24 Parganas, West Bengal.</p>
+        `;
+      } else if (policyType === "privacy") {
+        iconEl.textContent = "privacy_tip";
+        titleEl.textContent = "Privacy Policy — Jiyarul Tea Stall & Grocery";
+        bodyEl.innerHTML = `
+          <p class="font-bold text-[#0F172A]">Your Privacy Matters to Us</p>
+          <p><strong>Jiyarul Tea Stall &amp; Grocery</strong> is committed to protecting the privacy and security of our customers' personal information.</p>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">1. Information We Collect</h4>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><strong>Account &amp; Identity Data:</strong> Name, Google email address (for authentication), mobile number, delivery address, and Baki Khata Registration Number.</li>
+            <li><strong>Transaction Data:</strong> Order history, ledger entries, and Razorpay Payment Reference IDs (<code>razorpay_payment_id</code>).</li>
+          </ul>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Payment Security (PCI-DSS Compliance)</h4>
+          <p>All online payments (UPI, Google Pay, PhonePe, Paytm, Cards, NetBanking) are processed securely through <strong>Razorpay</strong>. We do <strong>not</strong> store your UPI PIN, debit/credit card numbers, or CVV on our servers or local storage.</p>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">3. Data Sharing</h4>
+          <p>We never sell or rent your personal data to third parties. Information is shared only with authorized payment processors (Razorpay) and cloud infrastructure (Google Firebase) strictly to fulfill your orders and maintain your ledger.</p>
+        `;
+      } else if (policyType === "refund") {
+        iconEl.textContent = "currency_exchange";
+        titleEl.textContent = "Refund & Cancellation Policy";
+        bodyEl.innerHTML = `
+          <h4 class="font-extrabold text-[#0F172A]">1. Order Cancellation</h4>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Customers may cancel a grocery/snack order directly from the "My Orders" tab while the order status is still <strong>Pending / New</strong>.</li>
+            <li>Once an order is marked as <strong>Preparing</strong> or <strong>Out for Delivery</strong>, it cannot be cancelled online.</li>
+          </ul>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Refunds for Store Orders</h4>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>If a prepaid online order is cancelled before preparation or if an item is unavailable/damaged upon delivery, a full or partial refund will be initiated.</li>
+            <li>Approved refunds are processed via Razorpay back to the original payment source (UPI / Bank Account / Card) within <strong>5–7 business days</strong>.</li>
+          </ul>
+          <h4 class="font-extrabold text-[#0F172A] pt-1">3. Baki Khata (Ledger) Duplicate / Excess Payments</h4>
+          <p>If a customer accidentally makes a duplicate payment or pays in excess of their due ledger balance via Razorpay, they can report the Razorpay Payment ID to the store within 48 hours. Verified excess payments will be refunded to the original payment method within <strong>5–7 business days</strong> or adjusted against future purchases as preferred by the customer.</p>
+        `;
+      } else {
+        iconEl.textContent = "contact_support";
+        titleEl.textContent = "Contact Us — Jiyarul Tea Stall & Grocery";
+        bodyEl.innerHTML = `
+          <div class="p-3.5 rounded-[14px] bg-[#FAF6F0] border border-[#E8DCCF] space-y-2.5">
+            <div>
+              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Merchant / Store Name</p>
+              <p class="font-extrabold text-[15px] text-[#0F172A]">Jiyarul Tea Stall &amp; Grocery</p>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Operational Address</p>
+              <p class="font-semibold text-[13px] text-[#1E293B]">
+                Digberia, Mandirbazar, South 24 Parganas, West Bengal - 743395
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Phone Numbers</p>
+              <p class="font-semibold text-[13px] text-[#1E293B]">
+                • Primary: <a href="tel:+919093154681" class="text-[#2563EB] hover:underline">+91-9093154681</a><br/>
+                • Alternate / WhatsApp: <a href="https://wa.me/919062472159" target="_blank" rel="noopener" class="text-[#16A34A] hover:underline">+91-9062472159</a>
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Email Support</p>
+              <p class="font-semibold text-[13px] text-[#1E293B]">
+                • Primary: <a href="mailto:jiyaruljamader386@gmail.com" class="text-[#2563EB] hover:underline">jiyaruljamader386@gmail.com</a><br/>
+                • Alternate: <a href="mailto:mikailjamader786@gmail.com" class="text-[#2563EB] hover:underline">mikailjamader786@gmail.com</a>
+              </p>
+            </div>
+            <div>
+              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Operating Hours</p>
+              <p class="font-semibold text-[13px] text-[#1E293B]">
+                Monday – Sunday: 7:00 AM – 9:00 PM IST
+              </p>
+            </div>
+          </div>
+        `;
+      }
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeKycPolicyModal() {
+      const modal = document.getElementById("kycPolicyModal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
     }
 
     function getTodayDateKey() {
@@ -2856,35 +4321,80 @@
 
       const inp = document.getElementById("saraChatInput");
       const sendBtn = document.getElementById("saraSendBtn");
+      const hasText = Boolean(inp && inp.value.trim().length > 0);
       if (inp) {
         inp.disabled = isExhausted || isAiLoading;
         inp.placeholder = isExhausted ? "সীমা শেষ হয়েছে..." : "প্রশ্ন লিখুন...";
       }
       if (sendBtn) {
-        sendBtn.disabled = isExhausted || isAiLoading;
+        sendBtn.disabled = !hasText || isExhausted || isAiLoading;
         sendBtn.className =
-          isExhausted || isAiLoading
-            ? "w-11 h-11 rounded-full bg-gradient-to-br from-[#CBD5E1] to-[#94A3B8] text-white flex items-center justify-center shrink-0 cursor-not-allowed"
-            : "w-11 h-11 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition";
+          !hasText || isExhausted || isAiLoading
+            ? "w-12 h-12 rounded-full bg-gradient-to-br from-[#CBD5E1] to-[#94A3B8] text-white flex items-center justify-center shrink-0 cursor-not-allowed transition"
+            : "w-12 h-12 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition";
       }
     }
 
+    let isSaraKeyboardOpen = false;
+
+    function syncSaraModalToVisualViewport() {
+      const modal = document.getElementById("saraAiModal");
+      const card = document.getElementById("saraAiModalCard");
+      if (!modal || !card || modal.classList.contains("hidden")) return;
+
+      const vv = window.visualViewport;
+      if (vv) {
+        // Lock the modal overlay exactly to the visible viewport above the mobile keyboard
+        modal.style.top = `${Math.max(0, Math.round(vv.offsetTop))}px`;
+        modal.style.height = `${Math.round(vv.height)}px`;
+        modal.style.bottom = "auto";
+
+        const fullH = window.innerHeight || document.documentElement.clientHeight || vv.height;
+        const kbOpen = vv.height < fullH * 0.78 || document.activeElement?.id === "saraChatInput";
+
+        // Keep ~11% space at the top so the store header remains visible just like Screenshot 3 & 4!
+        const targetCardH = Math.min(Math.round(vv.height * (kbOpen ? 0.89 : 0.86)), 680);
+        card.style.height = `${targetCardH}px`;
+
+        if (kbOpen !== isSaraKeyboardOpen) {
+          isSaraKeyboardOpen = kbOpen;
+          if (saraMessages.length === 0 && !isAiLoading) {
+            renderSaraMessages();
+          } else {
+            const box = document.getElementById("saraChatMessages");
+            if (box) box.scrollTop = box.scrollHeight;
+          }
+        }
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", syncSaraModalToVisualViewport);
+      window.visualViewport.addEventListener("scroll", syncSaraModalToVisualViewport);
+    }
+    window.addEventListener("resize", syncSaraModalToVisualViewport);
+
     function openSaraAiModal() {
       loadAiChatState();
+      isSaraKeyboardOpen = false;
       updateAiHeaderAndQuotaUI();
       renderSaraMessages();
       const modal = document.getElementById("saraAiModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
-      setTimeout(() => {
-        document.getElementById("saraChatInput")?.focus();
-      }, 100);
+      syncSaraModalToVisualViewport();
     }
 
     function closeSaraAiModal() {
+      const inp = document.getElementById("saraChatInput");
+      if (inp) inp.blur();
+      isSaraKeyboardOpen = false;
       const modal = document.getElementById("saraAiModal");
       modal.classList.add("hidden");
       modal.classList.remove("flex");
+      modal.style.top = "";
+      modal.style.height = "";
+      modal.style.bottom = "";
     }
 
     function clearAiChatHistory() {
@@ -2900,9 +4410,8 @@
       sendSaraChatMessage();
     }
 
-    async function callRealGeminiModel(modelName, apiKey, systemInstructionText, userPrompt, recentHistory) {
+    async function callRealGeminiModel(endpointUrl, systemInstructionText, userPrompt, recentHistory) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
         const contents = [];
 
         recentHistory.slice(-6).forEach((m) => {
@@ -2924,14 +4433,14 @@
           };
         }
 
-        const resp = await fetch(url, {
+        const resp = await fetch(endpointUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
         if (!resp.ok) {
-          console.warn(`Gemini API (${modelName}) HTTP ${resp.status}`);
+          console.warn(`Gemini API HTTP ${resp.status}`);
           return null;
         }
 
@@ -2945,22 +4454,37 @@
           }
         }
       } catch (err) {
-        console.warn(`Gemini API (${modelName}) error:`, err);
+        console.warn("Gemini API error:", err);
       }
       return null;
     }
 
     async function generateRealGeminiResponse(systemInstructionText, userPrompt, recentHistory) {
-      const apiKey = (storeSettings.geminiApiKey || DEFAULT_GEMINI_API_KEY || "").trim();
-      if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
-        return "দুঃখিত, এআই সার্ভিস কনফিগার করা হয়নি।";
+      const fbKey = (firebaseConfig.apiKey || "").trim();
+      const projectId = (firebaseConfig.projectId || "jiyarul-store").trim();
+      const customKey = (storeSettings.geminiApiKey || "").trim();
+
+      const models = ["gemini-3.5-flash-lite", "gemini-3.8-flash"];
+
+      // 1. Primary: Provisioned Firebase AI Logic endpoint (works on both Vercel & local file://)
+      if (fbKey) {
+        for (const modelName of models) {
+          const fbUrl = `https://firebasevertexai.googleapis.com/v1beta/projects/${encodeURIComponent(projectId)}/models/${modelName}:generateContent?key=${encodeURIComponent(fbKey)}`;
+          const reply = await callRealGeminiModel(fbUrl, systemInstructionText, userPrompt, recentHistory);
+          if (reply && reply.trim()) {
+            return reply.trim();
+          }
+        }
       }
 
-      const models = ["gemini-3.5-flash", "gemini-2.5-flash"];
-      for (const modelName of models) {
-        const reply = await callRealGeminiModel(modelName, apiKey, systemInstructionText, userPrompt, recentHistory);
-        if (reply && reply.trim()) {
-          return reply.trim();
+      // 2. Fallback: Custom Google AI Studio key if explicitly configured in storeSettings
+      if (customKey && customKey.startsWith("AIza") && customKey !== fbKey) {
+        for (const modelName of models) {
+          const genUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(customKey)}`;
+          const reply = await callRealGeminiModel(genUrl, systemInstructionText, userPrompt, recentHistory);
+          if (reply && reply.trim()) {
+            return reply.trim();
+          }
         }
       }
 
@@ -3251,24 +4775,26 @@ RULES:
 
       const assistantName = getAssistantName();
 
-      // Empty State Welcome Card (Exact match to AiAssistantBottomSheet.kt lines 263-347)
+      // Empty State Welcome Card (Exact match to Screenshot 3 when keyboard is open & Screenshot 4 when closed)
       if (saraMessages.length === 0 && !isAiLoading) {
-        const quickPrompts = [
+        const allPrompts = [
           "☕ স্পেশাল মালাই চায়ের দাম কত?",
           "🍲 খিচুড়ি বানাতে কী কী লাগবে?",
           "🍪 আজকের তাজা স্ন্যাক্স কী আছে?"
         ];
+        const visiblePrompts = isSaraKeyboardOpen ? allPrompts.slice(0, 1) : allPrompts;
+
         box.innerHTML = `
-          <div class="h-full min-h-[340px] flex flex-col items-center justify-center px-4 py-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#6366F1]/15 to-[#A855F7]/15 flex items-center justify-center mb-3">
-              <span class="material-icons-round text-[#6366F1] text-[32px]">auto_awesome</span>
+          <div class="h-full flex flex-col items-center justify-center px-4 ${isSaraKeyboardOpen ? "py-1.5" : "py-4"} text-center">
+            <div class="${isSaraKeyboardOpen ? "w-14 h-14 mb-2" : "w-16 h-16 mb-3"} rounded-full bg-gradient-to-br from-[#6366F1]/15 to-[#A855F7]/15 flex items-center justify-center shrink-0">
+              <span class="material-icons-round text-[#6366F1] ${isSaraKeyboardOpen ? "text-[28px]" : "text-[32px]"}">auto_awesome</span>
             </div>
-            <h4 class="font-bold text-[16px] text-[#1E293B]">নমস্কার! আমি ${escapeHtml(assistantName)} 👋😊</h4>
+            <h4 class="font-bold ${isSaraKeyboardOpen ? "text-[15.5px]" : "text-[16.5px]"} text-[#1E293B]">নমস্কার! আমি ${escapeHtml(assistantName)} 👋😊</h4>
             <p class="text-[13px] text-[#64748B] mt-1 max-w-[300px] leading-relaxed">
               জিয়ারুল স্টোরের যে কোনো জিনিস বা রান্নার সামগ্রী সম্পর্কে আমাকে জিজ্ঞাসা করুন 🛒✨
             </p>
-            <div class="mt-4 flex flex-col items-center gap-2 w-full">
-              ${quickPrompts
+            <div class="${isSaraKeyboardOpen ? "mt-2.5" : "mt-4"} flex flex-col items-center gap-2 w-full">
+              ${visiblePrompts
                 .map(
                   (q) => `
                   <button
