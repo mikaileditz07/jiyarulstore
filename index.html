@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Jiyarul Tea Stall & Grocery — Online Store</title>
   <meta name="description" content="Jiyarul Tea Stall & Grocery — চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা অনলাইন শপিং ও লাইভ অর্ডার ট্র্যাকিং" />
-  <meta name="theme-color" content="#C0392B" />
+  <meta name="theme-color" content="#B3261E" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,24 +15,24 @@
         extend: {
           colors: {
             chai: {
-              primary: '#C0392B',
-              primaryHover: '#A93226',
-              secondary: '#D35400',
-              tertiary: '#F39C12',
-              cream: '#F8FAFC',
-              warmBg: '#FAF6F0',
-              warmFooter: '#F9F5EF',
-              imgBg: '#F3ECE1',
-              borderWarm: '#E8E0D5',
-              borderInput: '#E2D6C7',
+              primary: '#B3261E',
+              primaryHover: '#8F1D17',
+              secondary: '#B45309',
+              tertiary: '#F3B63F',
+              cream: '#FAF7F2',
+              warmBg: '#F6F3EE',
+              warmFooter: '#F4EFE7',
+              imgBg: '#F5EFE6',
+              borderWarm: '#E7E0D4',
+              borderInput: '#DDD4C5',
             },
             status: {
-              openGreen: '#2E7D32',
-              openContainer: '#E8F5E9',
-              openText: '#1B5E20',
-              closedRed: '#C62828',
-              closedContainer: '#FFEBEE',
-              closedText: '#B71C1C',
+              openGreen: '#1F6B45',
+              openContainer: '#EBF5EE',
+              openText: '#14532D',
+              closedRed: '#B3261E',
+              closedContainer: '#FDECEC',
+              closedText: '#8F1D17',
             }
           },
           fontFamily: {
@@ -44,10 +44,10 @@
     };
   </script>
 
-  <!-- Google Fonts: Hind Siliguri & Plus Jakarta Sans -->
+  <!-- Google Fonts: Hind Siliguri, Baloo Da 2 & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <!-- Material Icons & FontAwesome -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -66,31 +66,239 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
+    :root {
+      --bg-canvas: #F6F3EE;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #FAF7F2;
+      --ink: #25190F;
+      --ink-2: #574536;
+      --ink-3: #857261;
+      --brand: #B3261E;
+      --brand-dark: #8F1D17;
+      --brand-amber: #B45309;
+      --brand-soft: #FDF2EE;
+      --leaf: #1F6B45;
+      --leaf-dark: #14532D;
+      --leaf-soft: #EBF5EE;
+      --gold: #F3B63F;
+      --gold-soft: #FEF8E8;
+      --line: #E7E0D4;
+      --line-strong: #DDD4C5;
+    }
+
     body {
       font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
-      background-color: #FAF6F0;
-      color: #0F172A;
+      background-color: var(--bg-canvas);
+      background-image:
+        radial-gradient(900px 380px at 50% -120px, rgba(243, 182, 63, 0.14), transparent 70%),
+        radial-gradient(700px 300px at 100% 0%, rgba(179, 38, 30, 0.05), transparent 65%);
+      color: var(--ink);
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
+      font-feature-settings: "cv02", "cv03", "cv04";
+    }
+
+    h1, h2, .brand-display {
+      font-family: 'Baloo Da 2', 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.01em;
     }
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Elevated Warm Store Card */
     .app-card {
-      background: #FFFFFF;
-      border-radius: 16px;
-      border: 1px solid #E8E0D5;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      background: var(--bg-surface);
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow:
+        0 1px 2px rgba(37, 25, 15, 0.04),
+        0 6px 18px -6px rgba(37, 25, 15, 0.06);
+      transition: transform 0.18s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    /* Pulse ring for Download App button */
+    /* Product Tile — Vertical Image-First Card (2-col mobile, 3-col desktop) */
+    .prod-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #FFFFFF;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      box-shadow: 0 2px 10px -2px rgba(37, 25, 15, 0.06);
+      transition: transform 0.18s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .prod-card:hover {
+      border-color: #D8C7B2;
+      box-shadow: 0 10px 24px -8px rgba(37, 25, 15, 0.13);
+    }
+    .prod-card:active {
+      transform: scale(0.99);
+    }
+    .prod-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: linear-gradient(145deg, #FAF4EA 0%, #EFE5D4 100%);
+      overflow: hidden;
+    }
+    .prod-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+    .prod-card:hover .prod-photo img {
+      transform: scale(1.04);
+    }
+    .prod-photo::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 36%;
+      background: linear-gradient(to top, rgba(24, 15, 8, 0.18), transparent);
+      pointer-events: none;
+    }
+    .prod-cat-pill {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--ink-2);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(37, 25, 15, 0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      max-width: calc(100% - 16px);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prod-inbag-pill {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--leaf);
+      color: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(20, 83, 45, 0.32);
+    }
+    .prod-price {
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+
+    /* Unified Add / Stepper CTA on Product Card */
+    .prod-add-btn {
+      height: 34px;
+      padding: 0 13px;
+      border-radius: 11px;
+      background: #FFF6F4;
+      color: var(--brand);
+      border: 1.5px solid rgba(179, 38, 30, 0.28);
+      font-weight: 800;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 1px 2px rgba(179, 38, 30, 0.08);
+      transition: all 0.15s ease;
+    }
+    .prod-add-btn:hover {
+      background: var(--brand);
+      color: #FFFFFF;
+      border-color: var(--brand);
+    }
+    .prod-add-btn:active {
+      transform: scale(0.95);
+    }
+    .prod-add-btn.is-loose {
+      background: #FFF8EC;
+      color: #9A4406;
+      border-color: rgba(180, 83, 9, 0.32);
+    }
+    .prod-add-btn.is-loose:hover {
+      background: #B45309;
+      color: #FFFFFF;
+      border-color: #B45309;
+    }
+    .prod-stepper {
+      height: 34px;
+      border-radius: 11px;
+      background: var(--brand);
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 3px;
+      box-shadow: 0 3px 10px rgba(179, 38, 30, 0.28);
+    }
+    .prod-stepper button {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      line-height: 1;
+      color: #FFFFFF;
+      transition: background 0.15s ease;
+    }
+    .prod-stepper button:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+    .prod-stepper span {
+      min-width: 22px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 12.5px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Sticky Catalog Filter Bar (Search + Chips stay pinned while browsing) */
+    #catalogStickyBar {
+      position: sticky;
+      top: 57px;
+      z-index: 20;
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+      padding: 0.55rem 0.75rem 0.5rem;
+      background: rgba(246, 243, 238, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(231, 224, 212, 0.85);
+    }
+    @media (min-width: 640px) {
+      #catalogStickyBar {
+        margin-left: -1.25rem;
+        margin-right: -1.25rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+    }
+
+    /* Subtle Download App Pill */
     @keyframes subtlePulse {
       0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
+      50% { transform: scale(1.02); }
     }
     .download-app-pill {
-      animation: subtlePulse 2.8s infinite ease-in-out;
+      animation: subtlePulse 3.4s infinite ease-in-out;
     }
 
     /* Circular Spinner */
@@ -114,8 +322,8 @@
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background-color: #E2E8F0;
-      border: 1.5px solid #CBD5E1;
+      background-color: #E7E0D4;
+      border: 1.5px solid #D5CBB9;
       transition: 0.22s;
       border-radius: 999px;
     }
@@ -126,17 +334,105 @@
       width: 15px;
       left: 2.5px;
       bottom: 2px;
-      background-color: #64748B;
+      background-color: #786655;
       transition: 0.22s;
       border-radius: 50%;
     }
     .m3-switch input:checked + .m3-slider {
-      background-color: #E8F5E9;
-      border-color: #A5D6A7;
+      background-color: var(--leaf-soft);
+      border-color: #86EFAC;
     }
     .m3-switch input:checked + .m3-slider:before {
       transform: translateX(17px);
-      background-color: #2E7D32;
+      background-color: var(--leaf);
+    }
+
+    /* Welcome Screen — Warm Masala Chai Backdrop & Steaming Cup */
+    #googleLoginWelcomeScreen {
+      background-image:
+        radial-gradient(520px 320px at 50% 8%, rgba(217, 119, 6, 0.20), transparent 70%),
+        radial-gradient(420px 280px at 85% 90%, rgba(179, 38, 30, 0.16), transparent 70%);
+    }
+    #loginWelcomeCard {
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 24px 60px -15px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 236, 209, 0.07) inset;
+    }
+    #loginWelcomeCard::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, #B3261E 0%, #F3B63F 50%, #1F6B45 100%);
+      opacity: 0.9;
+    }
+    #loginLogoCircle {
+      position: relative;
+      box-shadow:
+        0 10px 25px -6px rgba(217, 119, 6, 0.35),
+        0 0 0 5px rgba(253, 248, 240, 0.08);
+    }
+    @keyframes steamRise {
+      0% { transform: translateY(3px) scaleX(0.9); opacity: 0; }
+      45% { opacity: 0.75; }
+      100% { transform: translateY(-7px) scaleX(1.1); opacity: 0; }
+    }
+    .login-cup .steam {
+      animation: steamRise 2.4s infinite ease-in-out;
+      transform-origin: center;
+    }
+    .login-cup .steam-2 { animation-delay: 0.6s; }
+    .login-cup .steam-3 { animation-delay: 1.2s; }
+
+    /* Bottom Navigation Pill Indicator */
+    #bottomNav_home, #bottomNav_orders {
+      position: relative;
+      transition: color 0.18s ease, background-color 0.18s ease;
+    }
+    #bottomNav_home .material-icons-round,
+    #bottomNav_orders .material-icons-round {
+      padding: 2px 14px;
+      border-radius: 999px;
+      transition: background-color 0.2s ease, transform 0.18s ease;
+    }
+    #bottomNav_home.font-extrabold .material-icons-round,
+    #bottomNav_orders.font-extrabold .material-icons-round {
+      background-color: rgba(179, 38, 30, 0.11);
+      transform: translateY(-1px);
+    }
+
+    /* Smooth Bottom Sheet Entrance */
+    @keyframes sheetSlideUp {
+      from { transform: translateY(24px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    #looseProductModal > div,
+    #cartCheckoutModal > div,
+    #kycPolicyModal > div,
+    #custOrderDetailsModal > div,
+    #googleProfileModal > div,
+    #saraAiModal > div {
+      animation: sheetSlideUp 0.22s cubic-bezier(.2,.8,.2,1);
+    }
+
+    /* Shimmer Skeleton for Initial Catalog Load */
+    @keyframes shimmerSweep {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .prod-skel {
+      background: linear-gradient(90deg, #EFE9DE 25%, #F8F4EC 50%, #EFE9DE 75%);
+      background-size: 200% 100%;
+      animation: shimmerSweep 1.5s infinite linear;
+    }
+
+    /* Hide AI FAB while any full modal is open on small screens to avoid overlap */
+    .ai-fab {
+      box-shadow:
+        0 12px 26px -6px rgba(20, 83, 45, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.22) inset;
     }
   </style>
 </head>
@@ -154,7 +450,7 @@
         <button
           id="welcomeDownloadAppBtn"
           onclick="triggerApkDirectDownload()"
-          class="download-app-pill px-3.5 py-2 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-lg shadow-[#2E7D32]/30 flex items-center gap-1.5 transition"
+          class="download-app-pill px-3.5 py-2 rounded-full bg-gradient-to-r from-[#14532D] to-[#1F6B45] hover:from-[#0F3F22] hover:to-[#14532D] active:scale-95 text-white shadow-lg shadow-[#1F6B45]/30 flex items-center gap-1.5 transition"
           title="লগইন না করেই সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
         >
           <svg class="w-4 h-4 shrink-0 text-[#A5D6A7]" viewBox="0 0 24 24" fill="currentColor">
@@ -183,14 +479,22 @@
       <!-- Centered Login Card -->
       <div
         id="loginWelcomeCard"
-        class="w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-9 flex flex-col items-center text-center transition-colors duration-300"
+        class="w-full max-w-[400px] rounded-[28px] bg-[#16110B] border border-[#2B2218] shadow-2xl px-6 py-8 flex flex-col items-center text-center transition-colors duration-300"
       >
-        <!-- Circular Logo Emblem -->
+        <!-- Circular Logo Emblem with Animated Steaming Tea Cup -->
         <div
           id="loginLogoCircle"
-          class="w-[72px] h-[72px] rounded-full bg-[#FDF8F0] flex items-center justify-center shadow-inner mb-5"
+          class="w-[74px] h-[74px] rounded-full bg-gradient-to-br from-[#FFF9EE] to-[#F5E6CC] flex items-center justify-center shadow-inner mb-4"
         >
-          <span class="material-icons-round text-[#8B4513] text-[34px]">local_cafe</span>
+          <svg class="login-cup w-9 h-9 text-[#9A3412]" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <path class="steam steam-1" d="M12 9c0-1.6 1.5-2.2 1.5-3.8" stroke="#D97706" stroke-width="1.8" stroke-linecap="round"/>
+            <path class="steam steam-2" d="M17 8.5c0-1.6 1.5-2.2 1.5-3.8" stroke="#B3261E" stroke-width="1.8" stroke-linecap="round"/>
+            <path class="steam steam-3" d="M22 9c0-1.6 1.5-2.2 1.5-3.8" stroke="#D97706" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M7 13h18v7a8 8 0 01-8 8h-2a8 8 0 01-8-8v-7z" fill="#9A3412"/>
+            <path d="M9 14.5h14v4.5a6.5 6.5 0 01-6.5 6.5h-1A6.5 6.5 0 019 19v-4.5z" fill="#B45309"/>
+            <path d="M25 14.5h2.2a3.3 3.3 0 010 6.6H25" stroke="#9A3412" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M6 30h21" stroke="#78350F" stroke-width="2.3" stroke-linecap="round"/>
+          </svg>
         </div>
 
         <!-- Store Title + Official Blue Verified Badge (Inline beside title) -->
@@ -217,7 +521,7 @@
         <button
           id="welcomeGoogleSignInBtn"
           onclick="handleGoogleSignInClick()"
-          class="mt-7 w-full h-[52px] rounded-full bg-white hover:bg-slate-50 active:scale-[0.99] border border-[#DADCE0] shadow-md px-5 flex items-center justify-center gap-3 transition"
+          class="mt-6 w-full h-[52px] rounded-full bg-white hover:bg-slate-50 active:scale-[0.99] border border-[#DADCE0] shadow-md px-5 flex items-center justify-center gap-3 transition"
         >
           <svg id="welcomeGoogleGIcon" class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
             <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
@@ -227,7 +531,7 @@
           </svg>
           <span
             id="welcomeSigningInSpinner"
-            class="hidden w-[18px] h-[18px] rounded-full border-[2.4px] border-[#C0392B] border-t-transparent apk-spinner shrink-0"
+            class="hidden w-[18px] h-[18px] rounded-full border-[2.4px] border-[#B3261E] border-t-transparent apk-spinner shrink-0"
           ></span>
           <span id="welcomeSignInBtnText" class="text-[15px] font-semibold text-[#3C4043]">Sign in with Google</span>
         </button>
@@ -239,17 +543,23 @@
           <div id="loginOrLineRight" class="h-[1px] flex-1 bg-[#2B2218] transition-colors duration-300"></div>
         </div>
 
-        <!-- Instant Guest Browse Button -->
+        <!-- Instant Guest Browse Button (English-only as requested) -->
         <button
           id="welcomeGuestAccessBtn"
           type="button"
           onclick="continueAsGuest()"
-          class="w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13px] flex items-center justify-center gap-2 transition px-4"
-          title="লগইন ছাড়াই দোকান দেখুন (Browse as Guest)"
+          class="w-full h-[46px] rounded-full bg-white/10 hover:bg-white/15 active:scale-[0.99] border border-white/20 text-[#FAF6F0] font-bold text-[13.5px] flex items-center justify-center gap-2 transition px-4"
+          title="Browse as Guest"
         >
           <span class="material-icons-round text-[18px] text-[#A5D6A7]">storefront</span>
-          <span>লগইন ছাড়াই দোকান দেখুন (Browse as Guest)</span>
+          <span>Browse as Guest</span>
         </button>
+
+        <!-- 1-Tap Previously Verified Google Accounts on this Device (Instant Re-Login without Popup Blocker) -->
+        <div
+          id="welcomeSavedAccountsBox"
+          class="hidden mt-3.5 w-full text-left"
+        ></div>
 
         <!-- Real Auth Error / Domain Info Banner (Only shown if Google Auth fails) -->
         <div
@@ -308,16 +618,16 @@
   <!-- ===================================================================== -->
   <!-- 2. STICKY TOP HEADER BAR (Exact 4th Screenshot UI + Download App)     -->
   <!-- ===================================================================== -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E8E0D5] shadow-sm">
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E7E0D4] shadow-sm">
     <div class="max-w-4xl mx-auto px-3 sm:px-5 py-2.5 flex items-center justify-between gap-2">
       <!-- Left: Store Emblem + Name + Live Dot + Subtitle -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#C0392B] to-[#D35400] flex items-center justify-center text-white shadow-sm shrink-0">
-          <span class="material-icons-round text-[22px]">local_cafe</span>
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#B3261E] to-[#B45309] flex items-center justify-center text-white shadow-sm ring-2 ring-[#FEF3C7] shrink-0">
+          <span class="material-icons-round text-[21px]">local_cafe</span>
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-1.5">
-            <h1 id="topStoreName" class="font-extrabold text-[15px] sm:text-[17px] text-[#1E293B] truncate">
+            <h1 id="topStoreName" class="font-extrabold text-[15px] sm:text-[17px] text-[#25190F] truncate">
               Jiyarul Tea Stall &amp; Grocery
             </h1>
             <span
@@ -325,7 +635,7 @@
               title="Verified Store"
             >verified</span>
           </div>
-          <p id="topStoreSubtitle" class="text-[11px] text-[#64748B] truncate">
+          <p id="topStoreSubtitle" class="text-[11px] text-[#6B5847] truncate">
             চা, স্ন্যাক্স ও নিত্যপ্রয়োজনীয় মুদিখানা
           </p>
         </div>
@@ -337,7 +647,7 @@
         <button
           id="topDownloadAppBtn"
           onclick="triggerApkDirectDownload()"
-          class="download-app-pill w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-[#1B5E20] to-[#2E7D32] hover:from-[#144718] hover:to-[#1B5E20] active:scale-95 text-white shadow-md shadow-[#2E7D32]/25 flex items-center justify-center gap-1.5 transition shrink-0"
+          class="download-app-pill w-9 h-9 sm:w-auto sm:h-auto sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-[#14532D] to-[#1F6B45] hover:from-[#0F3F22] hover:to-[#14532D] active:scale-95 text-white shadow-md shadow-[#1F6B45]/25 flex items-center justify-center gap-1.5 transition shrink-0"
           title="সরাসরি অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (Direct APK Download)"
         >
           <!-- Vector Android Icon (Desktop pill) -->
@@ -359,7 +669,7 @@
         <!-- Baki Khata Lookup Icon Button -->
         <button
           onclick="openCustomerBakiModal()"
-          class="w-9 h-9 rounded-full bg-[#FFF3E0] hover:bg-[#FFE0B2] border border-[#FFCC80] text-[#D35400] flex items-center justify-center transition"
+          class="w-9 h-9 rounded-full bg-[#FEF6E7] hover:bg-[#FDE9C4] border border-[#F3D19B] text-[#9A4406] flex items-center justify-center transition"
           title="বাকি খাতা হিসাব দেখুন (Check Baki Khata)"
         >
           <span class="material-icons-round text-[19px]">menu_book</span>
@@ -368,7 +678,7 @@
         <!-- WhatsApp Quick Contact Icon -->
         <button
           onclick="openStoreWhatsApp()"
-          class="w-9 h-9 rounded-full bg-[#E8F5E9] hover:bg-[#C8E6C9] border border-[#A5D6A7] text-[#2E7D32] flex items-center justify-center transition"
+          class="w-9 h-9 rounded-full bg-[#EBF5EE] hover:bg-[#D5ECDC] border border-[#B5DEC2] text-[#1F6B45] flex items-center justify-center transition"
           title="দোকানে WhatsApp করুন"
         >
           <i class="fa-brands fa-whatsapp text-[18px]"></i>
@@ -378,7 +688,7 @@
         <button
           id="topGoogleAvatarBtn"
           onclick="openGoogleProfileModal()"
-          class="w-9 h-9 rounded-full bg-[#C0392B] text-white font-extrabold text-[14px] border-2 border-[#E2E8F0] shadow-sm overflow-hidden flex items-center justify-center transition"
+          class="w-9 h-9 rounded-full bg-[#B3261E] text-white font-extrabold text-[14px] border-2 border-[#E7E0D4] shadow-sm overflow-hidden flex items-center justify-center transition"
           title="আপনার Google Account"
         >
           <span id="topGoogleAvatarInitial">G</span>
@@ -395,16 +705,16 @@
     <!-- STORE OPEN / CLOSED BANNER -->
     <div
       id="customerStoreStatusBanner"
-      class="w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#E8F5E9] border-[#A5D6A7]"
+      class="w-full rounded-[16px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#EBF5EE] border-[#B5DEC2] shadow-sm"
     >
       <div class="flex items-center gap-2.5 min-w-0">
-        <span id="custStatusDot" class="w-2.5 h-2.5 rounded-full bg-[#2E7D32] shrink-0"></span>
+        <span id="custStatusDot" class="w-2.5 h-2.5 rounded-full bg-[#1F6B45] ring-4 ring-[#1F6B45]/15 shrink-0"></span>
         <div class="min-w-0">
           <div class="flex items-center gap-1.5 flex-wrap">
-            <span id="custStatusTitle" class="font-extrabold text-[13px] text-[#1B5E20]">দোকান খোলা আছে (OPEN)</span>
-            <span id="custStatusSub" class="text-[11px] font-semibold text-[#2E7D32]">• অর্ডার নেওয়া হচ্ছে</span>
+            <span id="custStatusTitle" class="font-extrabold text-[13px] text-[#14532D]">দোকান খোলা আছে (OPEN)</span>
+            <span id="custStatusSub" class="text-[11px] font-semibold text-[#1F6B45]">• অর্ডার নেওয়া হচ্ছে</span>
           </div>
-          <p id="custStoreTiming" class="text-[11px] text-[#1B5E20]/80 truncate">
+          <p id="custStoreTiming" class="text-[11px] text-[#14532D]/80 truncate">
             সকাল ৬:০০ - রাত ১০:৩০ (6:00 AM - 10:30 PM)
           </p>
         </div>
@@ -413,10 +723,10 @@
       <button
         onclick="enableWebPushNotifications()"
         id="webNotifBellBtn"
-        class="px-2.5 py-1 rounded-[8px] bg-white/80 hover:bg-white text-[#1E293B] border border-black/10 text-[11px] font-bold flex items-center gap-1 shrink-0 transition"
+        class="px-2.5 py-1 rounded-[9px] bg-white/90 hover:bg-white text-[#25190F] border border-[#25190F]/10 text-[11px] font-bold flex items-center gap-1 shrink-0 shadow-sm transition"
         title="অর্ডার আপডেট নোটিফিকেশন চালু রাখুন"
       >
-        <span id="webNotifBellIcon" class="material-icons-round text-[15px] text-[#D35400]">notifications_active</span>
+        <span id="webNotifBellIcon" class="material-icons-round text-[15px] text-[#B45309]">notifications_active</span>
         <span class="hidden sm:inline">নোটিফিকেশন</span>
       </button>
     </div>
@@ -424,14 +734,14 @@
     <!-- TODAY'S SPECIAL NOTICE BANNER -->
     <div
       id="customerNoticeBanner"
-      class="w-full rounded-[14px] bg-gradient-to-r from-[#FFF8E1] via-[#FFF3E0] to-[#FFECB3] border border-[#FFE082] px-3.5 py-2.5 flex items-center gap-2.5 shadow-sm"
+      class="w-full rounded-[16px] bg-gradient-to-r from-[#FFFDF7] via-[#FEF6E4] to-[#FDECC8] border border-[#F3D19B] px-3.5 py-2.5 flex items-center gap-2.5 shadow-sm"
     >
-      <div class="w-8 h-8 rounded-full bg-[#D35400]/15 text-[#D35400] flex items-center justify-center shrink-0">
+      <div class="w-8 h-8 rounded-full bg-[#B45309]/12 text-[#9A4406] flex items-center justify-center shrink-0">
         <span class="material-icons-round text-[18px]">campaign</span>
       </div>
       <div class="min-w-0 flex-1">
-        <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#E65100]">আজকের স্পেশাল ঘোষণা (NOTICE)</p>
-        <p id="customerNoticeText" class="text-[12.5px] font-bold text-[#3E2723] leading-snug">
+        <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#9A4406]">আজকের স্পেশাল ঘোষণা (NOTICE)</p>
+        <p id="customerNoticeText" class="text-[12.5px] font-bold text-[#25190F] leading-snug">
           আজকের স্পেশাল: খাঁটি দুধের স্পেশাল মালাই চা ও গরম সিঙ্গাড়া!
         </p>
       </div>
@@ -443,42 +753,61 @@
     <!-- =============================================================== -->
     <!-- TAB 0: SHOPPING CATALOG VIEW (#customerTab_home)                -->
     <!-- =============================================================== -->
-    <section id="customerTab_home" class="space-y-3.5">
+    <section id="customerTab_home" class="space-y-3">
 
-      <!-- Search Bar + In-Stock Filter Toggle (Exact 4th Screenshot UI) -->
-      <div class="flex flex-col sm:flex-row gap-2">
-        <div class="relative flex-1 flex items-center">
-          <span class="material-icons-round text-[#C0392B] text-[20px] absolute left-3.5">search</span>
-          <input
-            id="customerSearchInput"
-            type="text"
-            oninput="renderCustomerProducts()"
-            placeholder="চা, সিঙ্গাড়া, চিনি, তেল বা মশলা খুঁজুন..."
-            class="w-full bg-white border border-[#E2D6C7] focus:border-[#C0392B] rounded-[14px] pl-10 pr-9 py-2.5 text-[13.5px] font-medium text-[#0F172A] shadow-sm outline-none"
-          />
-          <button
-            id="clearCustSearchBtn"
-            onclick="document.getElementById('customerSearchInput').value=''; renderCustomerProducts();"
-            class="hidden absolute right-3 text-slate-400 hover:text-slate-600"
+      <!-- Sticky Catalog Bar: Search + Stock Filter + Category Chips stay pinned while scrolling -->
+      <div id="catalogStickyBar" class="space-y-2.5">
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1 flex items-center">
+            <span class="material-icons-round text-[#B3261E] text-[20px] absolute left-3.5 pointer-events-none">search</span>
+            <input
+              id="customerSearchInput"
+              type="text"
+              oninput="renderCustomerProducts()"
+              placeholder="চা, সিঙ্গাড়া, চিনি, তেল বা মশলা খুঁজুন..."
+              class="w-full bg-white border border-[#DDD4C5] focus:border-[#B3261E] focus:ring-2 focus:ring-[#B3261E]/10 rounded-[14px] pl-10 pr-9 py-2.5 text-[13.5px] font-medium text-[#25190F] placeholder:text-[#8C7B6B] shadow-sm outline-none transition"
+            />
+            <button
+              id="clearCustSearchBtn"
+              onclick="document.getElementById('customerSearchInput').value=''; renderCustomerProducts();"
+              class="hidden absolute right-2.5 w-6 h-6 rounded-full bg-[#F5EFE6] hover:bg-[#E7E0D4] text-[#574536] flex items-center justify-center"
+              title="Clear search"
+            >
+              <span class="material-icons-round text-[15px]">close</span>
+            </button>
+          </div>
+
+          <label
+            for="inStockOnlyToggle"
+            class="px-3 py-2 rounded-[14px] bg-white border border-[#DDD4C5] flex items-center gap-2 shrink-0 shadow-sm cursor-pointer select-none"
+            title="শুধু স্টকে থাকা পণ্য দেখুন"
           >
-            <span class="material-icons-round text-[18px]">close</span>
-          </button>
-        </div>
-
-        <div class="px-3.5 py-2 rounded-[14px] bg-white border border-[#E2D6C7] flex items-center justify-between sm:justify-start gap-2.5 shrink-0 shadow-sm">
-          <span class="text-[12px] font-bold text-[#3E2723]">শুধু স্টকে থাকা পণ্য</span>
-          <label class="m3-switch">
-            <input id="inStockOnlyToggle" type="checkbox" onchange="renderCustomerProducts()" />
-            <span class="m3-slider"></span>
+            <span class="text-[11.5px] font-bold text-[#25190F] whitespace-nowrap">স্টকে আছে</span>
+            <span class="m3-switch">
+              <input id="inStockOnlyToggle" type="checkbox" onchange="renderCustomerProducts()" />
+              <span class="m3-slider"></span>
+            </span>
           </label>
         </div>
+
+        <!-- Category Chips Horizontal Scroll -->
+        <div id="customerCategoriesRow" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5"></div>
       </div>
 
-      <!-- Category Chips Horizontal Scroll (Exact 4th Screenshot UI) -->
-      <div id="customerCategoriesRow" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
-
-      <!-- Product Catalog Grid (Exact 4th Screenshot Horizontal Cards) -->
-      <div id="customerProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+      <!-- Product Catalog Grid (2-col on mobile for fast browsing, 3-col on tablet/desktop) -->
+      <div id="customerProductsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <!-- Initial Shimmer Skeleton Tiles (replaced automatically on render) -->
+        <div class="prod-card p-2.5 space-y-2.5">
+          <div class="w-full aspect-[4/3] rounded-[12px] prod-skel"></div>
+          <div class="h-3.5 w-3/4 rounded prod-skel"></div>
+          <div class="h-3 w-1/2 rounded prod-skel"></div>
+        </div>
+        <div class="prod-card p-2.5 space-y-2.5">
+          <div class="w-full aspect-[4/3] rounded-[12px] prod-skel"></div>
+          <div class="h-3.5 w-3/4 rounded prod-skel"></div>
+          <div class="h-3 w-1/2 rounded prod-skel"></div>
+        </div>
+      </div>
 
     </section>
 
@@ -486,31 +815,31 @@
     <!-- TAB 1: CUSTOMER LIVE ORDERS & HISTORY (#customerTab_orders)     -->
     <!-- =============================================================== -->
     <section id="customerTab_orders" class="space-y-3.5 hidden">
-      <div class="app-card p-3.5 border-[#E2D6C7]">
+      <div class="app-card p-3.5 border-[#DDD4C5]">
         <div class="flex items-center justify-between flex-wrap gap-2 mb-2.5">
           <div>
-            <h2 class="font-extrabold text-[15px] text-[#0F172A] flex items-center gap-1.5">
-              <span class="material-icons-round text-[#C0392B] text-[20px]">receipt_long</span>
+            <h2 class="font-extrabold text-[15px] text-[#25190F] flex items-center gap-1.5">
+              <span class="material-icons-round text-[#B3261E] text-[20px]">receipt_long</span>
               <span>আমার অর্ডার সমূহ (My Live Orders)</span>
             </h2>
-            <p id="myOrdersAccountSub" class="text-[11px] text-slate-500">আপনার অর্ডারের লাইভ স্ট্যাটাস এখানে সাথে সাথে আপডেট হবে</p>
+            <p id="myOrdersAccountSub" class="text-[11px] text-[#6B5847]">আপনার অর্ডারের লাইভ স্ট্যাটাস এখানে সাথে সাথে আপডেট হবে</p>
           </div>
-          <span id="myOrdersCountPill" class="px-2.5 py-1 rounded-full bg-[#C0392B] text-white font-extrabold text-[11px]">
+          <span id="myOrdersCountPill" class="px-2.5 py-1 rounded-full bg-[#B3261E] text-white font-extrabold text-[11px]">
             0টি অর্ডার
           </span>
         </div>
 
         <!-- Order Search Box -->
         <div class="relative flex items-center">
-          <span class="material-icons-round text-[#C0392B] text-[19px] absolute left-3">search</span>
+          <span class="material-icons-round text-[#B3261E] text-[19px] absolute left-3">search</span>
           <input
             id="myOrderSearchInput"
             type="text"
             oninput="renderCustomerOrders()"
             placeholder="Order ID (#123456) বা তারিখ (dd/mm/yyyy) দিয়ে খুঁজুন..."
-            class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[12px] pl-9 pr-10 py-2 text-[12.5px] font-medium text-[#0F172A] outline-none"
+            class="w-full bg-[#FAF7F2] border border-[#DDD4C5] focus:border-[#B3261E] rounded-[12px] pl-9 pr-10 py-2 text-[12.5px] font-medium text-[#25190F] outline-none"
           />
-          <label class="absolute right-2.5 w-7 h-7 rounded-[7px] bg-[#C0392B]/10 hover:bg-[#C0392B]/20 flex items-center justify-center cursor-pointer text-[#C0392B]">
+          <label class="absolute right-2.5 w-7 h-7 rounded-[7px] bg-[#B3261E]/10 hover:bg-[#B3261E]/20 flex items-center justify-center cursor-pointer text-[#B3261E]">
             <span class="material-icons-round text-[16px]">calendar_month</span>
             <input type="date" class="sr-only" onchange="applyMyOrderDateFilter(this.value)" />
           </label>
@@ -523,29 +852,29 @@
     <!-- =============================================================== -->
     <!-- RAZORPAY KYC COMPLIANCE FOOTER (Terms, Privacy, Refund, Contact) -->
     <!-- =============================================================== -->
-    <footer class="mt-8 pt-5 pb-6 border-t border-[#E8E0D5] text-center space-y-2.5">
-      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11.5px] font-bold text-[#5D4037]">
-        <button type="button" onclick="openKycPolicyModal('terms')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+    <footer class="mt-8 pt-5 pb-6 border-t border-[#E7E0D4] text-center space-y-2.5">
+      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11.5px] font-bold text-[#574536]">
+        <button type="button" onclick="openKycPolicyModal('terms')" class="hover:text-[#B3261E] underline decoration-[#D8CBB8] underline-offset-4 transition">
           Terms &amp; Conditions
         </button>
-        <span class="text-[#D7CCC8]">•</span>
-        <button type="button" onclick="openKycPolicyModal('privacy')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+        <span class="text-[#D8CBB8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('privacy')" class="hover:text-[#B3261E] underline decoration-[#D8CBB8] underline-offset-4 transition">
           Privacy Policy
         </button>
-        <span class="text-[#D7CCC8]">•</span>
-        <button type="button" onclick="openKycPolicyModal('refund')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+        <span class="text-[#D8CBB8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('refund')" class="hover:text-[#B3261E] underline decoration-[#D8CBB8] underline-offset-4 transition">
           Refund &amp; Cancellation Policy
         </button>
-        <span class="text-[#D7CCC8]">•</span>
-        <button type="button" onclick="openKycPolicyModal('contact')" class="hover:text-[#C0392B] underline decoration-[#D7CCC8] underline-offset-4 transition">
+        <span class="text-[#D8CBB8]">•</span>
+        <button type="button" onclick="openKycPolicyModal('contact')" class="hover:text-[#B3261E] underline decoration-[#D8CBB8] underline-offset-4 transition">
           Contact Us
         </button>
       </div>
-      <p class="text-[10.5px] text-slate-500">
+      <p class="text-[10.5px] text-[#6B5847]">
         © 2026 <strong>Jiyarul Tea Stall &amp; Grocery</strong> • Digberia, Mandirbazar, South 24 Parganas, WB - 743395
       </p>
-      <p class="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-        <span class="material-icons-round text-[13px] text-[#16A34A]">verified_user</span>
+      <p class="text-[10px] text-[#857261] flex items-center justify-center gap-1">
+        <span class="material-icons-round text-[13px] text-[#1F6B45]">verified_user</span>
         <span>100% Secure Online Payments powered by Razorpay</span>
       </p>
     </footer>
@@ -553,47 +882,47 @@
   </main>
 
   <!-- ===================================================================== -->
-  <!-- 4. FLOATING CART BAR & 3RD SCREENSHOT CIRCULAR AI BUTTON              -->
+  <!-- 4. FLOATING CART BAR & TEA-LEAF AI ASSISTANT FAB                      -->
   <!-- ===================================================================== -->
   <div
     id="floatingCartBar"
     onclick="openCartCheckoutModal()"
-    class="fixed bottom-[68px] left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-[520px] rounded-[16px] bg-gradient-to-r from-[#C0392B] to-[#D35400] text-white px-4 py-3 shadow-xl shadow-[#C0392B]/35 hidden items-center justify-between cursor-pointer active:scale-[0.99] transition"
+    class="fixed bottom-[66px] left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-[520px] rounded-[18px] bg-gradient-to-r from-[#25190F] via-[#3A2416] to-[#B3261E] text-white px-4 py-3 shadow-2xl shadow-[#25190F]/35 border border-white/10 hidden items-center justify-between cursor-pointer active:scale-[0.99] transition"
   >
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-extrabold text-[14px]" id="floatingCartCountBadge">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-[12px] bg-[#F3B63F] text-[#25190F] flex items-center justify-center font-extrabold text-[14px] shadow-sm" id="floatingCartCountBadge">
         0
       </div>
       <div>
-        <p class="text-[11px] font-medium text-white/85">আপনার শপিং ব্যাগ (Cart)</p>
+        <p class="text-[10.5px] font-semibold uppercase tracking-wider text-[#F3B63F]">আপনার শপিং ব্যাগ (Cart)</p>
         <p id="floatingCartTotalText" class="text-[16px] font-extrabold leading-tight">মোট ₹0</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-1.5 bg-white text-[#C0392B] px-3.5 py-2 rounded-[11px] font-extrabold text-[12.5px] shadow-sm">
+    <div class="flex items-center gap-1.5 bg-white text-[#B3261E] px-3.5 py-2 rounded-[12px] font-extrabold text-[12.5px] shadow-sm">
       <span>অর্ডার করুন</span>
       <span class="material-icons-round text-[17px]">arrow_forward</span>
     </div>
   </div>
 
-  <!-- Circular 52x52 Purple-Blue Sparkle AI Button (Exact match to 3rd Screenshot!) -->
+  <!-- Circular 50x50 Warm Tea-Leaf Green AI Assistant Button -->
   <button
     onclick="openSaraAiModal()"
-    class="fixed bottom-[76px] right-4 z-30 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-[#4F46E5] via-[#7C3AED] to-[#2563EB] hover:from-[#4338CA] hover:to-[#1D4ED8] text-white shadow-xl shadow-indigo-600/35 flex items-center justify-center active:scale-95 transition"
-    title="AI Shopping Assistant"
+    class="ai-fab fixed bottom-[74px] right-4 z-30 w-[50px] h-[50px] rounded-full bg-gradient-to-br from-[#14532D] via-[#1F6B45] to-[#0F766E] hover:from-[#0F3F22] hover:to-[#115E59] text-white flex items-center justify-center active:scale-95 transition"
+    title="দোকান AI সহকারী (Shopping Assistant)"
   >
-    <span class="material-icons-round text-[24px]">auto_awesome</span>
+    <span class="material-icons-round text-[22px] text-[#FDE68A]">auto_awesome</span>
   </button>
 
   <!-- ===================================================================== -->
   <!-- 5. BOTTOM NAVIGATION BAR (Exact 4th Screenshot UI: দোকান | আমার অর্ডার) -->
   <!-- ===================================================================== -->
-  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-[#E8E0D5] shadow-lg">
-    <div class="max-w-md mx-auto grid grid-cols-2 h-[58px]">
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-[#E7E0D4] shadow-lg">
+    <div class="max-w-md mx-auto grid grid-cols-2 h-[60px]">
       <button
         id="bottomNav_home"
         onclick="switchCustomerTab('home')"
-        class="flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition"
+        class="flex flex-col items-center justify-center gap-0.5 text-[#B3261E] font-extrabold transition"
       >
         <span class="material-icons-round text-[22px]">storefront</span>
         <span class="text-[11px]">দোকান (Shop)</span>
@@ -602,13 +931,13 @@
       <button
         id="bottomNav_orders"
         onclick="switchCustomerTab('orders')"
-        class="relative flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition"
+        class="relative flex flex-col items-center justify-center gap-0.5 text-[#6B5847] font-bold transition"
       >
         <div class="relative">
           <span class="material-icons-round text-[22px]">receipt_long</span>
           <span
             id="bottomNavOrderBadge"
-            class="hidden absolute -top-1.5 -right-3 px-1.5 py-0.2 rounded-full bg-[#C0392B] text-white font-extrabold text-[9px]"
+            class="hidden absolute -top-1.5 -right-3 px-1.5 py-0.2 rounded-full bg-[#B3261E] text-white font-extrabold text-[9px]"
           >0</span>
         </div>
         <span class="text-[11px]">আমার অর্ডার (Orders)</span>
@@ -620,58 +949,58 @@
   <!-- MODAL A: LOOSE / PACKET WEIGHT & PRICE SELECTOR                       -->
   <!-- ===================================================================== -->
   <div id="looseProductModal" onclick="if(event.target===this) closeLooseProductModal()" class="fixed inset-0 z-[60] bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4">
-    <div class="w-full max-w-[400px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden">
-      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+    <div class="w-full max-w-[400px] bg-white rounded-[20px] border border-[#E7E0D4] shadow-2xl overflow-hidden">
+      <div class="px-5 py-3.5 bg-[#FAF7F2] border-b border-[#E7E0D4] flex items-center justify-between">
         <div>
-          <h3 id="looseModalTitle" class="font-extrabold text-[15px] text-[#0F172A]">প্যাকেট বা খুচরো পরিমাণ নির্বাচন করুন</h3>
-          <p id="looseModalSub" class="text-[11px] text-[#D35400] font-semibold"></p>
+          <h3 id="looseModalTitle" class="font-extrabold text-[15px] text-[#25190F]">প্যাকেট বা খুচরো পরিমাণ নির্বাচন করুন</h3>
+          <p id="looseModalSub" class="text-[11px] text-[#B45309] font-semibold"></p>
         </div>
-        <button onclick="closeLooseProductModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+        <button onclick="closeLooseProductModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-[#574536]">
           <span class="material-icons-round text-[20px]">close</span>
         </button>
       </div>
 
       <div class="p-4 space-y-3.5">
         <div id="looseModalPacketsBox" class="hidden space-y-1.5">
-          <p class="text-[11.5px] font-bold text-[#1B5E20]">রেডি প্যাকেট সিলেক্ট করুন (Packet):</p>
+          <p class="text-[11.5px] font-bold text-[#14532D]">রেডি প্যাকেট সিলেক্ট করুন (Packet):</p>
           <div id="looseModalPacketChips" class="flex flex-wrap gap-2"></div>
         </div>
 
         <div class="space-y-1.5">
-          <p class="text-[11.5px] font-bold text-[#3E2723]">অথবা খুচরো ওজন সিলেক্ট করুন (Loose Weight):</p>
+          <p class="text-[11.5px] font-bold text-[#25190F]">অথবা খুচরো ওজন সিলেক্ট করুন (Loose Weight):</p>
           <div id="looseModalWeightChips" class="flex flex-wrap gap-1.5"></div>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5 pt-1">
           <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">কত টাকার নেবেন? (₹)</label>
+            <label class="block text-[11px] font-bold text-[#574536] mb-1">কত টাকার নেবেন? (₹)</label>
             <input
               id="looseCustomRupeeInput"
               type="number"
               oninput="onLooseRupeeInput()"
               placeholder="যেমন: 15"
-              class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[14px] font-extrabold text-[#C0392B] outline-none"
+              class="w-full bg-[#FAF7F2] border border-[#DDD4C5] focus:border-[#B3261E] rounded-[10px] px-3 py-2 text-[14px] font-extrabold text-[#B3261E] outline-none"
             />
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-600 mb-1">ওজন (গ্রাম / মিলি)</label>
+            <label class="block text-[11px] font-bold text-[#574536] mb-1">ওজন (গ্রাম / মিলি)</label>
             <input
               id="looseCustomGramInput"
               type="number"
               oninput="onLooseGramInput()"
               placeholder="যেমন: 100"
-              class="w-full bg-[#FAF6F0] border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[14px] font-bold text-[#0F172A] outline-none"
+              class="w-full bg-[#FAF7F2] border border-[#DDD4C5] focus:border-[#B3261E] rounded-[10px] px-3 py-2 text-[14px] font-bold text-[#25190F] outline-none"
             />
           </div>
         </div>
 
-        <div id="looseCalcSummary" class="p-2.5 rounded-[10px] bg-[#E8F5E9] border border-[#A5D6A7] text-center font-bold text-[12.5px] text-[#1B5E20]">
+        <div id="looseCalcSummary" class="p-2.5 rounded-[10px] bg-[#EBF5EE] border border-[#B5DEC2] text-center font-bold text-[12.5px] text-[#14532D]">
           পরিমাণ নির্বাচন করুন
         </div>
 
         <button
           onclick="confirmAddLooseItemToCart()"
-          class="w-full py-2.5 rounded-[12px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+          class="w-full py-2.5 rounded-[12px] bg-[#B3261E] hover:bg-[#8F1D17] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
         >
           <span class="material-icons-round text-[18px]">add_shopping_cart</span>
           <span>ব্যাগে যোগ করুন (Add to Cart)</span>
@@ -684,15 +1013,15 @@
   <!-- MODAL B: SHOPPING CART & CHECKOUT SHEET                               -->
   <!-- ===================================================================== -->
   <div id="cartCheckoutModal" onclick="if(event.target===this) closeCartCheckoutModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="w-full max-w-[500px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
-      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+    <div class="w-full max-w-[500px] bg-white rounded-[22px] border border-[#E7E0D4] shadow-2xl overflow-hidden my-4">
+      <div class="px-5 py-3.5 bg-[#FAF7F2] border-b border-[#E7E0D4] flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="material-icons-round text-[#C0392B]">shopping_bag</span>
-          <h3 class="font-extrabold text-[15px] text-[#0F172A]">আপনার অর্ডার বক্স (Checkout)</h3>
+          <span class="material-icons-round text-[#B3261E]">shopping_bag</span>
+          <h3 class="font-extrabold text-[15px] text-[#25190F]">আপনার অর্ডার বক্স (Checkout)</h3>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="clearEntireCart()" class="text-[11px] font-bold text-[#C62828] hover:underline">সব মুছুন</button>
-          <button onclick="closeCartCheckoutModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+          <button onclick="clearEntireCart()" class="text-[11px] font-bold text-[#B3261E] hover:underline">সব মুছুন</button>
+          <button onclick="closeCartCheckoutModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-[#574536]">
             <span class="material-icons-round text-[20px]">close</span>
           </button>
         </div>
@@ -701,9 +1030,9 @@
       <div class="p-4 space-y-3.5 max-h-[80vh] overflow-y-auto">
         <div id="cartModalItemsList" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
 
-        <div class="p-3 rounded-[12px] bg-[#FAF6F0] border border-[#E2D6C7] flex items-center justify-between">
-          <span class="font-bold text-[13px] text-[#3E2723]">সর্বমোট বিল (Total Payable):</span>
-          <span id="cartModalTotalAmount" class="font-extrabold text-[19px] text-[#C0392B]">₹0</span>
+        <div class="p-3 rounded-[12px] bg-[#FAF7F2] border border-[#DDD4C5] flex items-center justify-between">
+          <span class="font-bold text-[13px] text-[#25190F]">সর্বমোট বিল (Total Payable):</span>
+          <span id="cartModalTotalAmount" class="font-extrabold text-[19px] text-[#B3261E]">₹0</span>
         </div>
 
         <div class="px-3 py-2 rounded-[10px] bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-between gap-2">
@@ -711,7 +1040,7 @@
             <span class="material-icons-round text-[#1D4ED8] text-[16px]">verified</span>
             <div class="min-w-0">
               <p id="checkoutVerifiedEmailLabel" class="text-[10px] font-bold text-[#1E40AF]">Order Gmail ID (Verified)</p>
-              <p id="checkoutVerifiedEmailText" class="text-[12px] font-extrabold text-[#0F172A] truncate"></p>
+              <p id="checkoutVerifiedEmailText" class="text-[12px] font-extrabold text-[#25190F] truncate"></p>
             </div>
           </div>
           <span class="px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[10px] shrink-0">Scam Protected</span>
@@ -719,17 +1048,17 @@
 
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">আপনার নাম (Customer Name) *</label>
+            <label class="block text-[11px] font-bold text-[#574536] mb-1">আপনার নাম (Customer Name) *</label>
             <input
               id="checkoutCustomerName"
               type="text"
               placeholder="আপনার নাম লিখুন"
-              class="w-full bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
+              class="w-full bg-white border border-[#DDD4C5] focus:border-[#B3261E] rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
             />
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">মোবাইল নম্বর (১০ সংখ্যার ফোন নম্বর) *</label>
+            <label class="block text-[11px] font-bold text-[#574536] mb-1">মোবাইল নম্বর (১০ সংখ্যার ফোন নম্বর) *</label>
             <div class="flex gap-2">
               <input
                 id="checkoutCustomerPhone"
@@ -737,13 +1066,13 @@
                 maxlength="10"
                 oninput="onCustomerPhoneInputChanged()"
                 placeholder="9876543210"
-                class="flex-1 bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] px-3 py-2 text-[13px] font-bold outline-none"
+                class="flex-1 bg-white border border-[#DDD4C5] focus:border-[#B3261E] rounded-[10px] px-3 py-2 text-[13px] font-bold outline-none"
               />
               <button
                 id="sendOtpBtn"
                 type="button"
                 onclick="sendInstantPhoneOtp()"
-                class="px-3 py-2 rounded-[10px] bg-[#D35400] hover:bg-[#BA4A00] text-white font-bold text-[11.5px] shrink-0 transition"
+                class="px-3 py-2 rounded-[10px] bg-[#B45309] hover:bg-[#9A4406] text-white font-bold text-[11.5px] shrink-0 transition"
               >
                 OTP নিন
               </button>
@@ -764,13 +1093,13 @@
                 <button
                   type="button"
                   onclick="verifyPhoneOtpCode()"
-                  class="px-3.5 py-1.5 rounded-[8px] bg-[#16A34A] text-white font-bold text-[11.5px]"
+                  class="px-3.5 py-1.5 rounded-[8px] bg-[#1F6B45] text-white font-bold text-[11.5px]"
                 >
                   Verify
                 </button>
               </div>
             </div>
-            <p id="phoneVerifiedBadge" class="hidden mt-1 text-[11px] font-bold text-[#16A34A] items-center gap-1">
+            <p id="phoneVerifiedBadge" class="hidden mt-1 text-[11px] font-bold text-[#1F6B45] items-center gap-1">
               <span class="material-icons-round text-[14px]">check_circle</span>
               <span>নম্বরটি OTP দ্বারা ভেরিফায়েড!</span>
             </p>
@@ -778,11 +1107,11 @@
 
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="text-[11px] font-bold text-slate-700">ডেলিভারি ঠিকানা বা নোট (Address / Note) *</label>
+              <label class="text-[11px] font-bold text-[#574536]">ডেলিভারি ঠিকানা বা নোট (Address / Note) *</label>
               <button
                 type="button"
                 onclick="detectCustomerGpsLocation()"
-                class="text-[11px] font-bold text-[#C0392B] hover:underline flex items-center gap-0.5"
+                class="text-[11px] font-bold text-[#B3261E] hover:underline flex items-center gap-0.5"
               >
                 <span class="material-icons-round text-[13px]">my_location</span>
                 <span>GPS লোকেশন নিন</span>
@@ -792,7 +1121,7 @@
               id="checkoutCustomerAddress"
               rows="2"
               placeholder="বাড়ির নাম, পাড়া বা দোকানে এসে নেবেন কি না লিখুন..."
-              class="w-full bg-white border border-[#CBD5E1] focus:border-[#C0392B] rounded-[10px] p-2.5 text-[12.5px] font-medium outline-none"
+              class="w-full bg-white border border-[#DDD4C5] focus:border-[#B3261E] rounded-[10px] p-2.5 text-[12.5px] font-medium outline-none"
             ></textarea>
           </div>
         </div>
@@ -800,7 +1129,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
           <button
             onclick="submitCustomerOrder('COD')"
-            class="py-3 px-4 rounded-[12px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
+            class="py-3 px-4 rounded-[12px] bg-[#1F6B45] hover:bg-[#14532D] text-white font-extrabold text-[13px] flex items-center justify-center gap-1.5 shadow-md transition"
           >
             <span class="material-icons-round text-[18px]">check_circle</span>
             <span>অর্ডার কনফার্ম করুন (Cash)</span>
@@ -822,19 +1151,19 @@
   <!-- MODAL C: RAZORPAY KYC COMPLIANCE POLICY MODAL                         -->
   <!-- ===================================================================== -->
   <div id="kycPolicyModal" onclick="if(event.target===this) closeKycPolicyModal()" class="fixed inset-0 z-[95] bg-black/60 backdrop-blur-[2px] hidden items-center justify-center p-4 overflow-y-auto">
-    <div class="w-full max-w-[520px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-4">
-      <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+    <div class="w-full max-w-[520px] bg-white rounded-[22px] border border-[#E7E0D4] shadow-2xl overflow-hidden my-4">
+      <div class="px-5 py-3.5 bg-[#FAF7F2] border-b border-[#E7E0D4] flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span id="kycPolicyModalIcon" class="material-icons-round text-[#C0392B]">gavel</span>
-          <h3 id="kycPolicyModalTitle" class="font-extrabold text-[15px] text-[#0F172A]">Policy Details</h3>
+          <span id="kycPolicyModalIcon" class="material-icons-round text-[#B3261E]">gavel</span>
+          <h3 id="kycPolicyModalTitle" class="font-extrabold text-[15px] text-[#25190F]">Policy Details</h3>
         </div>
-        <button onclick="closeKycPolicyModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-600">
+        <button onclick="closeKycPolicyModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-[#574536]">
           <span class="material-icons-round text-[20px]">close</span>
         </button>
       </div>
-      <div id="kycPolicyModalBody" class="p-5 max-h-[75vh] overflow-y-auto text-[12.5px] text-slate-700 leading-relaxed space-y-3"></div>
-      <div class="px-5 py-3 bg-[#FAF6F0] border-t border-[#E8E0D5] flex justify-end">
-        <button onclick="closeKycPolicyModal()" class="px-5 py-2 rounded-[10px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[12.5px]">
+      <div id="kycPolicyModalBody" class="p-5 max-h-[75vh] overflow-y-auto text-[12.5px] text-[#574536] leading-relaxed space-y-3"></div>
+      <div class="px-5 py-3 bg-[#FAF7F2] border-t border-[#E7E0D4] flex justify-end">
+        <button onclick="closeKycPolicyModal()" class="px-5 py-2 rounded-[10px] bg-[#B3261E] hover:bg-[#8F1D17] text-white font-extrabold text-[12.5px]">
           বন্ধ করুন (Close)
         </button>
       </div>
@@ -846,25 +1175,25 @@
   <!-- ===================================================================== -->
   <div
     id="customerBakiModal"
-    class="fixed inset-0 z-50 bg-[#FAF6F0] hidden flex-col h-full w-full overflow-hidden"
+    class="fixed inset-0 z-50 bg-[#F6F3EE] hidden flex-col h-full w-full overflow-hidden"
   >
     <!-- 1. Native-App Style Sticky Top Bar (Compact) -->
-    <div class="bg-white border-b border-[#E8E0D5] shadow-sm shrink-0">
+    <div class="bg-white border-b border-[#E7E0D4] shadow-sm shrink-0">
       <div class="max-w-3xl mx-auto px-3 sm:px-5 py-2 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 min-w-0">
           <button
             type="button"
             onclick="closeCustomerBakiModal()"
-            class="w-8 h-8 rounded-full bg-[#FAF6F0] hover:bg-[#EFE6DC] active:scale-95 flex items-center justify-center text-[#0F172A] shrink-0 transition"
+            class="w-8 h-8 rounded-full bg-[#FAF7F2] hover:bg-[#EFE6DC] active:scale-95 flex items-center justify-center text-[#25190F] shrink-0 transition"
             title="দোকানে ফিরে যান (Back to Shop)"
           >
             <span class="material-icons-round text-[20px]">arrow_back</span>
           </button>
-          <div class="w-8 h-8 rounded-[9px] bg-[#FFF3E0] flex items-center justify-center shrink-0">
-            <span class="material-icons-round text-[#D35400] text-[18px]">menu_book</span>
+          <div class="w-8 h-8 rounded-[9px] bg-[#FEF6E7] flex items-center justify-center shrink-0">
+            <span class="material-icons-round text-[#B45309] text-[18px]">menu_book</span>
           </div>
           <div class="min-w-0">
-            <h3 class="font-extrabold text-[14.5px] sm:text-[16px] text-[#0F172A] truncate leading-tight">
+            <h3 class="font-extrabold text-[14.5px] sm:text-[16px] text-[#25190F] truncate leading-tight">
               দোকানের বাকি খাতা (Dokaner Baki Khata)
             </h3>
             <p class="text-[10.5px] text-[#7A6B5F] truncate leading-tight">
@@ -875,7 +1204,7 @@
         <button
           type="button"
           onclick="closeCustomerBakiModal()"
-          class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-slate-500 shrink-0 transition"
+          class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center text-[#574536] shrink-0 transition"
           title="Close"
         >
           <span class="material-icons-round text-[19px]">close</span>
@@ -888,20 +1217,20 @@
       <div class="max-w-3xl mx-auto px-3 sm:px-5 py-2">
         <div class="flex gap-2 items-center">
           <div class="relative flex-1">
-            <span class="material-icons-round text-[#D35400] text-[17px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">tag</span>
+            <span class="material-icons-round text-[#B45309] text-[17px] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">tag</span>
             <input
               id="bakiLookupInput"
               type="text"
               oninput="onBakiLookupInputChange()"
               onkeydown="if(event.key==='Enter'){event.preventDefault();submitCustomerBakiLookup();}"
               placeholder="রেজিস্ট্রেশন নম্বর দিন (যেমন: #1 বা 1546)"
-              class="w-full bg-[#F8FAFC] border border-[#CBD5E1] focus:border-[#D35400] rounded-[10px] pl-8 pr-3 py-1.5 text-[13px] font-bold text-[#0F172A] outline-none"
+              class="w-full bg-[#FAF7F2] border border-[#DDD4C5] focus:border-[#B45309] rounded-[10px] pl-8 pr-3 py-1.5 text-[13px] font-bold text-[#25190F] outline-none"
             />
           </div>
           <button
             type="button"
             onclick="submitCustomerBakiLookup()"
-            class="px-3.5 py-1.5 rounded-[10px] bg-[#D35400] hover:bg-[#B84700] active:scale-95 transition text-white font-extrabold text-[12.5px] shrink-0 shadow-sm flex items-center gap-1"
+            class="px-3.5 py-1.5 rounded-[10px] bg-[#B45309] hover:bg-[#9A4406] active:scale-95 transition text-white font-extrabold text-[12.5px] shrink-0 shadow-sm flex items-center gap-1"
           >
             <span class="material-icons-round text-[16px]">search</span>
             <span>চেক করুন</span>
@@ -921,7 +1250,7 @@
   <!-- MODAL E: GOOGLE ACCOUNT PROFILE DIALOG (Account Details)              -->
   <!-- ===================================================================== -->
   <div id="googleProfileModal" onclick="if(event.target===this) closeGoogleProfileModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-4">
-    <div class="w-full max-w-[350px] bg-white rounded-[22px] border border-[#E8E0D5] shadow-2xl overflow-hidden p-5">
+    <div class="w-full max-w-[350px] bg-white rounded-[22px] border border-[#E7E0D4] shadow-2xl overflow-hidden p-5">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24">
@@ -930,16 +1259,16 @@
             <path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
             <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.7-2.9c-1 .7-2.3 1.1-3.7 1.1-3.1 0-5.8-2.1-6.7-5L1.6 16.3C3.5 20.2 7.4 23 12 23z"/>
           </svg>
-          <h3 class="font-bold text-[15px] text-[#1E293B]">Account Details</h3>
+          <h3 class="font-bold text-[15px] text-[#25190F]">Account Details</h3>
         </div>
-        <button onclick="closeGoogleProfileModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+        <button onclick="closeGoogleProfileModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-[#574536]">
           <span class="material-icons-round text-[19px]">close</span>
         </button>
       </div>
 
       <div class="mt-4 flex flex-col items-center text-center">
         <div class="relative w-16 h-16">
-          <div id="profileModalAvatarBox" class="w-16 h-16 rounded-full bg-[#C0392B] text-white font-extrabold text-[24px] flex items-center justify-center overflow-hidden border-2 border-[#C0392B]">
+          <div id="profileModalAvatarBox" class="w-16 h-16 rounded-full bg-[#B3261E] text-white font-extrabold text-[24px] flex items-center justify-center overflow-hidden border-2 border-[#B3261E]">
             G
           </div>
           <div class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-white shadow flex items-center justify-center p-[2.5px]">
@@ -952,25 +1281,25 @@
           </div>
         </div>
 
-        <h3 id="profileModalName" class="mt-2.5 font-extrabold text-[16.5px] text-[#0F172A]">Customer</h3>
-        <p id="profileModalEmail" class="text-[12.5px] font-medium text-[#64748B] mt-0.5"></p>
+        <h3 id="profileModalName" class="mt-2.5 font-extrabold text-[16.5px] text-[#25190F]">Customer</h3>
+        <p id="profileModalEmail" class="text-[12.5px] font-medium text-[#6B5847] mt-0.5"></p>
       </div>
 
-      <div class="mt-3.5 pt-3 border-t border-[#E2E8F0] space-y-2 text-left">
+      <div class="mt-3.5 pt-3 border-t border-[#E7E0D4] space-y-2 text-left">
         <div class="flex items-center gap-2.5">
-          <span class="material-icons-round text-[#C0392B] text-[16px]">phone</span>
-          <span id="profileModalPhoneText" class="text-[12.5px] font-medium text-[#334155]">নম্বর এখনো যোগ করা হয়নি</span>
+          <span class="material-icons-round text-[#B3261E] text-[16px]">phone</span>
+          <span id="profileModalPhoneText" class="text-[12.5px] font-medium text-[#25190F]">নম্বর এখনো যোগ করা হয়নি</span>
         </div>
         <div class="flex items-start gap-2.5">
-          <span class="material-icons-round text-[#C0392B] text-[16px] mt-0.5">location_on</span>
-          <span id="profileModalAddressText" class="text-[12.5px] text-[#475569] line-clamp-2">ঠিকানা এখনো যোগ করা হয়নি</span>
+          <span class="material-icons-round text-[#B3261E] text-[16px] mt-0.5">location_on</span>
+          <span id="profileModalAddressText" class="text-[12.5px] text-[#574536] line-clamp-2">ঠিকানা এখনো যোগ করা হয়নি</span>
         </div>
       </div>
 
       <div class="mt-4 flex flex-col gap-2">
         <button
           onclick="closeGoogleProfileModal(); switchCustomerTab('orders');"
-          class="w-full py-2.5 rounded-[11px] bg-[#C0392B] hover:bg-[#A93226] text-white font-bold text-[13px] flex items-center justify-center gap-2 shadow-sm transition"
+          class="w-full py-2.5 rounded-[11px] bg-[#B3261E] hover:bg-[#8F1D17] text-white font-bold text-[13px] flex items-center justify-center gap-2 shadow-sm transition"
         >
           <span class="material-icons-round text-[17px]">inventory_2</span>
           <span id="profileModalMyOrdersBtnText">My Orders (0)</span>
@@ -997,35 +1326,35 @@
   >
     <div
       id="saraAiModalCard"
-      class="w-full max-w-[440px] bg-[#F8FAFC] rounded-t-[28px] sm:rounded-[26px] shadow-2xl overflow-hidden flex flex-col h-[86%] max-h-[680px] transition-[height] duration-150 ease-out"
+      class="w-full max-w-[440px] bg-[#FAF7F2] rounded-t-[28px] sm:rounded-[26px] shadow-2xl overflow-hidden flex flex-col h-[86%] max-h-[680px] transition-[height] duration-150 ease-out"
     >
       <!-- Top White Drag Handle Cap (Exact Match to Screenshot 3 & 4) -->
       <div class="bg-white pt-3 pb-2.5 shrink-0">
-        <div class="w-10 h-1.5 rounded-full bg-[#CBD5E1] mx-auto"></div>
+        <div class="w-10 h-1.5 rounded-full bg-[#D5CBB9] mx-auto"></div>
       </div>
 
       <!-- Warm Tonal Header Bar (Exact Match to Phone App Surface tonalElevation=2.dp in Screenshot 3 & 4) -->
-      <div class="bg-[#FDF1EC] border-b border-[#E8E0D8] py-3 px-4 shrink-0">
+      <div class="bg-[#EEF5F0] border-b border-[#D5E6DA] py-3 px-4 shrink-0">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-3 min-w-0 flex-1">
-            <!-- Glowing Gradient Robot Avatar -->
-            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#6366F1] via-[#A855F7] to-[#06B6D4] flex items-center justify-center shrink-0 shadow-sm">
-              <span class="material-icons-round text-white text-[22px]">smart_toy</span>
+            <!-- Tea-Leaf Green Assistant Avatar -->
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#14532D] via-[#1F6B45] to-[#0F766E] flex items-center justify-center shrink-0 shadow-sm">
+              <span class="material-icons-round text-[#FDE68A] text-[21px]">smart_toy</span>
             </div>
             <div class="min-w-0 flex-1">
-              <h3 id="saraModalTitle" class="font-bold text-[15px] text-[#0F172A] truncate">Talk to রিজিয়া (রিজিয়া-র সাথে কথা বলুন)</h3>
+              <h3 id="saraModalTitle" class="font-bold text-[15px] text-[#25190F] truncate">Talk to রিজিয়া (রিজিয়া-র সাথে কথা বলুন)</h3>
               <div class="mt-0.5 flex items-center">
-                <span id="saraQuotaBadge" class="inline-block px-2 py-0.5 rounded-[12px] bg-[#ECFDF5] text-[#059669] font-bold text-[10.5px]">
+                <span id="saraQuotaBadge" class="inline-block px-2 py-0.5 rounded-[12px] bg-[#DCFCE7] text-[#14532D] font-bold text-[10.5px]">
                   বার্তা বাকি: 20/20
                 </span>
               </div>
             </div>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button onclick="clearAiChatHistory()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#475569] transition" title="চ্যাট মুছুন">
+            <button onclick="clearAiChatHistory()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#574536] transition" title="চ্যাট মুছুন">
               <span class="material-icons-round text-[20px]">delete_sweep</span>
             </button>
-            <button onclick="closeSaraAiModal()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#475569] transition" title="বন্ধ করুন">
+            <button onclick="closeSaraAiModal()" class="w-9 h-9 rounded-full hover:bg-black/5 flex items-center justify-center text-[#574536] transition" title="বন্ধ করুন">
               <span class="material-icons-round text-[20px]">close</span>
             </button>
           </div>
@@ -1033,13 +1362,13 @@
       </div>
 
       <!-- Messages Container -->
-      <div id="saraChatMessages" class="flex-1 min-h-0 px-4 py-2 overflow-y-auto space-y-3 bg-[#F8FAFC]"></div>
+      <div id="saraChatMessages" class="flex-1 min-h-0 px-4 py-2 overflow-y-auto space-y-3 bg-[#FAF7F2]"></div>
 
       <!-- Quota Exhausted Banner -->
       <div id="saraQuotaWarningBanner" class="hidden px-4 py-2 bg-[#FEF2F2] border-t border-red-100 text-[#B91C1C] font-semibold text-[12px] shrink-0"></div>
 
       <!-- Warm Tonal Input Row (Exact Match to Phone App Surface tonalElevation=8.dp in Screenshot 3 & 4) -->
-      <div class="px-3 py-2.5 bg-[#FDF1EC] border-t border-[#E8E0D8] flex items-center gap-2.5 shrink-0">
+      <div class="px-3 py-2.5 bg-[#EEF5F0] border-t border-[#D5E6DA] flex items-center gap-2.5 shrink-0">
         <input
           id="saraChatInput"
           type="text"
@@ -1047,13 +1376,13 @@
           oninput="updateAiHeaderAndQuotaUI()"
           onfocus="setTimeout(syncSaraModalToVisualViewport, 60)"
           onblur="setTimeout(syncSaraModalToVisualViewport, 120)"
-          class="flex-1 bg-white border border-[#CBD5E1] focus:border-2 focus:border-[#6366F1] rounded-[26px] px-4 py-3 text-[14px] text-[#0F172A] placeholder-[#94A3B8] outline-none transition"
+          class="flex-1 bg-white border border-[#DDD4C5] focus:border-2 focus:border-[#1F6B45] rounded-[26px] px-4 py-3 text-[14px] text-[#25190F] placeholder-[#8C7B6B] outline-none transition"
           onkeydown="if(event.key==='Enter') sendSaraChatMessage()"
         />
         <button
           id="saraSendBtn"
           onclick="sendSaraChatMessage()"
-          class="w-12 h-12 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition"
+          class="w-12 h-12 rounded-full bg-gradient-to-br from-[#14532D] to-[#1F6B45] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition"
         >
           <span class="material-icons-round text-[21px]">send</span>
         </button>
@@ -1065,7 +1394,7 @@
   <!-- MODAL G: FULL ORDER DETAILS & PHOTO ZOOM MODAL                        -->
   <!-- ===================================================================== -->
   <div id="custOrderDetailsModal" onclick="if(event.target===this) closeCustOrderDetailsModal()" class="fixed inset-0 z-50 bg-black/55 backdrop-blur-[2px] hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div id="custOrderDetailsCard" class="w-full max-w-[500px] bg-white rounded-[20px] border border-[#E8E0D5] shadow-2xl overflow-hidden my-6"></div>
+    <div id="custOrderDetailsCard" class="w-full max-w-[500px] bg-white rounded-[20px] border border-[#E7E0D4] shadow-2xl overflow-hidden my-6"></div>
   </div>
 
   <div id="photoZoomModal" onclick="if(event.target===this) closePhotoZoomModal()" class="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
@@ -1402,6 +1731,7 @@
           complianceFooter.className = "mt-4 w-full max-w-[400px] px-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11.5px] font-medium text-[#8C7B6B] transition-colors duration-300";
         }
       }
+      renderWelcomeSavedAccountsBox();
     }
 
     let isGoogleSignInInProgress = false;
@@ -1430,6 +1760,20 @@
         });
         localStorage.setItem("jiyarul_verified_google_accounts_v3", JSON.stringify(list.slice(0, 8)));
       } catch (e) {}
+      renderWelcomeSavedAccountsBox();
+    }
+
+    function removeVerifiedGoogleAccountFromDevice(email, ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      const targetEmail = String(email || "").trim().toLowerCase();
+      if (!targetEmail) return;
+      try {
+        const list = getVerifiedGoogleAccountsOnDevice().filter(
+          (a) => a.email.toLowerCase() !== targetEmail
+        );
+        localStorage.setItem("jiyarul_verified_google_accounts_v3", JSON.stringify(list));
+      } catch (e) {}
+      renderWelcomeSavedAccountsBox();
     }
 
     function signInWithSavedVerifiedAccount(email) {
@@ -1446,6 +1790,53 @@
       }
     }
 
+    function renderWelcomeSavedAccountsBox() {
+      const box = document.getElementById("welcomeSavedAccountsBox");
+      if (!box) return;
+      const savedList = getVerifiedGoogleAccountsOnDevice();
+      if (!savedList.length) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+      }
+      const isDark = loginWelcomeDarkMode;
+      const itemsHtml = savedList
+        .map((a) => {
+          const init = (a.displayName || a.email || "G").trim().charAt(0).toUpperCase();
+          const rowClass = isDark
+            ? "bg-white/[0.07] hover:bg-white/[0.14] border-white/15 text-[#FAF6F0]"
+            : "bg-[#FAF7F2] hover:bg-[#F3ECE1] border-[#DDD4C5] text-[#25190F]";
+          const subClass = isDark ? "text-[#A69B8D]" : "text-[#6B5847]";
+          return (
+            `<div onclick="signInWithSavedVerifiedAccount('${escapeQuotes(a.email)}')" ` +
+            `class="w-full p-2.5 rounded-[14px] border ${rowClass} flex items-center gap-2.5 text-left cursor-pointer active:scale-[0.99] transition">` +
+            `<div class="w-8 h-8 rounded-full bg-[#B3261E] text-white font-extrabold text-[13px] flex items-center justify-center shrink-0 overflow-hidden shadow-sm">` +
+            (a.photoUrl
+              ? `<img src="${escapeAttr(a.photoUrl)}" class="w-full h-full object-cover" />`
+              : `<span>${escapeHtml(init)}</span>`) +
+            `</div>` +
+            `<div class="min-w-0 flex-1">` +
+            `<p class="font-bold text-[12.5px] truncate leading-tight">${escapeHtml(a.displayName)}</p>` +
+            `<p class="text-[11px] ${subClass} truncate leading-tight mt-0.5">${escapeHtml(a.email)}</p>` +
+            `</div>` +
+            `<span class="px-2 py-1 rounded-full bg-[#1F6B45]/20 text-[#4ADE80] font-extrabold text-[10px] shrink-0">1-Tap Login</span>` +
+            `</div>`
+          );
+        })
+        .join("");
+
+      const labelColor = isDark ? "text-[#A69B8D]" : "text-[#6B5847]";
+      box.innerHTML =
+        `<div class="pt-2 border-t ${isDark ? "border-[#2B2218]" : "border-[#E6DEC8]"} space-y-1.5">` +
+        `<p class="text-[11px] font-bold ${labelColor} flex items-center gap-1">` +
+        `<span class="material-icons-round text-[14px] text-[#4ADE80]">verified_user</span>` +
+        `<span>পূর্বে লগইন করা একাউন্ট (ট্যাপ করে সরাসরি প্রবেশ করুন):</span>` +
+        `</p>` +
+        `<div class="space-y-1.5 max-h-[150px] overflow-y-auto no-scrollbar">${itemsHtml}</div>` +
+        `</div>`;
+      box.classList.remove("hidden");
+    }
+
     function buildSavedVerifiedAccountsQuickHtml() {
       const savedList = getVerifiedGoogleAccountsOnDevice();
       if (!savedList.length) return "";
@@ -1455,7 +1846,7 @@
           return (
             `<button type="button" onclick="signInWithSavedVerifiedAccount('${escapeQuotes(a.email)}')" ` +
             `class="w-full p-2 rounded-[10px] bg-white/10 hover:bg-white/20 border border-white/20 flex items-center gap-2.5 text-left transition">` +
-            `<div class="w-7 h-7 rounded-full bg-[#C0392B] text-white font-bold text-[12px] flex items-center justify-center shrink-0 overflow-hidden">` +
+            `<div class="w-7 h-7 rounded-full bg-[#B3261E] text-white font-bold text-[12px] flex items-center justify-center shrink-0 overflow-hidden">` +
             (a.photoUrl
               ? `<img src="${escapeAttr(a.photoUrl)}" class="w-full h-full object-cover" />`
               : `<span>${escapeHtml(init)}</span>`) +
@@ -1534,6 +1925,7 @@
 
     function handleAuthFailure(err) {
       setWelcomeButtonLoading(false);
+      renderWelcomeSavedAccountsBox();
       const code = err && err.code ? String(err.code) : "";
       const host = window.location.hostname || window.location.host;
       const savedQuickHtml = buildSavedVerifiedAccountsQuickHtml();
@@ -1542,7 +1934,7 @@
         if (savedQuickHtml) {
           showRealAuthError(
             `<div class="space-y-1.5">` +
-            `<p class="text-[11.5px] text-slate-200">গুগল পপআপটি বন্ধ হয়ে গেছে। আপনার পূর্বের একাউন্টে সরাসরি প্রবেশ করতে নিচে ট্যাপ করুন:</p>` +
+            `<p class="text-[11.5px] text-slate-200">আপনার পূর্বের গুগল একাউন্টে সরাসরি প্রবেশ করতে নিচে ট্যাপ করুন:</p>` +
             savedQuickHtml +
             `</div>`
           );
@@ -1555,7 +1947,7 @@
       if (code === "auth/popup-blocked") {
         showRealAuthError(
           `<div class="space-y-1.5">` +
-          `<p class="font-bold text-[#FBBF24] text-[12.5px]">⚡ গুগল লগইন প্রস্তুত হয়েছে!</p>` +
+          `<p class="font-bold text-[#FBBF24] text-[12.5px]">⚡ পপআপ ব্লক হয়েছে — আবার ট্যাপ করুন</p>` +
           `<p class="text-[11.5px] text-slate-200">আপনার গুগল একাউন্ট সিলেক্ট করতে উপরের সাদা <strong>"Sign in with Google"</strong> বাটনে আর একবার ট্যাপ করুন।</p>` +
           savedQuickHtml +
           `</div>`
@@ -1570,7 +1962,7 @@
           `<p class="text-[11.5px] text-[#FCA5A5]"><code>${escapeHtml(host)}</code> ডোমেইনটি এখনো Firebase Console-এ অনুমোদিত নয়।</p>` +
           `<p class="text-[10.5px] text-slate-300">Firebase Console ➔ Authentication ➔ Settings ➔ Authorized domains-এ গিয়ে <strong>${escapeHtml(host)}</strong> যোগ করুন।</p>` +
           savedQuickHtml +
-          `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
+          `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#1F6B45] hover:bg-[#14532D] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
           `</div>`
         );
         return;
@@ -1581,7 +1973,7 @@
         `<p class="font-bold text-[#F87171] text-[12.5px]">⚠️ Google Sign-In সম্পন্ন হয়নি (${escapeHtml(code || err?.message || "Auth Error")}):</p>` +
         `<p class="text-[11px] text-slate-300">উপরের <strong>"Sign in with Google"</strong> বাটনে আবার ট্যাপ করুন অথবা নিচের একাউন্ট ব্যবহার করুন:</p>` +
         savedQuickHtml +
-        `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#2E7D32] hover:bg-[#1B5E20] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
+        `<div class="pt-2"><button type="button" onclick="continueAsGuest()" class="w-full py-2 rounded-[10px] bg-[#1F6B45] hover:bg-[#14532D] text-white font-bold text-[12px] shadow-sm transition">Browse as Guest</button></div>` +
         `</div>`
       );
     }
@@ -1613,46 +2005,13 @@
         return;
       }
 
-      try {
-        sessionStorage.removeItem("jiyarul_auth_redirect_pending");
-      } catch (e) {}
-
-      // Only pre-open a blank window if the internal Firebase /__/auth/iframe hasn't finished warming yet.
-      // Never call document.write() on preOpenedPopup so it never races with Firebase's location assignment!
-      const nativeWindowOpen = window.open.bind(window);
-      let preOpenedPopup = null;
-      if (!isAuthIframeReady) {
-        try {
-          preOpenedPopup = nativeWindowOpen("about:blank", "_blank", "width=500,height=620");
-        } catch (e) {}
-
-        if (preOpenedPopup) {
-          window.open = function (url, target, features) {
-            window.open = nativeWindowOpen;
-            if (url && url !== "about:blank") {
-              try {
-                preOpenedPopup.location.replace(url);
-              } catch (e) {
-                preOpenedPopup.location.href = url;
-              }
-            }
-            return preOpenedPopup;
-          };
-        }
-      }
-
       setWelcomeButtonLoading(true);
       const provider = new firebase.auth.GoogleAuthProvider();
-      // CRITICAL FIX FOR REPEAT ACCOUNT LOGIN ON MOBILE CHROME:
-      // Using "select_account consent" forces Google OAuth to ALWAYS present the "Continue" (consent)
-      // confirmation step even when logging back into a previously used Google account on the same phone!
-      provider.setCustomParameters({ prompt: "select_account consent" });
+      provider.setCustomParameters({ prompt: "select_account" });
 
       auth
         .signInWithPopup(provider)
         .then((result) => {
-          window.open = nativeWindowOpen;
-          isAuthIframeReady = true;
           const u = result && result.user ? result.user : auth.currentUser;
           if (u && u.uid && u.email) {
             try {
@@ -1672,30 +2031,30 @@
           }
         })
         .catch((err) => {
-          window.open = nativeWindowOpen;
-          isAuthIframeReady = true;
-          try {
-            if (preOpenedPopup && !preOpenedPopup.closed) {
-              preOpenedPopup.close();
+          // On Mobile Chrome, returning from the Google OAuth popup tab can briefly trigger
+          // popup-closed-by-user ~300ms before the background tab finishes receiving auth.currentUser.
+          setTimeout(() => {
+            if (currentCustomerAccount && !currentCustomerAccount.isGuest) {
+              setWelcomeButtonLoading(false);
+              return;
             }
-          } catch (e) {}
-          // Check if onAuthStateChanged already signed the user in on mobile tab return
-          if (auth && auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
-            try {
-              localStorage.removeItem("jiyarul_guest_session");
-            } catch (e) {}
-            setAuthenticatedCustomer(
-              {
-                uid: auth.currentUser.uid,
-                displayName: auth.currentUser.displayName || "Customer",
-                email: auth.currentUser.email.toLowerCase(),
-                photoUrl: auth.currentUser.photoURL || ""
-              },
-              true
-            );
-            return;
-          }
-          handleAuthFailure(err);
+            if (auth && auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
+              try {
+                localStorage.removeItem("jiyarul_guest_session");
+              } catch (e) {}
+              setAuthenticatedCustomer(
+                {
+                  uid: auth.currentUser.uid,
+                  displayName: auth.currentUser.displayName || "Customer",
+                  email: auth.currentUser.email.toLowerCase(),
+                  photoUrl: auth.currentUser.photoURL || ""
+                },
+                true
+              );
+              return;
+            }
+            handleAuthFailure(err);
+          }, 450);
         });
     }
 
@@ -1716,6 +2075,8 @@
 
         const savedCart = JSON.parse(localStorage.getItem("jiyarul_web_cart") || "{}");
         if (savedCart && typeof savedCart === "object") cartMap = savedCart;
+
+        renderWelcomeSavedAccountsBox();
 
         // Restore verified Real Firebase Google session or Guest session
         const savedRealUser = JSON.parse(localStorage.getItem("jiyarul_real_firebase_user_v3") || "null");
@@ -1819,18 +2180,16 @@
         localStorage.removeItem("jiyarul_guest_session");
         sessionStorage.clear();
       } catch (e) {}
-      setWelcomeButtonLoading(false);
-      document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
       if (auth) {
         try {
           await auth.signOut();
         } catch (e) {}
       }
+      setWelcomeButtonLoading(false);
+      showRealAuthError("");
+      renderWelcomeSavedAccountsBox();
+      document.getElementById("googleLoginWelcomeScreen").classList.remove("hidden");
       showToast("আপনি সফলভাবে লগআউট করেছেন।");
-      // Reload page cleanly after signOut so Firebase's hidden /__/auth/iframe is 100% fresh for next login
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
     }
 
     /*************************************************************************
@@ -1849,38 +2208,6 @@
         auth = firebase.auth();
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
-        try {
-          sessionStorage.removeItem("jiyarul_auth_redirect_pending");
-        } catch (e) {}
-
-        // Pre-warm Firebase Auth internal /__/auth/iframe on page load and check any redirect result
-        auth.getRedirectResult().then((result) => {
-          isAuthIframeReady = true;
-          if (result && result.user && result.user.uid && result.user.email) {
-            setAuthenticatedCustomer(
-              {
-                uid: result.user.uid,
-                displayName: result.user.displayName || "Customer",
-                email: result.user.email.toLowerCase(),
-                photoUrl: result.user.photoURL || ""
-              },
-              true
-            );
-          } else if (auth.currentUser && auth.currentUser.uid && auth.currentUser.email) {
-            setAuthenticatedCustomer(
-              {
-                uid: auth.currentUser.uid,
-                displayName: auth.currentUser.displayName || "Customer",
-                email: auth.currentUser.email.toLowerCase(),
-                photoUrl: auth.currentUser.photoURL || ""
-              },
-              true
-            );
-          }
-        }).catch(() => {
-          isAuthIframeReady = true;
-        });
-
         // Listen to Real Firebase Auth state without wiping an existing verified session
         auth.onAuthStateChanged((user) => {
           if (user && user.uid && user.email) {
@@ -1895,6 +2222,7 @@
             );
           } else if (!currentCustomerAccount) {
             setWelcomeButtonLoading(false);
+            renderWelcomeSavedAccountsBox();
             if (localStorage.getItem("jiyarul_guest_session") === "true") {
               continueAsGuest(false);
             } else {
@@ -2101,18 +2429,18 @@
       document.getElementById("custStoreTiming").textContent = storeSettings.storeTiming || "";
 
       if (storeSettings.isOpen) {
-        banner.className = "w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#E8F5E9] border-[#A5D6A7]";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-[#2E7D32] shrink-0";
-        title.className = "font-extrabold text-[13px] text-[#1B5E20]";
+        banner.className = "w-full rounded-[16px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#EBF5EE] border-[#B5DEC2] shadow-sm";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-[#1F6B45] ring-4 ring-[#1F6B45]/15 shrink-0";
+        title.className = "font-extrabold text-[13px] text-[#14532D]";
         title.textContent = "দোকান খোলা আছে (OPEN)";
-        sub.className = "text-[11px] font-semibold text-[#2E7D32]";
+        sub.className = "text-[11px] font-semibold text-[#1F6B45]";
         sub.textContent = "• অর্ডার নেওয়া হচ্ছে";
       } else {
-        banner.className = "w-full rounded-[14px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#FFEBEE] border-[#EF9A9A]";
-        dot.className = "w-2.5 h-2.5 rounded-full bg-[#C62828] shrink-0";
-        title.className = "font-extrabold text-[13px] text-[#B71C1C]";
+        banner.className = "w-full rounded-[16px] px-3.5 py-2.5 border flex items-center justify-between gap-2 bg-[#FDECEC] border-[#F5B5B5] shadow-sm";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-[#B3261E] ring-4 ring-[#B3261E]/15 shrink-0";
+        title.className = "font-extrabold text-[13px] text-[#8F1D17]";
         title.textContent = "দোকান এখন বন্ধ আছে (CLOSED)";
-        sub.className = "text-[11px] font-semibold text-[#C62828]";
+        sub.className = "text-[11px] font-semibold text-[#B3261E]";
         sub.textContent = "• নতুন অর্ডার সাময়িক বন্ধ";
       }
 
@@ -2161,11 +2489,11 @@
               onclick="selectedCategory='${escapeQuotes(cat)}'; renderCustomerCategoryChips(); renderCustomerProducts();"
               class="px-3.5 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap border flex items-center gap-1 transition ${
                 isSelected
-                  ? "bg-[#C0392B] text-white border-[#C0392B] shadow-sm"
-                  : "bg-white text-[#3E2723] border-[#E2D6C7] hover:bg-[#FAF6F0]"
+                  ? "bg-[#25190F] text-white border-[#25190F] shadow-sm"
+                  : "bg-white text-[#25190F] border-[#DDD4C5] hover:bg-[#FAF7F2]"
               }"
             >
-              ${isPinned ? `<span class="material-icons-round text-[13px] ${isSelected ? "text-amber-200" : "text-[#D35400]"}">push_pin</span>` : ""}
+              ${isPinned ? `<span class="material-icons-round text-[13px] ${isSelected ? "text-[#F3B63F]" : "text-[#B45309]"}">push_pin</span>` : ""}
               <span>${escapeHtml(label)}</span>
             </button>
           `;
@@ -2249,81 +2577,91 @@
       if (!filtered.length) {
         grid.innerHTML = `
           <div class="col-span-full py-12 text-center space-y-2">
-            <div class="w-16 h-16 rounded-full bg-[#F3ECE1] mx-auto flex items-center justify-center text-[#C0392B]/60">
+            <div class="w-16 h-16 rounded-full bg-[#F5EFE6] mx-auto flex items-center justify-center text-[#B3261E]/65">
               <span class="material-icons-round text-[32px]">inventory_2</span>
             </div>
-            <h4 class="font-bold text-[15px] text-[#3E2723]">কোনো পণ্য পাওয়া যায়নি</h4>
-            <p class="text-[12px] text-slate-500">অন্য কোনো নাম বা ক্যাটাগরি দিয়ে খুঁজুন।</p>
+            <h4 class="font-bold text-[15px] text-[#25190F]">কোনো পণ্য পাওয়া যায়নি</h4>
+            <p class="text-[12px] text-[#6B5847]">অন্য কোনো নাম বা ক্যাটাগরি দিয়ে খুঁজুন।</p>
           </div>
         `;
         return;
       }
 
-      // Exact 4th Screenshot Horizontal Cards
+      // 2-Col Mobile / 3-Col Desktop Image-First Vertical Product Cards
       grid.innerHTML = filtered
         .map((p) => {
           const spec = parseProductUnitSpec(p.unit);
           const cartKey = p.id;
           const inCartQty = cartMap[cartKey] ? cartMap[cartKey].quantity : 0;
+          const looseCartQty = Object.values(cartMap)
+            .filter((it) => it && it.productId === p.id)
+            .reduce((sum, it) => sum + (Number(it.quantity) || 0), 0);
+          const activeBadgeQty = spec.isMultiMode ? looseCartQty : inCartQty;
 
           return `
-            <div class="app-card p-3 flex items-center gap-3 transition hover:shadow-md ${!p.isAvailable ? "opacity-70" : ""}">
-              <!-- Product Photo -->
+            <article class="prod-card ${!p.isAvailable ? "opacity-75" : ""}">
+              <!-- Top 4:3 Product Photo with Floating Category Pill -->
               <div
                 onclick="${p.imageUrl ? `openPhotoZoomModal('${escapeQuotes(p.imageUrl)}', '${escapeQuotes(p.nameBn || p.name)}')` : ""}"
-                class="w-[82px] h-[82px] rounded-[14px] bg-[#F3ECE1] border border-[#E8E0D5] overflow-hidden shrink-0 flex items-center justify-center relative ${p.imageUrl ? "cursor-pointer" : ""}"
+                class="prod-photo flex items-center justify-center ${p.imageUrl ? "cursor-pointer" : ""}"
               >
+                <span class="prod-cat-pill">${escapeHtml(p.category)}</span>
+                ${
+                  activeBadgeQty > 0 && p.isAvailable
+                    ? `<span class="prod-inbag-pill">✓ ${activeBadgeQty}</span>`
+                    : ""
+                }
                 ${
                   p.imageUrl
-                    ? `<img src="${escapeAttr(p.imageUrl)}" alt="${escapeAttr(p.name)}" class="w-full h-full object-cover" loading="lazy" />`
-                    : `<span class="material-icons-round text-[#D35400]/50 text-[32px]">local_cafe</span>`
+                    ? `<img src="${escapeAttr(p.imageUrl)}" alt="${escapeAttr(p.name)}" loading="lazy" />`
+                    : `<span class="material-icons-round text-[#B45309]/40 text-[40px]">local_cafe</span>`
                 }
                 ${
                   !p.isAvailable
-                    ? `<div class="absolute inset-0 bg-black/60 flex items-center justify-center">
-                         <span class="px-1.5 py-0.5 rounded bg-[#C62828] text-white font-extrabold text-[9px]">STOCK SESH</span>
+                    ? `<div class="absolute inset-0 z-[3] bg-black/55 backdrop-blur-[1px] flex items-center justify-center">
+                         <span class="px-2.5 py-1 rounded-full bg-[#B3261E] text-white font-extrabold text-[10px] tracking-wide shadow">স্টক শেষ</span>
                        </div>`
                     : ""
                 }
               </div>
 
-              <!-- Info & Cart Controls -->
-              <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between gap-1">
-                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FAF6F0] border border-[#E8E0D5] text-[#D35400] font-bold text-[10px] truncate">
-                    ${escapeHtml(p.category)}
-                  </span>
+              <!-- Card Body: Title + Subtitle + Price & Action Footer -->
+              <div class="p-2.5 sm:p-3 flex-1 flex flex-col justify-between gap-2">
+                <div class="min-w-0">
+                  <h3 class="font-extrabold text-[13.5px] sm:text-[14.5px] text-[#25190F] leading-snug line-clamp-1" title="${escapeAttr(p.name)}">${escapeHtml(p.name)}</h3>
+                  ${
+                    p.nameBn
+                      ? `<p class="text-[11.5px] font-medium text-[#6B5847] truncate mt-0.5">${escapeHtml(p.nameBn)}</p>`
+                      : `<p class="text-[11px] text-[#9C8B7A] truncate mt-0.5">${escapeHtml(spec.baseUnit)}</p>`
+                  }
                 </div>
 
-                <h3 class="font-extrabold text-[14.5px] text-[#0F172A] truncate mt-1">${escapeHtml(p.name)}</h3>
-                ${p.nameBn ? `<p class="text-[12px] font-semibold text-[#5D4037] truncate">${escapeHtml(p.nameBn)}</p>` : ""}
-
-                <div class="mt-2 flex items-center justify-between gap-2">
-                  <div>
-                    <span class="font-extrabold text-[16px] text-[#C0392B]">₹${p.price}</span>
-                    <span class="text-[11px] font-semibold text-slate-500">/ ${escapeHtml(spec.baseUnit)}</span>
+                <div class="pt-1.5 border-t border-[#F1EBE0] flex items-center justify-between gap-1.5">
+                  <div class="min-w-0 leading-tight">
+                    <span class="prod-price text-[15px] sm:text-[16px]">₹${p.price}</span>
+                    <span class="block text-[10px] font-semibold text-[#857261] truncate">/ ${escapeHtml(spec.baseUnit)}</span>
                   </div>
 
                   ${
                     !p.isAvailable
-                      ? `<span class="px-2.5 py-1 rounded-[8px] bg-[#FFEBEE] text-[#C62828] font-bold text-[11px]">স্টক শেষ</span>`
+                      ? `<span class="px-2 py-1 rounded-[9px] bg-[#FDECEC] text-[#8F1D17] font-bold text-[10.5px] shrink-0">নেই</span>`
                       : spec.isMultiMode
                       ? `<button
                            onclick="openLooseProductModal('${escapeQuotes(p.id)}')"
-                           class="px-3 py-1.5 rounded-[10px] bg-[#D35400] hover:bg-[#BA4A00] text-white font-extrabold text-[11.5px] flex items-center gap-1 shadow-sm transition"
+                           class="prod-add-btn is-loose shrink-0"
                          >
                            <span class="material-icons-round text-[14px]">scale</span>
-                           <span>ওজন / প্যাক</span>
+                           <span>ওজন</span>
                          </button>`
                       : inCartQty > 0
-                      ? `<div class="flex items-center gap-2 bg-[#C0392B] text-white rounded-[10px] px-2 py-1 shadow-sm">
-                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', -1)" class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-extrabold">-</button>
-                           <span class="font-extrabold text-[13px] min-w-[16px] text-center">${inCartQty}</span>
-                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', 1)" class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center font-extrabold">+</button>
+                      ? `<div class="prod-stepper shrink-0">
+                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', -1)" aria-label="Decrease">−</button>
+                           <span>${inCartQty}</span>
+                           <button onclick="updateFixedCartQty('${escapeQuotes(p.id)}', 1)" aria-label="Increase">+</button>
                          </div>`
                       : `<button
                            onclick="updateFixedCartQty('${escapeQuotes(p.id)}', 1)"
-                           class="px-3.5 py-1.5 rounded-[10px] bg-[#C0392B] hover:bg-[#A93226] text-white font-extrabold text-[12px] flex items-center gap-1 shadow-sm transition"
+                           class="prod-add-btn shrink-0"
                          >
                            <span class="material-icons-round text-[15px]">add</span>
                            <span>Add</span>
@@ -2331,7 +2669,7 @@
                   }
                 </div>
               </div>
-            </div>
+            </article>
           `;
         })
         .join("");
@@ -2399,7 +2737,7 @@
             (amt) => `
             <button
               onclick="selectLoosePreset('${escapeQuotes(p.name)} (₹${amt} প্যাকেট)', ${amt}, ${-amt})"
-              class="px-3 py-1.5 rounded-[10px] bg-[#E8F5E9] hover:bg-[#C8E6C9] border border-[#A5D6A7] text-[#1B5E20] font-extrabold text-[12px]"
+              class="px-3 py-1.5 rounded-[10px] bg-[#EBF5EE] hover:bg-[#D5ECDC] border border-[#B5DEC2] text-[#14532D] font-extrabold text-[12px]"
             >
               ₹${amt} প্যাকেট
             </button>`
@@ -2419,7 +2757,7 @@
           return `
             <button
               onclick="selectLoosePreset('${escapeQuotes(p.name)} (${label} খুচরো)', ${cost}, ${g})"
-              class="px-3 py-1.5 rounded-[10px] bg-[#FFF3E0] hover:bg-[#FFE0B2] border border-[#FFCC80] text-[#E65100] font-bold text-[12px]"
+              class="px-3 py-1.5 rounded-[10px] bg-[#FEF6E7] hover:bg-[#FDE9C4] border border-[#F3D19B] text-[#9A4406] font-bold text-[12px]"
             >
               ${label} (₹${cost})
             </button>
@@ -2549,29 +2887,29 @@
       if (listEl) {
         document.getElementById("cartModalTotalAmount").textContent = `₹${Math.round(totalAmount)}`;
         if (!items.length) {
-          listEl.innerHTML = `<p class="text-center text-[12px] text-slate-400 py-4">আপনার ব্যাগ খালি।</p>`;
+          listEl.innerHTML = `<p class="text-center text-[12px] text-[#857261] py-4">আপনার ব্যাগ খালি।</p>`;
         } else {
           listEl.innerHTML = items
             .map(
               (it) => `
-              <div class="p-2.5 rounded-[12px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2">
+              <div class="p-2.5 rounded-[12px] bg-[#FAF7F2] border border-[#E7E0D4] flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-10 h-10 rounded-[8px] bg-[#F3ECE1] overflow-hidden shrink-0 flex items-center justify-center">
+                  <div class="w-10 h-10 rounded-[8px] bg-[#F5EFE6] overflow-hidden shrink-0 flex items-center justify-center">
                     ${
                       it.imageUrl
                         ? `<img src="${escapeAttr(it.imageUrl)}" class="w-full h-full object-cover" />`
-                        : `<span class="material-icons-round text-[#D35400] text-[18px]">shopping_bag</span>`
+                        : `<span class="material-icons-round text-[#B45309] text-[18px]">shopping_bag</span>`
                     }
                   </div>
                   <div class="min-w-0">
-                    <p class="font-bold text-[12.5px] text-[#0F172A] truncate">${escapeHtml(it.title)}</p>
-                    <p class="text-[11px] font-semibold text-[#C0392B]">₹${it.price} × ${it.quantity} = ₹${Math.round(it.price * it.quantity)}</p>
+                    <p class="font-bold text-[12.5px] text-[#25190F] truncate">${escapeHtml(it.title)}</p>
+                    <p class="text-[11px] font-semibold text-[#B3261E]">₹${it.price} × ${it.quantity} = ₹${Math.round(it.price * it.quantity)}</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', -1)" class="w-6 h-6 rounded-full bg-white border border-slate-300 font-extrabold text-[13px]">-</button>
+                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', -1)" class="w-6 h-6 rounded-full bg-white border border-[#DDD4C5] font-extrabold text-[13px]">-</button>
                   <span class="font-bold text-[12.5px] w-5 text-center">${it.quantity}</span>
-                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', 1)" class="w-6 h-6 rounded-full bg-[#C0392B] text-white font-extrabold text-[13px]">+</button>
+                  <button onclick="changeCartItemQty('${escapeQuotes(it.cartKey)}', 1)" class="w-6 h-6 rounded-full bg-[#B3261E] text-white font-extrabold text-[13px]">+</button>
                 </div>
               </div>
             `
@@ -3044,23 +3382,23 @@
         activeContainer.innerHTML = `
           <div
             onclick="openCustOrderDetailsModal('${escapeQuotes(latest.id)}')"
-            class="w-full rounded-[14px] bg-white border-2 border-[#D35400] p-3 shadow-sm cursor-pointer flex items-center justify-between gap-2"
+            class="w-full rounded-[14px] bg-white border-2 border-[#B45309] p-3 shadow-sm cursor-pointer flex items-center justify-between gap-2"
           >
             <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-9 h-9 rounded-full bg-[#FFF3E0] text-[#D35400] flex items-center justify-center shrink-0">
+              <div class="w-9 h-9 rounded-full bg-[#FEF6E7] text-[#B45309] flex items-center justify-center shrink-0">
                 <span class="material-icons-round text-[20px]">local_shipping</span>
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-1.5">
-                  <span class="font-extrabold text-[12.5px] text-[#C0392B]">#${shortId}</span>
-                  <span class="px-2 py-0.5 rounded-full bg-[#FFF3E0] text-[#E65100] font-extrabold text-[10.5px]">${escapeHtml(latest.status)}</span>
+                  <span class="font-extrabold text-[12.5px] text-[#B3261E]">#${shortId}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#FEF6E7] text-[#9A4406] font-extrabold text-[10.5px]">${escapeHtml(latest.status)}</span>
                 </div>
-                <p class="text-[11px] font-semibold text-slate-600 truncate">
+                <p class="text-[11px] font-semibold text-[#574536] truncate">
                   ${latest.expectedTime ? `সম্ভাব্য সময়: ${escapeHtml(latest.expectedTime)}` : "লাইভ ট্র্যাক করতে ট্যাপ করুন"}
                 </p>
               </div>
             </div>
-            <span class="material-icons-round text-[#D35400]">chevron_right</span>
+            <span class="material-icons-round text-[#B45309]">chevron_right</span>
           </div>
         `;
       } else {
@@ -3080,9 +3418,9 @@
       if (!filtered.length) {
         listEl.innerHTML = `
           <div class="app-card py-12 text-center space-y-2">
-            <span class="material-icons-round text-[36px] text-slate-300">receipt_long</span>
-            <p class="font-bold text-[14px] text-slate-600">এই অ্যাকাউন্টে এখনো কোনো অর্ডার নেই</p>
-            <p class="text-[11.5px] text-slate-400">দোকান ট্যাব থেকে পণ্য ব্যাগে যোগ করে অর্ডার করুন।</p>
+            <span class="material-icons-round text-[36px] text-[#D5CBB9]">receipt_long</span>
+            <p class="font-bold text-[14px] text-[#574536]">এই অ্যাকাউন্টে এখনো কোনো অর্ডার নেই</p>
+            <p class="text-[11.5px] text-[#857261]">দোকান ট্যাব থেকে পণ্য ব্যাগে যোগ করে অর্ডার করুন।</p>
           </div>
         `;
         return;
@@ -3096,13 +3434,13 @@
           return `
             <div
               onclick="openCustOrderDetailsModal('${escapeQuotes(o.id)}')"
-              class="app-card p-3.5 cursor-pointer hover:border-[#C0392B]/50 transition space-y-2.5"
+              class="app-card p-3.5 cursor-pointer hover:border-[#B3261E]/50 transition space-y-2.5"
             >
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-1.5 min-w-0">
-                  <span class="font-extrabold text-[14px] text-[#C0392B] whitespace-nowrap">#${shortId}</span>
-                  <span class="text-[11px] text-slate-500 truncate">${formatOrderDate(o.createdAt)}</span>
-                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FFF3E0] border border-[#FFE0B2] text-[#D35400] font-extrabold text-[10.5px] whitespace-nowrap">
+                  <span class="font-extrabold text-[14px] text-[#B3261E] whitespace-nowrap">#${shortId}</span>
+                  <span class="text-[11px] text-[#6B5847] truncate">${formatOrderDate(o.createdAt)}</span>
+                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FEF6E7] border border-[#F3D19B] text-[#9A4406] font-extrabold text-[10.5px] whitespace-nowrap">
                     ${itemCount}টি আইটেম • ₹${Math.round(o.totalAmount)}
                   </span>
                 </div>
@@ -3111,12 +3449,12 @@
                 </span>
               </div>
 
-              <div class="p-2.5 rounded-[10px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2">
+              <div class="p-2.5 rounded-[10px] bg-[#FAF7F2] border border-[#E7E0D4] flex items-center justify-between gap-2">
                 <div class="min-w-0">
-                  <p class="font-bold text-[12.5px] text-[#0F172A] truncate">${escapeHtml(o.customerName)} • ${escapeHtml(o.customerPhone)}</p>
-                  <p class="text-[11px] text-slate-500 truncate">ঠিকানা: ${escapeHtml(o.deliveryAddress)}</p>
+                  <p class="font-bold text-[12.5px] text-[#25190F] truncate">${escapeHtml(o.customerName)} • ${escapeHtml(o.customerPhone)}</p>
+                  <p class="text-[11px] text-[#6B5847] truncate">ঠিকানা: ${escapeHtml(o.deliveryAddress)}</p>
                 </div>
-                <span class="text-[11px] font-bold text-[#C0392B] whitespace-nowrap">বিস্তারিত দেখুন →</span>
+                <span class="text-[11px] font-bold text-[#B3261E] whitespace-nowrap">বিস্তারিত দেখুন →</span>
               </div>
             </div>
           `;
@@ -3134,21 +3472,21 @@
         .map((it) => {
           const img = it.imageUrl || (productsList.find((p) => p.id === it.productId)?.imageUrl || "");
           return `
-            <div class="p-2.5 rounded-[10px] bg-[#FAF6F0] border border-[#E8E0D5] flex items-center justify-between gap-2.5">
+            <div class="p-2.5 rounded-[10px] bg-[#FAF7F2] border border-[#E7E0D4] flex items-center justify-between gap-2.5">
               <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-11 h-11 rounded-[8px] bg-white border border-[#E2E8F0] overflow-hidden shrink-0 flex items-center justify-center">
+                <div class="w-11 h-11 rounded-[8px] bg-white border border-[#E7E0D4] overflow-hidden shrink-0 flex items-center justify-center">
                   ${
                     img
                       ? `<img src="${escapeAttr(img)}" class="w-full h-full object-cover" />`
-                      : `<span class="material-icons-round text-[#D35400]">shopping_bag</span>`
+                      : `<span class="material-icons-round text-[#B45309]">shopping_bag</span>`
                   }
                 </div>
                 <div class="min-w-0">
-                  <p class="font-bold text-[13px] text-[#0F172A] truncate">${escapeHtml(it.title)}</p>
-                  <p class="text-[11px] font-bold text-[#C0392B]">Qty: x${it.quantity} • ₹${it.price} করে</p>
+                  <p class="font-bold text-[13px] text-[#25190F] truncate">${escapeHtml(it.title)}</p>
+                  <p class="text-[11px] font-bold text-[#B3261E]">Qty: x${it.quantity} • ₹${it.price} করে</p>
                 </div>
               </div>
-              <span class="font-extrabold text-[13.5px] text-[#0F172A]">₹${Math.round(it.price * it.quantity)}</span>
+              <span class="font-extrabold text-[13.5px] text-[#25190F]">₹${Math.round(it.price * it.quantity)}</span>
             </div>
           `;
         })
@@ -3156,10 +3494,10 @@
 
       const card = document.getElementById("custOrderDetailsCard");
       card.innerHTML = `
-        <div class="px-5 py-3.5 bg-[#FAF6F0] border-b border-[#E8E0D5] flex items-center justify-between">
+        <div class="px-5 py-3.5 bg-[#FAF7F2] border-b border-[#E7E0D4] flex items-center justify-between">
           <div>
-            <h3 class="font-extrabold text-[15px] text-[#C0392B]">Order #${shortId}</h3>
-            <p class="text-[11px] text-slate-500">${formatOrderDate(o.createdAt)}</p>
+            <h3 class="font-extrabold text-[15px] text-[#B3261E]">Order #${shortId}</h3>
+            <p class="text-[11px] text-[#6B5847]">${formatOrderDate(o.createdAt)}</p>
           </div>
           <button onclick="closeCustOrderDetailsModal()" class="w-8 h-8 rounded-full hover:bg-[#EFE6DC] flex items-center justify-center">
             <span class="material-icons-round text-[20px]">close</span>
@@ -3167,14 +3505,14 @@
         </div>
 
         <div class="p-4 space-y-3 max-h-[75vh] overflow-y-auto">
-          <div class="flex items-center justify-between p-2.5 rounded-[10px] bg-slate-50 border border-slate-200">
-            <span class="text-[12px] font-bold text-slate-600">বর্তমান স্ট্যাটাস:</span>
+          <div class="flex items-center justify-between p-2.5 rounded-[10px] bg-[#FAF7F2] border border-[#E7E0D4]">
+            <span class="text-[12px] font-bold text-[#574536]">বর্তমান স্ট্যাটাস:</span>
             <span class="px-2.5 py-1 rounded-[7px] font-extrabold text-[12px] ${getStatusStyle(o.status)}">${escapeHtml(o.status)}</span>
           </div>
 
           ${
             o.expectedTime
-              ? `<div class="p-2.5 rounded-[10px] bg-[#FFF3E0] border border-[#FFCC80] text-[#E65100] font-bold text-[12px]">
+              ? `<div class="p-2.5 rounded-[10px] bg-[#FEF6E7] border border-[#F3D19B] text-[#9A4406] font-bold text-[12px]">
                    সম্ভাব্য ডেলিভারি সময়: ${escapeHtml(o.expectedTime)}
                  </div>`
               : ""
@@ -3182,16 +3520,16 @@
 
           <div class="space-y-2">${itemsHtml}</div>
 
-          <div class="p-3 rounded-[12px] bg-[#FAF6F0] border border-[#E2D6C7] flex items-center justify-between">
+          <div class="p-3 rounded-[12px] bg-[#FAF7F2] border border-[#DDD4C5] flex items-center justify-between">
             <span class="font-bold text-[13px]">মোট বিল (Total Amount):</span>
-            <span class="font-extrabold text-[18px] text-[#C0392B]">₹${Math.round(o.totalAmount)}</span>
+            <span class="font-extrabold text-[18px] text-[#B3261E]">₹${Math.round(o.totalAmount)}</span>
           </div>
 
           ${
             canCancel
               ? `<button
                    onclick="cancelMyPendingOrder('${escapeQuotes(o.id)}')"
-                   class="w-full py-2.5 rounded-[10px] bg-[#FFEBEE] hover:bg-[#FFCDD2] text-[#C62828] font-extrabold text-[12.5px] transition"
+                   class="w-full py-2.5 rounded-[10px] bg-[#FDECEC] hover:bg-[#F5B5B5] text-[#B3261E] font-extrabold text-[12.5px] transition"
                  >
                    অর্ডার বাতিল করুন (Cancel Order)
                  </button>`
@@ -3382,7 +3720,7 @@
         payBtn.disabled = effectiveSelectedPayable <= 0;
         payBtn.className = `w-full py-2 px-3.5 rounded-[10px] font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm transition ${
           effectiveSelectedPayable > 0
-            ? "bg-[#16A34A] hover:bg-[#15803D] text-white active:scale-[0.99]"
+            ? "bg-[#1F6B45] hover:bg-[#14532D] text-white active:scale-[0.99]"
             : "bg-slate-200 text-slate-500 cursor-not-allowed"
         }`;
       }
@@ -3403,9 +3741,9 @@
       if (rowEl) {
         rowEl.className = `p-3 rounded-[14px] ${
           isChecked
-            ? "bg-[#FFF7ED] border-2 border-[#D35400]"
-            : "bg-white border border-[#E2E8F0]"
-        } flex items-center justify-between gap-2.5 cursor-pointer hover:border-[#D35400]/60 transition`;
+            ? "bg-[#FFF7ED] border-2 border-[#B45309]"
+            : "bg-white border border-[#E7E0D4]"
+        } flex items-center justify-between gap-2.5 cursor-pointer hover:border-[#B45309]/60 transition`;
       }
     }
 
@@ -3717,7 +4055,7 @@
         name: "Jiyarul Tea Stall & Grocery",
         description: paymentDescription,
         image: "https://jiyarulstore-web.vercel.app/logo.png",
-        theme: { color: "#C0392B" },
+        theme: { color: "#B3261E" },
         prefill: {
           name: customerName || currentUser?.displayName || "Customer",
           contact: currentUserPhone || "9062472159",
@@ -3849,12 +4187,12 @@
       if (!hasSearchedCustomerBaki) {
         container.innerHTML = `
           <div class="flex-1 flex flex-col items-center justify-center py-12 px-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-[#FFF3E0] flex items-center justify-center mb-3">
-              <span class="material-icons-round text-[38px] text-[#D35400]">menu_book</span>
+            <div class="w-16 h-16 rounded-full bg-[#FEF6E7] flex items-center justify-center mb-3">
+              <span class="material-icons-round text-[38px] text-[#B45309]">menu_book</span>
             </div>
-            <h4 class="font-extrabold text-[15px] text-[#3E2723]">আপনার বকেয়া খাতা দেখুন</h4>
-            <p class="mt-1.5 max-w-sm text-[12.5px] text-slate-500 leading-relaxed">
-              উপরে আপনার রেজিস্ট্রেশন নম্বর (যেমন <strong class="text-[#D35400]">#1</strong> বা <strong class="text-[#D35400]">1546</strong>) লিখে <strong>"চেক করুন"</strong> বাটনে চাপুন।
+            <h4 class="font-extrabold text-[15px] text-[#25190F]">আপনার বকেয়া খাতা দেখুন</h4>
+            <p class="mt-1.5 max-w-sm text-[12.5px] text-[#6B5847] leading-relaxed">
+              উপরে আপনার রেজিস্ট্রেশন নম্বর (যেমন <strong class="text-[#B45309]">#1</strong> বা <strong class="text-[#B45309]">1546</strong>) লিখে <strong>"চেক করুন"</strong> বাটনে চাপুন।
             </p>
           </div>
         `;
@@ -3866,8 +4204,8 @@
         container.innerHTML = `
           <div class="flex-1 flex flex-col items-center justify-center py-10 px-5 text-center">
             <span class="material-icons-round text-[46px] text-[#FF9800]">warning_amber</span>
-            <h4 class="mt-2 font-extrabold text-[15px] text-[#3C3229]">কোনো গ্রাহক খুঁজে পাওয়া যায়নি!</h4>
-            <p class="mt-1 max-w-sm text-[12.5px] text-slate-500 leading-relaxed">
+            <h4 class="mt-2 font-extrabold text-[15px] text-[#25190F]">কোনো গ্রাহক খুঁজে পাওয়া যায়নি!</h4>
+            <p class="mt-1 max-w-sm text-[12.5px] text-[#6B5847] leading-relaxed">
               অনুগ্রহ করে আপনার সঠিক ও সম্পূর্ণ রেজিস্ট্রেশন নম্বর দিন অথবা দোকানে যোগাযোগ করুন।
             </p>
           </div>
@@ -3897,7 +4235,7 @@
         ? "text-[#94A3B8]"
         : hasDue
         ? "text-[#DC2626]"
-        : "text-[#16A34A]";
+        : "text-[#1F6B45]";
 
       // Build Tab 1: Ledger Items HTML
       const txRowsHtml = txs.length
@@ -3919,14 +4257,14 @@
                     isCreditPayment
                       ? "bg-[#F0FDF4] border border-[#BBF7D0]"
                       : isChecked
-                      ? "bg-[#FFF7ED] border-2 border-[#D35400]"
-                      : "bg-white border border-[#E2E8F0]"
-                  } flex items-center justify-between gap-2.5 ${!isSettled ? "cursor-pointer hover:border-[#D35400]/60 transition" : ""}"
+                      ? "bg-[#FFF7ED] border-2 border-[#B45309]"
+                      : "bg-white border border-[#E7E0D4]"
+                  } flex items-center justify-between gap-2.5 ${!isSettled ? "cursor-pointer hover:border-[#B45309]/60 transition" : ""}"
                 >
                   <div class="flex items-center gap-2.5 min-w-0 flex-1">
                     ${
                       isSettled
-                        ? `<div class="w-[22px] h-[22px] rounded-full bg-[#16A34A] text-white flex items-center justify-center shrink-0">
+                        ? `<div class="w-[22px] h-[22px] rounded-full bg-[#1F6B45] text-white flex items-center justify-center shrink-0">
                              <span class="material-icons-round text-[14px]">check</span>
                            </div>`
                         : `<input
@@ -3934,18 +4272,18 @@
                              type="checkbox"
                              ${isChecked ? "checked" : ""}
                              onclick="event.stopPropagation(); toggleBakiTxCheckbox('${escapeQuotes(tx.id)}')"
-                             class="w-[19px] h-[19px] accent-[#D35400] rounded cursor-pointer shrink-0"
+                             class="w-[19px] h-[19px] accent-[#B45309] rounded cursor-pointer shrink-0"
                            />`
                     }
                     <div class="min-w-0 flex-1">
-                      <p class="font-bold text-[13.5px] text-[#0F172A] truncate">${escapeHtml(noteText)}</p>
-                      <p class="text-[10.5px] text-[#64748B] mt-0.5">${escapeHtml(formatBakiTxTimestamp(tx.timestamp))}</p>
+                      <p class="font-bold text-[13.5px] text-[#25190F] truncate">${escapeHtml(noteText)}</p>
+                      <p class="text-[10.5px] text-[#6B5847] mt-0.5">${escapeHtml(formatBakiTxTimestamp(tx.timestamp))}</p>
                       <div class="flex flex-wrap items-center gap-1.5 mt-1">
                         <span class="inline-block px-1.5 py-0.5 rounded-[6px] text-[9px] font-extrabold ${
                           isCreditPayment
                             ? "bg-[#DCFCE7] text-[#15803D]"
                             : isSettled
-                            ? "bg-[#DCFCE7] text-[#16A34A]"
+                            ? "bg-[#DCFCE7] text-[#1F6B45]"
                             : "bg-[#FEE2E2] text-[#DC2626]"
                         }">
                           ${isCreditPayment ? "PAYMENT RECEIVED" : isSettled ? "SETTLED" : "PENDING DUE"}
@@ -3961,7 +4299,7 @@
                   <div class="text-right shrink-0">
                     <p class="font-extrabold text-[14.5px] ${
                       isCreditPayment
-                        ? "text-[#16A34A]"
+                        ? "text-[#1F6B45]"
                         : isSettled
                         ? "text-[#94A3B8] line-through"
                         : "text-[#DC2626]"
@@ -3973,18 +4311,18 @@
               `;
             })
             .join("")
-        : `<p class="text-center text-[12px] text-slate-400 py-8">এখনো কোনো বাকি বা লেনদেনের হিসাব নেই।</p>`;
+        : `<p class="text-center text-[12px] text-[#857261] py-8">এখনো কোনো বাকি বা লেনদেনের হিসাব নেই।</p>`;
 
       // Docked Bottom Dual Payment Controls (Mode A + Mode B) — Sleek & Compact
       const dualPaymentControlsHtml =
         hasDue && activeBakiModalTab === "ledger"
           ? `
-          <div class="p-2.5 rounded-[14px] bg-white border border-[#E2D6C7] shadow-md space-y-2 shrink-0 mt-1.5">
+          <div class="p-2.5 rounded-[14px] bg-white border border-[#DDD4C5] shadow-md space-y-2 shrink-0 mt-1.5">
             <!-- Mode A: Selective Item Settlement -->
             <div class="space-y-1.5">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-[11px] font-extrabold text-[#3E2723] flex items-center gap-1 truncate">
-                  <span class="material-icons-round text-[14px] text-[#D35400]">fact_check</span>
+                <span class="text-[11px] font-extrabold text-[#25190F] flex items-center gap-1 truncate">
+                  <span class="material-icons-round text-[14px] text-[#B45309]">fact_check</span>
                   <span class="truncate">Mode A: আইটেম সিলেক্ট করে পেমেন্ট</span>
                 </span>
                 ${
@@ -4007,7 +4345,7 @@
                 ${effectiveSelectedPayable <= 0 ? "disabled" : ""}
                 class="w-full py-2 px-3.5 rounded-[10px] font-extrabold text-[12.5px] flex items-center justify-center gap-1.5 shadow-sm transition ${
                   effectiveSelectedPayable > 0
-                    ? "bg-[#16A34A] hover:bg-[#15803D] text-white active:scale-[0.99]"
+                    ? "bg-[#1F6B45] hover:bg-[#14532D] text-white active:scale-[0.99]"
                     : "bg-slate-200 text-slate-500 cursor-not-allowed"
                 }"
               >
@@ -4016,7 +4354,7 @@
               </button>
             </div>
 
-            <div class="border-t border-[#E2E8F0]"></div>
+            <div class="border-t border-[#E7E0D4]"></div>
 
             <!-- Mode B: Custom Partial / Lump-Sum Payment -->
             <div class="flex items-center gap-2">
@@ -4028,7 +4366,7 @@
                 value="${escapeAttr(customBakiPayAmountInput)}"
                 oninput="onBakiCustomAmountInput(this.value)"
                 placeholder="Mode B: Custom Amount (₹)"
-                class="flex-1 bg-[#F8FAFC] border border-[#CBD5E1] focus:border-[#2563EB] rounded-[9px] px-2.5 py-1.5 text-[12px] font-extrabold text-[#0F172A] outline-none"
+                class="flex-1 bg-[#FAF7F2] border border-[#DDD4C5] focus:border-[#2563EB] rounded-[9px] px-2.5 py-1.5 text-[12px] font-extrabold text-[#25190F] outline-none"
               />
               <button
                 type="button"
@@ -4048,21 +4386,21 @@
         ? paymentHistoryList
             .map(
               (p) => `
-              <div class="p-3 rounded-[14px] bg-white border border-[#E2E8F0] flex items-center justify-between gap-2.5">
+              <div class="p-3 rounded-[14px] bg-white border border-[#E7E0D4] flex items-center justify-between gap-2.5">
                 <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div class="w-9 h-9 rounded-full bg-[#DCFCE7] text-[#16A34A] flex items-center justify-center shrink-0">
+                  <div class="w-9 h-9 rounded-full bg-[#DCFCE7] text-[#1F6B45] flex items-center justify-center shrink-0">
                     <span class="material-icons-round text-[18px]">verified</span>
                   </div>
                   <div class="min-w-0 flex-1">
-                    <p class="font-bold text-[13px] text-[#0F172A] truncate">${escapeHtml(p.modeLabel)}</p>
-                    <p class="text-[10.5px] text-[#64748B] mt-0.5">${escapeHtml(formatBakiTxTimestamp(p.timestamp))}</p>
+                    <p class="font-bold text-[13px] text-[#25190F] truncate">${escapeHtml(p.modeLabel)}</p>
+                    <p class="text-[10.5px] text-[#6B5847] mt-0.5">${escapeHtml(formatBakiTxTimestamp(p.timestamp))}</p>
                     <p class="text-[10px] font-mono font-semibold text-[#2563EB] mt-0.5 truncate">
                       Ref: ${escapeHtml(p.paymentId)}
                     </p>
                   </div>
                 </div>
                 <div class="text-right shrink-0 space-y-1">
-                  <p class="font-extrabold text-[15px] text-[#16A34A]">₹${Number(p.amount || 0).toFixed(2)}</p>
+                  <p class="font-extrabold text-[15px] text-[#1F6B45]">₹${Number(p.amount || 0).toFixed(2)}</p>
                   <span class="inline-block px-2 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[9.5px] font-extrabold">
                     ${escapeHtml(p.status)}
                   </span>
@@ -4073,9 +4411,9 @@
             .join("")
         : `
           <div class="py-10 px-4 text-center space-y-1.5">
-            <span class="material-icons-round text-[38px] text-slate-300">receipt_long</span>
-            <p class="text-[12px] font-semibold text-slate-500">এখনো কোনো অনলাইন পেমেন্ট হিস্ট্রি নেই।</p>
-            <p class="text-[10.5px] text-slate-400">Razorpay দিয়ে বাকি পরিশোধ করলে তার রসিদ ও রেফারেন্স আইডি এখানে দেখা যাবে।</p>
+            <span class="material-icons-round text-[38px] text-[#D5CBB9]">receipt_long</span>
+            <p class="text-[12px] font-semibold text-[#6B5847]">এখনো কোনো অনলাইন পেমেন্ট হিস্ট্রি নেই।</p>
+            <p class="text-[10.5px] text-[#857261]">Razorpay দিয়ে বাকি পরিশোধ করলে তার রসিদ ও রেফারেন্স আইডি এখানে দেখা যাবে।</p>
           </div>
         `;
 
@@ -4090,11 +4428,11 @@
             <div class="p-2.5 sm:p-3 rounded-[14px] bg-white border border-[#E8DCCF] shadow-sm space-y-2">
               <div class="flex items-center justify-between gap-2">
                 <div class="min-w-0 flex items-center gap-1.5">
-                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FFF3E0] text-[#D35400] font-extrabold text-[11px]">${escapeHtml(c.regNo)}</span>
-                  <h4 class="font-extrabold text-[14.5px] text-[#0F172A] truncate">${escapeHtml(c.name)}</h4>
+                  <span class="px-2 py-0.5 rounded-[6px] bg-[#FEF6E7] text-[#B45309] font-extrabold text-[11px]">${escapeHtml(c.regNo)}</span>
+                  <h4 class="font-extrabold text-[14.5px] text-[#25190F] truncate">${escapeHtml(c.name)}</h4>
                 </div>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 ${
-                  hasDue ? "bg-[#FEE2E2] text-[#DC2626]" : "bg-[#DCFCE7] text-[#16A34A]"
+                  hasDue ? "bg-[#FEE2E2] text-[#DC2626]" : "bg-[#DCFCE7] text-[#1F6B45]"
                 }">
                   ${hasDue ? "বাকি রয়েছে (Due)" : "সব পরিশোধিত (Cleared)"}
                 </span>
@@ -4103,7 +4441,7 @@
               <!-- Compact Outstanding Balance Banner Row -->
               <div class="px-3 py-2 rounded-[12px] bg-[#EEF2FF] border border-[#E0E7FF] flex items-center justify-between gap-2">
                 <div>
-                  <p class="text-[10.5px] font-semibold text-[#64748B] leading-tight">Outstanding Balance (Baki)</p>
+                  <p class="text-[10.5px] font-semibold text-[#6B5847] leading-tight">Outstanding Balance (Baki)</p>
                   <p class="font-extrabold text-[19px] leading-tight mt-0.5 ${balanceColor}">${balanceText}</p>
                 </div>
                 <button
@@ -4119,14 +4457,14 @@
               </div>
 
               <!-- Toggle Tabs: Ledger Items vs Payment History -->
-              <div class="grid grid-cols-2 gap-1.5 p-1 rounded-[10px] bg-[#F1F5F9] border border-[#E2E8F0]">
+              <div class="grid grid-cols-2 gap-1.5 p-1 rounded-[10px] bg-[#F1F5F9] border border-[#E7E0D4]">
                 <button
                   type="button"
                   onclick="switchBakiModalTab('ledger')"
                   class="py-1.5 px-2.5 rounded-[7px] font-extrabold text-[11.5px] flex items-center justify-center gap-1 transition ${
                     activeBakiModalTab === "ledger"
-                      ? "bg-white text-[#0F172A] shadow-sm"
-                      : "text-[#64748B] hover:text-[#0F172A]"
+                      ? "bg-white text-[#25190F] shadow-sm"
+                      : "text-[#6B5847] hover:text-[#25190F]"
                   }"
                 >
                   <span class="material-icons-round text-[14px]">list_alt</span>
@@ -4137,8 +4475,8 @@
                   onclick="switchBakiModalTab('history')"
                   class="py-1.5 px-2.5 rounded-[7px] font-extrabold text-[11.5px] flex items-center justify-center gap-1 transition ${
                     activeBakiModalTab === "history"
-                      ? "bg-white text-[#16A34A] shadow-sm"
-                      : "text-[#64748B] hover:text-[#0F172A]"
+                      ? "bg-white text-[#1F6B45] shadow-sm"
+                      : "text-[#6B5847] hover:text-[#25190F]"
                   }"
                 >
                   <span class="material-icons-round text-[14px]">history</span>
@@ -4148,8 +4486,8 @@
             </div>
 
             <!-- Sticky Section Subheader Row Inside Scroll Area -->
-            <div class="sticky top-0 z-10 bg-[#FAF6F0]/95 backdrop-blur-sm flex items-center justify-between py-1 px-1">
-              <h5 class="font-bold text-[12px] text-[#64748B]">
+            <div class="sticky top-0 z-10 bg-[#F6F3EE]/95 backdrop-blur-sm flex items-center justify-between py-1 px-1">
+              <h5 class="font-bold text-[12px] text-[#6B5847]">
                 ${
                   activeBakiModalTab === "ledger"
                     ? `Official Ledger (${txs.length})`
@@ -4158,7 +4496,7 @@
               </h5>
               ${
                 activeBakiModalTab === "ledger" && hasDue
-                  ? `<span class="text-[10.5px] text-[#D35400] font-bold">চেকবক্সে টিক দিয়ে আইটেম পেমেন্ট করুন</span>`
+                  ? `<span class="text-[10.5px] text-[#B45309] font-bold">চেকবক্সে টিক দিয়ে আইটেম পেমেন্ট করুন</span>`
                   : ""
               }
             </div>
@@ -4193,85 +4531,85 @@
         iconEl.textContent = "gavel";
         titleEl.textContent = "Terms & Conditions — Jiyarul Tea Stall & Grocery";
         bodyEl.innerHTML = `
-          <p class="font-bold text-[#0F172A]">Effective Date: November 2026</p>
+          <p class="font-bold text-[#25190F]">Effective Date: November 2026</p>
           <p>Welcome to <strong>Jiyarul Tea Stall &amp; Grocery</strong> ("we", "our", "us"). By accessing or using our website, mobile application (APK), online ordering system, or <em>Dokaner Baki Khata</em> digital ledger payment services, you agree to be bound by these Terms &amp; Conditions.</p>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">1. Nature of Services</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">1. Nature of Services</h4>
           <p>We provide freshly prepared tea, snacks, daily groceries, household essentials, and digital ledger (Baki Khata) settlement facilities for registered customers located in and around Digberia, Mandirbazar, South 24 Parganas, West Bengal.</p>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Pricing, Orders &amp; Ledger Settlements</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">2. Pricing, Orders &amp; Ledger Settlements</h4>
           <ul class="list-disc pl-5 space-y-1">
             <li>All product prices and Baki Khata ledger balances are listed in Indian Rupees (INR / ₹).</li>
             <li>Customers can settle specific pending ledger items (Mode A) or make custom partial/lump-sum payments (Mode B) via our integrated Razorpay Payment Gateway.</li>
             <li>Upon successful payment confirmation from Razorpay, your digital ledger is automatically updated and a payment reference ID is recorded under your Payment History.</li>
           </ul>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">3. User Responsibilities</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">3. User Responsibilities</h4>
           <p>You agree to provide accurate delivery details, phone numbers, and registration numbers when placing orders or settling store dues. Fraudulent payment attempts or misuse of the platform are strictly prohibited.</p>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">4. Governing Law</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">4. Governing Law</h4>
           <p>These terms are governed by the laws of India, with jurisdiction in South 24 Parganas, West Bengal.</p>
         `;
       } else if (policyType === "privacy") {
         iconEl.textContent = "privacy_tip";
         titleEl.textContent = "Privacy Policy — Jiyarul Tea Stall & Grocery";
         bodyEl.innerHTML = `
-          <p class="font-bold text-[#0F172A]">Your Privacy Matters to Us</p>
+          <p class="font-bold text-[#25190F]">Your Privacy Matters to Us</p>
           <p><strong>Jiyarul Tea Stall &amp; Grocery</strong> is committed to protecting the privacy and security of our customers' personal information.</p>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">1. Information We Collect</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">1. Information We Collect</h4>
           <ul class="list-disc pl-5 space-y-1">
             <li><strong>Account &amp; Identity Data:</strong> Name, Google email address (for authentication), mobile number, delivery address, and Baki Khata Registration Number.</li>
             <li><strong>Transaction Data:</strong> Order history, ledger entries, and Razorpay Payment Reference IDs (<code>razorpay_payment_id</code>).</li>
           </ul>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Payment Security (PCI-DSS Compliance)</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">2. Payment Security (PCI-DSS Compliance)</h4>
           <p>All online payments (UPI, Google Pay, PhonePe, Paytm, Cards, NetBanking) are processed securely through <strong>Razorpay</strong>. We do <strong>not</strong> store your UPI PIN, debit/credit card numbers, or CVV on our servers or local storage.</p>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">3. Data Sharing</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">3. Data Sharing</h4>
           <p>We never sell or rent your personal data to third parties. Information is shared only with authorized payment processors (Razorpay) and cloud infrastructure (Google Firebase) strictly to fulfill your orders and maintain your ledger.</p>
         `;
       } else if (policyType === "refund") {
         iconEl.textContent = "currency_exchange";
         titleEl.textContent = "Refund & Cancellation Policy";
         bodyEl.innerHTML = `
-          <h4 class="font-extrabold text-[#0F172A]">1. Order Cancellation</h4>
+          <h4 class="font-extrabold text-[#25190F]">1. Order Cancellation</h4>
           <ul class="list-disc pl-5 space-y-1">
             <li>Customers may cancel a grocery/snack order directly from the "My Orders" tab while the order status is still <strong>Pending / New</strong>.</li>
             <li>Once an order is marked as <strong>Preparing</strong> or <strong>Out for Delivery</strong>, it cannot be cancelled online.</li>
           </ul>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">2. Refunds for Store Orders</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">2. Refunds for Store Orders</h4>
           <ul class="list-disc pl-5 space-y-1">
             <li>If a prepaid online order is cancelled before preparation or if an item is unavailable/damaged upon delivery, a full or partial refund will be initiated.</li>
             <li>Approved refunds are processed via Razorpay back to the original payment source (UPI / Bank Account / Card) within <strong>5–7 business days</strong>.</li>
           </ul>
-          <h4 class="font-extrabold text-[#0F172A] pt-1">3. Baki Khata (Ledger) Duplicate / Excess Payments</h4>
+          <h4 class="font-extrabold text-[#25190F] pt-1">3. Baki Khata (Ledger) Duplicate / Excess Payments</h4>
           <p>If a customer accidentally makes a duplicate payment or pays in excess of their due ledger balance via Razorpay, they can report the Razorpay Payment ID to the store within 48 hours. Verified excess payments will be refunded to the original payment method within <strong>5–7 business days</strong> or adjusted against future purchases as preferred by the customer.</p>
         `;
       } else {
         iconEl.textContent = "contact_support";
         titleEl.textContent = "Contact Us — Jiyarul Tea Stall & Grocery";
         bodyEl.innerHTML = `
-          <div class="p-3.5 rounded-[14px] bg-[#FAF6F0] border border-[#E8DCCF] space-y-2.5">
+          <div class="p-3.5 rounded-[14px] bg-[#FAF7F2] border border-[#E8DCCF] space-y-2.5">
             <div>
-              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Merchant / Store Name</p>
-              <p class="font-extrabold text-[15px] text-[#0F172A]">Jiyarul Tea Stall &amp; Grocery</p>
+              <p class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Merchant / Store Name</p>
+              <p class="font-extrabold text-[15px] text-[#25190F]">Jiyarul Tea Stall &amp; Grocery</p>
             </div>
             <div>
-              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Operational Address</p>
-              <p class="font-semibold text-[13px] text-[#1E293B]">
+              <p class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Operational Address</p>
+              <p class="font-semibold text-[13px] text-[#25190F]">
                 Digberia, Mandirbazar, South 24 Parganas, West Bengal - 743395
               </p>
             </div>
             <div>
-              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Phone Numbers</p>
-              <p class="font-semibold text-[13px] text-[#1E293B]">
+              <p class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Phone Numbers</p>
+              <p class="font-semibold text-[13px] text-[#25190F]">
                 • Primary: <a href="tel:+919062472159" class="text-[#2563EB] hover:underline">+91-9062472159</a><br/>
-                • Alternate / WhatsApp: <a href="https://wa.me/919062472159" target="_blank" rel="noopener" class="text-[#16A34A] hover:underline">+91-9062472159</a>
+                • Alternate / WhatsApp: <a href="https://wa.me/919062472159" target="_blank" rel="noopener" class="text-[#1F6B45] hover:underline">+91-9062472159</a>
               </p>
             </div>
             <div>
-              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Email Support</p>
-              <p class="font-semibold text-[13px] text-[#1E293B]">
+              <p class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Email Support</p>
+              <p class="font-semibold text-[13px] text-[#25190F]">
                 • Email: <a href="mailto:jiyaruljamader386@gmail.com" class="text-[#2563EB] hover:underline">jiyaruljamader386@gmail.com</a>
               </p>
             </div>
             <div>
-              <p class="text-[11px] font-bold text-[#D35400] uppercase tracking-wider">Operating Hours</p>
-              <p class="font-semibold text-[13px] text-[#1E293B]">
+              <p class="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Operating Hours</p>
+              <p class="font-semibold text-[13px] text-[#25190F]">
                 Monday – Sunday: 7:00 AM – 9:00 PM IST
               </p>
             </div>
@@ -4355,7 +4693,7 @@
         badge.textContent = `বার্তা বাকি: ${remaining}/20`;
         badge.className = isExhausted
           ? "inline-block px-2 py-0.5 rounded-[12px] bg-[#FEE2E2] text-[#DC2626] font-bold text-[10.5px]"
-          : "inline-block px-2 py-0.5 rounded-[12px] bg-[#ECFDF5] text-[#059669] font-bold text-[10.5px]";
+          : "inline-block px-2 py-0.5 rounded-[12px] bg-[#EEF5F0] text-[#1F6B45] font-bold text-[10.5px]";
       }
 
       const warnBanner = document.getElementById("saraQuotaWarningBanner");
@@ -4380,7 +4718,7 @@
         sendBtn.className =
           !hasText || isExhausted || isAiLoading
             ? "w-12 h-12 rounded-full bg-gradient-to-br from-[#CBD5E1] to-[#94A3B8] text-white flex items-center justify-center shrink-0 cursor-not-allowed transition"
-            : "w-12 h-12 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition";
+            : "w-12 h-12 rounded-full bg-gradient-to-br from-[#14532D] to-[#1F6B45] hover:opacity-95 text-white flex items-center justify-center shrink-0 shadow-sm transition";
       }
     }
 
@@ -4835,11 +5173,11 @@ RULES:
 
         box.innerHTML = `
           <div class="h-full flex flex-col items-center justify-center px-4 ${isSaraKeyboardOpen ? "py-1.5" : "py-4"} text-center">
-            <div class="${isSaraKeyboardOpen ? "w-14 h-14 mb-2" : "w-16 h-16 mb-3"} rounded-full bg-gradient-to-br from-[#6366F1]/15 to-[#A855F7]/15 flex items-center justify-center shrink-0">
-              <span class="material-icons-round text-[#6366F1] ${isSaraKeyboardOpen ? "text-[28px]" : "text-[32px]"}">auto_awesome</span>
+            <div class="${isSaraKeyboardOpen ? "w-14 h-14 mb-2" : "w-16 h-16 mb-3"} rounded-full bg-gradient-to-br from-[#14532D]/15 to-[#1F6B45]/15 flex items-center justify-center shrink-0">
+              <span class="material-icons-round text-[#1F6B45] ${isSaraKeyboardOpen ? "text-[28px]" : "text-[32px]"}">auto_awesome</span>
             </div>
-            <h4 class="font-bold ${isSaraKeyboardOpen ? "text-[15.5px]" : "text-[16.5px]"} text-[#1E293B]">নমস্কার! আমি ${escapeHtml(assistantName)} 👋😊</h4>
-            <p class="text-[13px] text-[#64748B] mt-1 max-w-[300px] leading-relaxed">
+            <h4 class="font-bold ${isSaraKeyboardOpen ? "text-[15.5px]" : "text-[16.5px]"} text-[#25190F]">নমস্কার! আমি ${escapeHtml(assistantName)} 👋😊</h4>
+            <p class="text-[13px] text-[#7D6C5B] mt-1 max-w-[300px] leading-relaxed">
               জিয়ারুল স্টোরের যে কোনো জিনিস বা রান্নার সামগ্রী সম্পর্কে আমাকে জিজ্ঞাসা করুন 🛒✨
             </p>
             <div class="${isSaraKeyboardOpen ? "mt-2.5" : "mt-4"} flex flex-col items-center gap-2 w-full">
@@ -4848,7 +5186,7 @@ RULES:
                   (q) => `
                   <button
                     onclick="sendSaraQuickQuestion('${escapeQuotes(q)}')"
-                    class="px-4 py-2 rounded-[20px] bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] text-[#B83A1B] font-medium text-[12.5px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition"
+                    class="px-4 py-2 rounded-[20px] bg-white border border-[#E5DACB] hover:border-[#D4C3AE] text-[#B3261E] font-medium text-[12.5px] shadow-[0_1px_2px_rgba(37,25,15,0.04)] transition"
                   >
                     ${escapeHtml(q)}
                   </button>
@@ -4866,7 +5204,7 @@ RULES:
           if (m.sender === "user") {
             return `
               <div class="flex justify-end">
-                <div class="max-w-[78%] px-3.5 py-2.5 rounded-t-[16px] rounded-bl-[16px] rounded-br-[4px] bg-[#6366F1] text-white text-[13.5px] font-normal shadow-sm leading-[1.35] whitespace-pre-line">${escapeHtml(m.text)}</div>
+                <div class="max-w-[78%] px-3.5 py-2.5 rounded-t-[16px] rounded-bl-[16px] rounded-br-[4px] bg-[#1F6B45] text-white text-[13.5px] font-normal shadow-sm leading-[1.35] whitespace-pre-line">${escapeHtml(m.text)}</div>
               </div>
             `;
           }
@@ -4879,7 +5217,7 @@ RULES:
           const productCardsHtml =
             matchedProducts.length > 0
               ? `<div class="mt-1.5 pl-9 space-y-1.5">
-                  <p class="text-[10.5px] font-bold text-[#64748B]">সরাসরি কার্টে যোগ করুন:</p>
+                  <p class="text-[10.5px] font-bold text-[#7D6C5B]">সরাসরি কার্টে যোগ করুন:</p>
                   ${matchedProducts
                     .map((p) => {
                       const spec = parseProductUnitSpec(p.unit);
@@ -4922,7 +5260,7 @@ RULES:
                               spec.isMultiMode
                                 ? `<button
                                      onclick="openLooseProductModal('${escapeQuotes(p.id)}', ${msgIdx})"
-                                     class="mt-1 inline-flex items-center px-1.5 py-0.5 rounded-[6px] bg-white border border-[#CBD5E1] hover:border-[#94A3B8] text-[#334155] font-bold text-[9.5px] transition"
+                                     class="mt-1 inline-flex items-center px-1.5 py-0.5 rounded-[6px] bg-white border border-[#E5DACB] hover:border-[#D4C3AE] text-[#25190F] font-bold text-[9.5px] transition"
                                    >
                                      ⚖️ ${activeGrams ? "ওজন/প্যাক বদলান" : "ওজন / প্যাক বেছে নিন"}
                                    </button>`
@@ -4933,7 +5271,7 @@ RULES:
                             inCartQty === 0
                               ? `<button
                                    onclick="addAiSuggestedProductToCart('${escapeQuotes(p.id)}', 1, ${msgIdx})"
-                                   class="h-[30px] px-2.5 rounded-[8px] bg-[#B83A1B] hover:bg-[#992D13] text-white font-bold text-[11px] flex items-center gap-1 shrink-0 transition"
+                                   class="h-[30px] px-2.5 rounded-[8px] bg-[#B3261E] hover:bg-[#8E1C16] text-white font-bold text-[11px] flex items-center gap-1 shrink-0 transition"
                                  >
                                    <span class="material-icons-round text-[14px]">add</span>
                                    <span>যোগ করুন</span>
@@ -4958,10 +5296,10 @@ RULES:
           return `
             <div class="flex flex-col items-start">
               <div class="flex items-start gap-2 w-full">
-                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#14532D] to-[#1F6B45] flex items-center justify-center shrink-0 mt-0.5">
                   <span class="material-icons-round text-white text-[16px]">smart_toy</span>
                 </div>
-                <div class="max-w-[82%] px-3.5 py-2.5 rounded-t-[16px] rounded-br-[16px] rounded-bl-[4px] bg-white border border-[#E2E8F0] text-[#1E293B] text-[13.5px] leading-[1.42]">${formatAiTextHtml(m.text)}</div>
+                <div class="max-w-[82%] px-3.5 py-2.5 rounded-t-[16px] rounded-br-[16px] rounded-bl-[4px] bg-white border border-[#E5DACB] text-[#25190F] text-[13.5px] leading-[1.42]">${formatAiTextHtml(m.text)}</div>
               </div>
               ${productCardsHtml}
             </div>
@@ -4973,12 +5311,12 @@ RULES:
       const loadingHtml = isAiLoading
         ? `
           <div class="flex items-center gap-2 py-1">
-            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#6366F1] to-[#A855F7] flex items-center justify-center shrink-0">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#14532D] to-[#1F6B45] flex items-center justify-center shrink-0">
               <span class="material-icons-round text-white text-[16px]">smart_toy</span>
             </div>
-            <div class="px-3 py-2 rounded-[16px] bg-white border border-[#E2E8F0] flex items-center gap-2">
-              <span class="w-3.5 h-3.5 border-2 border-[#B83A1B] border-t-transparent rounded-full animate-spin shrink-0"></span>
-              <span class="text-[12px] text-[#64748B] font-medium">${escapeHtml(assistantName)} উত্তর প্রস্তুত করছে...</span>
+            <div class="px-3 py-2 rounded-[16px] bg-white border border-[#E5DACB] flex items-center gap-2">
+              <span class="w-3.5 h-3.5 border-2 border-[#1F6B45] border-t-transparent rounded-full animate-spin shrink-0"></span>
+              <span class="text-[12px] text-[#7D6C5B] font-medium">${escapeHtml(assistantName)} উত্তর প্রস্তুত করছে...</span>
             </div>
           </div>
         `
@@ -5001,13 +5339,13 @@ RULES:
       if (tab === "home") {
         homeSec.classList.remove("hidden");
         ordSec.classList.add("hidden");
-        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition";
-        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition";
+        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-[#B3261E] font-extrabold transition";
+        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-[#7D6C5B] font-bold transition";
       } else {
         homeSec.classList.add("hidden");
         ordSec.classList.remove("hidden");
-        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-slate-500 font-bold transition";
-        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-[#C0392B] font-extrabold transition";
+        homeBtn.className = "flex flex-col items-center justify-center gap-0.5 text-[#7D6C5B] font-bold transition";
+        ordBtn.className = "relative flex flex-col items-center justify-center gap-0.5 text-[#B3261E] font-extrabold transition";
         renderCustomerOrders();
       }
     }
@@ -5040,7 +5378,7 @@ RULES:
       if (status === "Out for Delivery") return "bg-[#F3E8FF] text-[#7E22CE]";
       if (status === "Completed") return "bg-[#DCFCE7] text-[#15803D]";
       if (status === "Cancelled") return "bg-[#FEE2E2] text-[#DC2626]";
-      return "bg-slate-100 text-slate-700";
+      return "bg-[#EFE6D8] text-[#4E3E2E]";
     }
 
     function formatOrderDate(ts) {
@@ -5059,7 +5397,7 @@ RULES:
       const container = document.getElementById("toastContainer");
       const el = document.createElement("div");
       el.className =
-        "px-4 py-2.5 rounded-[12px] bg-[#1E293B]/95 text-white font-bold text-[12.5px] shadow-xl border border-white/10 text-center transition-all duration-300";
+        "px-4 py-2.5 rounded-[12px] bg-[#25190F]/95 text-[#FFF8EF] font-bold text-[12.5px] shadow-xl border border-white/10 text-center transition-all duration-300";
       el.textContent = msg;
       container.appendChild(el);
       setTimeout(() => {
